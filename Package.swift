@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "ASCII", targets: ["ASCII"])
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-standards/swift-incits-4-1986.git", from: "0.0.1"),
+        .package(url: "https://github.com/swift-standards/swift-incits-4-1986-fork.git", from: "0.0.1"),
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", from: "0.0.1"),
         .package(url: "https://github.com/swift-primitives/swift-parsing-primitives.git", from: "0.0.1"),
         .package(url: "https://github.com/swift-primitives/swift-serialization-primitives.git", from: "0.0.1"),
@@ -27,7 +27,7 @@ let package = Package(
         .target(
             name: "ASCII",
             dependencies: [
-                .product(name: "INCITS 4 1986", package: "swift-incits-4-1986"),
+                .product(name: "INCITS 4 1986", package: "swift-incits-4-1986-fork"),
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Parsing Primitives", package: "swift-parsing-primitives"),
                 .product(name: "Serialization Primitives", package: "swift-serialization-primitives"),
