@@ -4,7 +4,7 @@
 // Tests for INCITS_4_1986.GraphicCharacters (94 characters: 0x21-0x7E)
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

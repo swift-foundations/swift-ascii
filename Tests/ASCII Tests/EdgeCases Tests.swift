@@ -4,7 +4,7 @@
 // Edge case tests that catch issues other ASCII libraries miss
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

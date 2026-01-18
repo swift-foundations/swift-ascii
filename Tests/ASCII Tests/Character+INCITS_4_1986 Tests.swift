@@ -4,7 +4,7 @@
 // Tests for Character extension predicates
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

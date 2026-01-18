@@ -4,7 +4,7 @@
 // Tests that verify linear performance scaling with no regression at higher workloads
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

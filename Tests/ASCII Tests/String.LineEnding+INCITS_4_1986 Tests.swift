@@ -4,7 +4,7 @@
 // Tests for INCITS_4_1986.FormatEffectors.LineEnding support
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

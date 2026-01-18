@@ -4,7 +4,7 @@
 // Tests for INCITS_4_1986.ControlCharacters (33 characters: 0x00-0x1F, 0x7F)
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

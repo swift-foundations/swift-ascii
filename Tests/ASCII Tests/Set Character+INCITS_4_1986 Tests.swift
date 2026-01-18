@@ -4,7 +4,7 @@
 // Tests for Set<Character> ASCII whitespace constants
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

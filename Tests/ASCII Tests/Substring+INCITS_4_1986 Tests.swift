@@ -4,7 +4,7 @@
 // Tests for Substring extension methods
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

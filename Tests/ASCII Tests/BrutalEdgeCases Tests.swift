@@ -4,7 +4,7 @@
 // Absolutely brutal edge case tests designed to break most ASCII libraries
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 

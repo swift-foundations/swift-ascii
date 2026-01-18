@@ -4,7 +4,7 @@
 // Tests for module-level INCITS_4_1986 namespace
 
 import Testing
-import Testing_Extras
+import Testing
 
 @testable import ASCII
 
