@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26),
+        .visionOS(.v26)
     ],
     products: [
         .library(name: "ASCII", targets: ["ASCII"])
@@ -20,9 +20,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-parsing-primitives"),
         .package(path: "../../swift-primitives/swift-serialization-primitives"),
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
-        .package(path: "../../swift-primitives/swift-string-primitives"),
-        .package(path: "../../swift-primitives/swift-test-primitives"),
-        .package(path: "../swift-testing"),
+        .package(path: "../../swift-primitives/swift-string-primitives")
     ],
     targets: [
         .target(
@@ -33,17 +31,9 @@ let package = Package(
                 .product(name: "Parsing Primitives", package: "swift-parsing-primitives"),
                 .product(name: "Serialization Primitives", package: "swift-serialization-primitives"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
-                .product(name: "String Primitives", package: "swift-string-primitives"),
+                .product(name: "String Primitives", package: "swift-string-primitives")
             ]
-        ),
-        .testTarget(
-            name: "ASCII Tests",
-            dependencies: [
-                "ASCII",
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-                .product(name: "Testing", package: "swift-testing"),
-            ]
-        ),
+        )
     ],
     swiftLanguageModes: [.v6]
 )
@@ -54,7 +44,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
-        .strictMemorySafety(),
+        .strictMemorySafety()
     ]
     target.swiftSettings = (target.swiftSettings ?? []) + settings
 }
