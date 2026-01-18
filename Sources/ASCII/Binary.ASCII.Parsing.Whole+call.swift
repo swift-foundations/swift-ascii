@@ -8,18 +8,18 @@ extension Binary.ASCII.Parsing.Whole {
     /// - Returns: The parsed value.
     /// - Throws: Parser failure or `.end(remaining:)` if bytes remain (remaining = bytes, not characters).
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+    public func call(_ bytes: [UInt8]) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
+        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
                 value = try parser.parse(&input)
             } catch {
-                throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
+                throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
             }
             if input.isEmpty {
                 return value
             }
-            throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
+            throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
         }
     }
 
@@ -31,19 +31,19 @@ extension Binary.ASCII.Parsing.Whole {
     @inlinable
     public func call<Bytes: Collection>(
         _ bytes: Bytes
-    ) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
+    ) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
     where Bytes.Element == UInt8 {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
                 value = try parser.parse(&input)
             } catch {
-                throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
+                throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
             }
             if input.isEmpty {
                 return value
             }
-            throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
+            throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
         }
     }
 
@@ -55,18 +55,18 @@ extension Binary.ASCII.Parsing.Whole {
     @inlinable
     public func call(
         _ string: some StringProtocol
-    ) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(string) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+    ) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
+        try Binary_Primitives.Binary.Bytes.withBorrowed(string) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
                 value = try parser.parse(&input)
             } catch {
-                throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
+                throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.left(error)
             }
             if input.isEmpty {
                 return value
             }
-            throw Parsing_Primitives.Parsing.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
+            throw Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
         }
     }
 }
