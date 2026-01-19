@@ -27,7 +27,7 @@ let package = Package(
             name: "ASCII",
             dependencies: [
                 .product(name: "INCITS 4 1986", package: "swift-incits-4-1986"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Binary Parsing Primitives", package: "swift-binary-primitives"),
                 .product(name: "Parsing Primitives", package: "swift-parsing-primitives"),
                 .product(name: "Serialization Primitives", package: "swift-serialization-primitives"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),

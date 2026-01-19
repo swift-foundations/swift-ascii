@@ -6,28 +6,15 @@ public import Binary_Parsing_Primitives
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.
     ///
-    /// Enforces that all input must be consumed by appending an `.end` check
-    /// to the parser program. Uses `withBorrowed` for zero-copy execution.
-    ///
-    /// The "with end" parser is pre-built at construction time, not on each call.
+    /// Enforces that all input must be consumed by checking the consumed count
+    /// at execution time. Uses `withBorrowed.whole` for zero-copy execution.
     public struct Whole {
-        /// The parser with `.end` appended.
         @usableFromInline
-        internal let wholeParser: Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<Output>
+        internal let parser: Binary.Bytes.Machine.Parser<Output>
 
         @inlinable
-        internal init(_ parser: Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<Output>) {
-            // Pre-build parser with .end check
-            self.wholeParser = Binary_Parsing_Primitives.Binary.Bytes.Machine.build { builder in
-                let inner = builder.embed(parser)
-                let end = Binary_Parsing_Primitives.Binary.Bytes.Machine.end(in: &builder)
-                return Binary_Parsing_Primitives.Binary.Bytes.Machine.sequence(
-                    inner,
-                    end,
-                    combine: { value, _ in value },
-                    in: &builder
-                )
-            }
+        internal init(_ parser: Binary.Bytes.Machine.Parser<Output>) {
+            self.parser = parser
         }
     }
 }
@@ -41,8 +28,8 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
     /// - Returns: The parsed value.
     /// - Throws: `Machine.Fault` if parsing fails or input remains.
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> Output {
-        try Binary_Parsing_Primitives.Binary.Bytes.withBorrowed(bytes, wholeParser)
+    public func call(_ bytes: [UInt8]) throws(Binary.Bytes.Machine.Fault) -> Output {
+        try Binary.Bytes.withBorrowed.whole(bytes, parser)
     }
 
     /// Parse entire string (UTF-8).
@@ -53,7 +40,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
     /// - Returns: The parsed value.
     /// - Throws: `Machine.Fault` if parsing fails or input remains.
     @inlinable
-    public func call(_ string: some StringProtocol) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> Output {
+    public func call(_ string: some StringProtocol) throws(Binary.Bytes.Machine.Fault) -> Output {
         try call(Array(string.utf8))
     }
 }

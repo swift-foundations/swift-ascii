@@ -4,12 +4,17 @@
 public import Binary_Parsing_Primitives
 
 extension Binary.ASCII.Parsing.Machine {
+    /// Namespace for decimal integer parsing operations.
+    public enum Decimal {}
+}
+
+extension Binary.ASCII.Parsing.Machine.Decimal {
     /// Accumulator type for folding decimal digits.
     ///
     /// Tracks both the multiplier (power of 10) and running sum to enable
     /// combining with the required first digit.
     @usableFromInline
-    struct DecimalFoldState<T: FixedWidthInteger> {
+    struct FoldState<T: FixedWidthInteger> {
         @usableFromInline var multiplier: T
         @usableFromInline var sum: T
 
@@ -23,7 +28,7 @@ extension Binary.ASCII.Parsing.Machine {
 
 // MARK: - Unsigned Decimal Parsers
 
-extension Binary.ASCII.Parsing.Machine {
+extension Binary.ASCII.Parsing.Machine.Decimal {
     /// Creates a parser for unsigned decimal integers.
     ///
     /// Parses one or more ASCII decimal digits ('0'-'9') and converts to the
@@ -32,15 +37,15 @@ extension Binary.ASCII.Parsing.Machine {
     /// ## Example
     ///
     /// ```swift
-    /// let parser = Binary.ASCII.Parsing.Machine.unsignedDecimal(as: UInt32.self)
-    /// let result = try Binary.Bytes.withBorrowed([0x31, 0x32, 0x33], parser) // "123" -> 123
+    /// let parser = Binary.ASCII.Parsing.Machine.Decimal.unsigned(UInt32.self)
+    /// let result = try parser.ascii.whole.call("123") // 123
     /// ```
     ///
     /// - Parameter type: The unsigned integer type to parse into.
     /// - Returns: A Machine parser for unsigned decimal integers.
     @inlinable
-    public static func unsignedDecimal<T: UnsignedInteger & FixedWidthInteger>(
-        as type: T.Type = T.self
+    public static func unsigned<T: UnsignedInteger & FixedWidthInteger>(
+        _ type: T.Type = T.self
     ) -> Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<T> {
         typealias M = Binary_Parsing_Primitives.Binary.Bytes.Machine
 
@@ -56,9 +61,9 @@ extension Binary.ASCII.Parsing.Machine {
             // Fold additional digits, tracking multiplier for final combination
             let moreDigits = M.fold(
                 digit,
-                initial: DecimalFoldState<T>(multiplier: 1, sum: 0),
+                initial: FoldState<T>(multiplier: 1, sum: 0),
                 combine: { state, d in
-                    DecimalFoldState(
+                    FoldState(
                         multiplier: state.multiplier &* 10,
                         sum: state.sum &* 10 &+ d
                     )
@@ -76,7 +81,7 @@ extension Binary.ASCII.Parsing.Machine {
 
 // MARK: - Signed Decimal Parsers
 
-extension Binary.ASCII.Parsing.Machine {
+extension Binary.ASCII.Parsing.Machine.Decimal {
     /// Creates a parser for signed decimal integers.
     ///
     /// Parses an optional sign ('-' or '+') followed by one or more ASCII
@@ -86,15 +91,15 @@ extension Binary.ASCII.Parsing.Machine {
     /// ## Example
     ///
     /// ```swift
-    /// let parser = Binary.ASCII.Parsing.Machine.signedDecimal(as: Int32.self)
-    /// let result = try Binary.Bytes.withBorrowed([0x2D, 0x31, 0x32, 0x33], parser) // "-123" -> -123
+    /// let parser = Binary.ASCII.Parsing.Machine.Decimal.signed(Int32.self)
+    /// let result = try parser.ascii.whole.call("-123") // -123
     /// ```
     ///
     /// - Parameter type: The signed integer type to parse into.
     /// - Returns: A Machine parser for signed decimal integers.
     @inlinable
-    public static func signedDecimal<T: SignedInteger & FixedWidthInteger>(
-        as type: T.Type = T.self
+    public static func signed<T: SignedInteger & FixedWidthInteger>(
+        _ type: T.Type = T.self
     ) -> Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<T> {
         typealias M = Binary_Parsing_Primitives.Binary.Bytes.Machine
 
@@ -117,9 +122,9 @@ extension Binary.ASCII.Parsing.Machine {
             // Fold additional digits, tracking multiplier for final combination
             let moreDigits = M.fold(
                 digit,
-                initial: DecimalFoldState<T>(multiplier: 1, sum: 0),
+                initial: FoldState<T>(multiplier: 1, sum: 0),
                 combine: { state, d in
-                    DecimalFoldState(
+                    FoldState(
                         multiplier: state.multiplier &* 10,
                         sum: state.sum &* 10 &+ d
                     )

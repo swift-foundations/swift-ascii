@@ -58,7 +58,7 @@ extension Binary.ASCII.Parsing.Machine {
         _ bytes: [UInt8],
         as type: T.Type = T.self
     ) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> T {
-        try parse(bytes, with: unsignedDecimal(as: type))
+        try parse(bytes, with: Decimal.unsigned(type))
     }
 
     /// Parse an unsigned decimal integer from a string.
@@ -73,7 +73,7 @@ extension Binary.ASCII.Parsing.Machine {
         _ string: some StringProtocol,
         as type: T.Type = T.self
     ) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> T {
-        try parse(string, with: unsignedDecimal(as: type))
+        try parse(string, with: Decimal.unsigned(type))
     }
 
     /// Parse a signed decimal integer from bytes.
@@ -91,7 +91,7 @@ extension Binary.ASCII.Parsing.Machine {
         _ bytes: [UInt8],
         as type: T.Type = T.self
     ) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> T {
-        try parse(bytes, with: signedDecimal(as: type))
+        try parse(bytes, with: Decimal.signed(type))
     }
 
     /// Parse a signed decimal integer from a string.
@@ -106,6 +106,6 @@ extension Binary.ASCII.Parsing.Machine {
         _ string: some StringProtocol,
         as type: T.Type = T.self
     ) throws(Binary_Parsing_Primitives.Binary.Bytes.Machine.Fault) -> T {
-        try parse(string, with: signedDecimal(as: type))
+        try parse(string, with: Decimal.signed(type))
     }
 }
