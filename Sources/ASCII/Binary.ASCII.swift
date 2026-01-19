@@ -1,9 +1,8 @@
 //
-//  File.swift
-//  swift-incits-4-1986
+//  Binary.ASCII.swift
+//  swift-ascii
 //
-//  Created by Coen ten Thije Boonkkamp on 28/11/2025.
-//
+//  ASCII operations namespace for UInt8.
 
 public import Binary_Primitives
 import Standard_Library_Extensions

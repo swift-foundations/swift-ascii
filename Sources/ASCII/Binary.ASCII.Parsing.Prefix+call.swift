@@ -9,7 +9,7 @@ extension Binary.ASCII.Parsing.Prefix {
     /// - Returns: The parsed value and count of bytes consumed.
     @inlinable
     public func call(_ bytes: [UInt8]) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
+        try Binary_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
             let value = try parser.parse(&input)
             return .init(value: value, count: input.consumedCount)
         }
@@ -24,10 +24,7 @@ extension Binary.ASCII.Parsing.Prefix {
         _ bytes: Bytes
     ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output>
     where Bytes.Element == UInt8 {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
-            let value = try parser.parse(&input)
-            return .init(value: value, count: input.consumedCount)
-        }
+        try call(Array(bytes))
     }
 
     /// Parse prefix of string.
@@ -38,9 +35,6 @@ extension Binary.ASCII.Parsing.Prefix {
     public func call(
         _ string: some StringProtocol
     ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> {
-        try Binary_Primitives.Binary.Bytes.withBorrowed(string) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
-            let value = try parser.parse(&input)
-            return .init(value: value, count: input.consumedCount)
-        }
+        try call(Array(string.utf8))
     }
 }

@@ -1,11 +1,8 @@
 //
 //  Binary.ASCII.RawRepresentable.swift
-//  swift-incits-4-1986
+//  swift-ascii
 //
-//  Protocol for ASCII serializable types that synthesize RawRepresentable
-//
-//  Created by Coen ten Thije Boonkkamp on 28/11/2025.
-//
+//  Protocol for ASCII serializable types that synthesize RawRepresentable.
 
 public import Binary_Primitives
 
