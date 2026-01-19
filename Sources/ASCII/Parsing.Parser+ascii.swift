@@ -1,7 +1,7 @@
 public import Parsing_Primitives
-public import Binary_Primitives
+public import Binary_Parsing_Primitives
 
-extension Parsing_Primitives.Parsing.Parser where Self: Sendable, Input == Binary_Primitives.Binary.Bytes.Input {
+extension Parsing_Primitives.Parsing.Parser where Self: Sendable, Input == Binary_Parsing_Primitives.Binary.Bytes.Input {
     /// Access to ASCII parsing capabilities.
     ///
     /// Provides `whole` and `prefix` methods for parsing ASCII strings and bytes.

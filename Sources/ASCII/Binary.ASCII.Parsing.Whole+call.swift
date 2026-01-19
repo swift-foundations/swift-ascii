@@ -1,5 +1,5 @@
 public import Parsing_Primitives
-public import Binary_Primitives
+public import Binary_Parsing_Primitives
 
 extension Binary.ASCII.Parsing.Whole {
     /// Parse entire byte array.
@@ -9,7 +9,7 @@ extension Binary.ASCII.Parsing.Whole {
     /// - Throws: Parser failure or `.end(remaining:)` if bytes remain (remaining = bytes, not characters).
     @inlinable
     public func call(_ bytes: [UInt8]) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try Binary_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+        try Binary_Parsing_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parsing_Primitives.Binary.Bytes.Input) throws(Parsing_Primitives.Parsing.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
                 value = try parser.parse(&input)

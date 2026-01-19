@@ -1,5 +1,5 @@
 public import Parsing_Primitives
-public import Binary_Primitives
+public import Binary_Parsing_Primitives
 public import Serialization_Primitives
 
 extension Binary.ASCII.Parsing.Prefix {
@@ -9,7 +9,7 @@ extension Binary.ASCII.Parsing.Prefix {
     /// - Returns: The parsed value and count of bytes consumed.
     @inlinable
     public func call(_ bytes: [UInt8]) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> {
-        try Binary_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
+        try Binary_Parsing_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parsing_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output> in
             let value = try parser.parse(&input)
             return .init(value: value, count: input.consumedCount)
         }
