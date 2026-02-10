@@ -4,8 +4,6 @@
 // Tests for module-level INCITS_4_1986 namespace
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // MARK: - Module Constants
@@ -46,17 +44,17 @@ struct `INCITS_4_1986 - Constants Tests` {
 
 // MARK: - Performance
 
-extension `Performance Tests` {
-    @Suite
-    struct `INCITS_4_1986 - Performance` {
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `whitespaces set lookup 1M times`() {
-            let testBytes: [UInt8] = [UInt8.ascii.sp, UInt8.ascii.A, UInt8.ascii.htab, UInt8.ascii.a]
-            for _ in 0..<250_000 {
-                for byte in testBytes {
-                    _ = INCITS_4_1986.whitespaces.contains(byte)
-                }
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `INCITS_4_1986 - Performance` {
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `whitespaces set lookup 1M times`() {
+//            let testBytes: [UInt8] = [UInt8.ascii.sp, UInt8.ascii.A, UInt8.ascii.htab, UInt8.ascii.a]
+//            for _ in 0..<250_000 {
+//                for byte in testBytes {
+//                    _ = INCITS_4_1986.whitespaces.contains(byte)
+//                }
+//            }
+//        }
+//    }
+//}

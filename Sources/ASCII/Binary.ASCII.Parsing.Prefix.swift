@@ -1,5 +1,5 @@
-public import Parsing_Primitives
-public import Binary_Parsing_Primitives
+public import Parser_Primitives
+public import Binary_Parser_Primitives
 public import Serialization_Primitives
 
 extension Binary.ASCII.Parsing {
@@ -7,8 +7,8 @@ extension Binary.ASCII.Parsing {
     ///
     /// Wraps a parser and provides `call` methods that parse a prefix,
     /// returning value and count consumed.
-    public struct Prefix<P: Parsing_Primitives.Parsing.Parser & Sendable>: Sendable
-    where P.Input == Binary_Parsing_Primitives.Binary.Bytes.Input, P.Output: Sendable {
+    public struct Prefix<P: Parser.`Protocol` & Sendable>: Sendable
+    where P.Input == Binary_Parser_Primitives.Binary.Bytes.Input, P.Output: Sendable {
         @usableFromInline
         internal let parser: P
 

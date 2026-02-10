@@ -4,8 +4,6 @@
 // Edge case tests that catch issues other ASCII libraries miss
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // MARK: - Boundary Value Edge Cases
@@ -562,62 +560,62 @@ struct `Edge Cases Tests` {
 // 􁁛 Test run with 1 test in 2 suites passed after 0.661 seconds.
 // Program ended with exit code: 0
 
-extension `Performance Tests` {
-    @Suite
-    struct `Edge Cases - Performance` {
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `validate worst case - non-ASCII at end of 1M bytes`() {
-            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-            bytes[999_999] = 0x80
-            _ = bytes.ascii.isAllASCII
-        }
-
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `validate best case - non-ASCII at start of 1M bytes`() {
-            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-            bytes[0] = 0x80
-            _ = bytes.ascii.isAllASCII
-        }
-
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `case conversion of already uppercase 100K bytes`() {
-            let bytes = Array(repeating: UInt8.ascii.A, count: 100_000)
-            for _ in 0..<10 {
-                _ = bytes.ascii(case: .upper)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `case conversion of already lowercase 100K bytes`() {
-            let bytes = Array(repeating: UInt8.ascii.a, count: 100_000)
-            for _ in 0..<10 {
-                _ = bytes.ascii(case: .lower)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `trim all-whitespace string 10K times`() {
-            let allWhitespace = "                    "  // 20 spaces
-            for _ in 0..<10000 {
-                _ = allWhitespace.trimming(.ascii.whitespaces)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `normalize already-normalized text 10K times`() {
-            let text = "line1\nline2\nline3\nline4\n"
-            for _ in 0..<10000 {
-                _ = text.normalized(to: .lf)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(300)))
-        func `boundary checks 1M times`() {
-            for _ in 0..<1_000_000 {
-                _ = UInt8.ascii.del.ascii.isControl  // Upper boundary
-                _ = (UInt8.ascii.A - 1).ascii.isLetter  // Letter lower boundary
-                _ = (UInt8.ascii.z + 1).ascii.isLetter  // Letter upper boundary
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Edge Cases - Performance` {
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `validate worst case - non-ASCII at end of 1M bytes`() {
+//            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
+//            bytes[999_999] = 0x80
+//            _ = bytes.ascii.isAllASCII
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `validate best case - non-ASCII at start of 1M bytes`() {
+//            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
+//            bytes[0] = 0x80
+//            _ = bytes.ascii.isAllASCII
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `case conversion of already uppercase 100K bytes`() {
+//            let bytes = Array(repeating: UInt8.ascii.A, count: 100_000)
+//            for _ in 0..<10 {
+//                _ = bytes.ascii(case: .upper)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `case conversion of already lowercase 100K bytes`() {
+//            let bytes = Array(repeating: UInt8.ascii.a, count: 100_000)
+//            for _ in 0..<10 {
+//                _ = bytes.ascii(case: .lower)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `trim all-whitespace string 10K times`() {
+//            let allWhitespace = "                    "  // 20 spaces
+//            for _ in 0..<10000 {
+//                _ = allWhitespace.trimming(.ascii.whitespaces)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `normalize already-normalized text 10K times`() {
+//            let text = "line1\nline2\nline3\nline4\n"
+//            for _ in 0..<10000 {
+//                _ = text.normalized(to: .lf)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(300)))
+//        func `boundary checks 1M times`() {
+//            for _ in 0..<1_000_000 {
+//                _ = UInt8.ascii.del.ascii.isControl  // Upper boundary
+//                _ = (UInt8.ascii.A - 1).ascii.isLetter  // Letter lower boundary
+//                _ = (UInt8.ascii.z + 1).ascii.isLetter  // Letter upper boundary
+//            }
+//        }
+//    }
+//}

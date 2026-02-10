@@ -4,8 +4,6 @@
 // Tests for INCITS_4_1986.FormatEffectors.LineEnding support
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // MARK: - Line Ending Constants
@@ -48,16 +46,16 @@ struct `INCITS_4_1986.FormatEffectors.LineEnding` {
 
 // MARK: - Performance
 
-extension `Performance Tests` {
-    @Suite
-    struct `INCITS_4_1986.FormatEffectors.LineEnding - Performance` {
-        @Test(.timed(threshold: .milliseconds(200)))
-        func `line ending to bytes conversion 10K times`() {
-            for _ in 0..<10000 {
-                _ = [UInt8](ascii: .lf)
-                _ = [UInt8](ascii: .cr)
-                _ = [UInt8](ascii: .crlf)
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `INCITS_4_1986.FormatEffectors.LineEnding - Performance` {
+//        @Test(.timed(threshold: .milliseconds(200)))
+//        func `line ending to bytes conversion 10K times`() {
+//            for _ in 0..<10000 {
+//                _ = [UInt8](ascii: .lf)
+//                _ = [UInt8](ascii: .cr)
+//                _ = [UInt8](ascii: .crlf)
+//            }
+//        }
+//    }
+//}

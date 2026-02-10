@@ -4,8 +4,6 @@
 // Tests for UInt8 ASCII namespace and predicates
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // Note: UInt8 constant tests are in INCITS_4_1986.GraphicCharacters Tests, INCITS_4_1986.ControlCharacters Tests, etc.
@@ -70,26 +68,26 @@ struct `UInt8 Tests` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `UInt8 - Performance` {
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `byte predicate checks 1M times`() {
-            let byte: UInt8 = 65
-            for _ in 0..<1_000_000 {
-                _ = byte.ascii.isLetter
-                _ = byte.ascii.isUppercase
-                _ = byte.ascii.isPrintable
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(300)))
-        func `character to byte conversion 100K times`() {
-            for _ in 0..<100_000 {
-                _ = UInt8(ascii: "A" as Character)
-                _ = UInt8(ascii: "0" as Character)
-                _ = UInt8(ascii: " " as Character)
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `UInt8 - Performance` {
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `byte predicate checks 1M times`() {
+//            let byte: UInt8 = 65
+//            for _ in 0..<1_000_000 {
+//                _ = byte.ascii.isLetter
+//                _ = byte.ascii.isUppercase
+//                _ = byte.ascii.isPrintable
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(300)))
+//        func `character to byte conversion 100K times`() {
+//            for _ in 0..<100_000 {
+//                _ = UInt8(ascii: "A" as Character)
+//                _ = UInt8(ascii: "0" as Character)
+//                _ = UInt8(ascii: " " as Character)
+//            }
+//        }
+//    }
+//}

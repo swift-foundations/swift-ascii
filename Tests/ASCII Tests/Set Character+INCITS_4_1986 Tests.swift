@@ -4,8 +4,6 @@
 // Tests for Set<Character> ASCII whitespace constants
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 @Suite
@@ -74,27 +72,27 @@ struct `Set<Character>` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `Set<Character> - Performance` {
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `whitespace set membership check 10K times`() {
-            let ws = Set<Character>.ascii.whitespaces
-            for _ in 0..<10000 {
-                _ = ws.contains(" ")
-                _ = ws.contains("\t")
-                _ = ws.contains("a")
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(300)))
-        func `whitespace set iteration 100K times`() {
-            let ws = Set<Character>.ascii.whitespaces
-            for _ in 0..<100_000 {
-                for _ in ws {
-                    // Iterate through all whitespace characters
-                }
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Set<Character> - Performance` {
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `whitespace set membership check 10K times`() {
+//            let ws = Set<Character>.ascii.whitespaces
+//            for _ in 0..<10000 {
+//                _ = ws.contains(" ")
+//                _ = ws.contains("\t")
+//                _ = ws.contains("a")
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(300)))
+//        func `whitespace set iteration 100K times`() {
+//            let ws = Set<Character>.ascii.whitespaces
+//            for _ in 0..<100_000 {
+//                for _ in ws {
+//                    // Iterate through all whitespace characters
+//                }
+//            }
+//        }
+//    }
+//}

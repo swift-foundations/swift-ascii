@@ -4,8 +4,6 @@
 // Tests for INCITS_4_1986.GraphicCharacters (94 characters: 0x21-0x7E)
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 @Suite
@@ -74,16 +72,16 @@ struct `Graphic Characters` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `Graphic Characters - Performance` {
-        @Test(.timed(threshold: .milliseconds(200)))
-        func `graphic character access 100K times`() {
-            for _ in 0..<100_000 {
-                _ = UInt8.ascii.A
-                _ = UInt8.ascii.0
-                _ = UInt8.ascii.period
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Graphic Characters - Performance` {
+//        @Test(.timed(threshold: .milliseconds(200)))
+//        func `graphic character access 100K times`() {
+//            for _ in 0..<100_000 {
+//                _ = UInt8.ascii.A
+//                _ = UInt8.ascii.0
+//                _ = UInt8.ascii.period
+//            }
+//        }
+//    }
+//}

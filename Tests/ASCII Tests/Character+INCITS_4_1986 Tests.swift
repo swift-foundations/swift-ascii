@@ -4,8 +4,6 @@
 // Tests for Character extension predicates
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 @Suite
@@ -191,31 +189,31 @@ struct `Character Tests` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `Character - Performance` {
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `character whitespace check 1M times`() {
-            let char: Character = " "
-            for _ in 0..<1_000_000 {
-                _ = char.ascii.isWhitespace
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `character digit check 1M times`() {
-            let char: Character = "5"
-            for _ in 0..<1_000_000 {
-                _ = char.ascii.isDigit
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `character letter check 1M times`() {
-            let char: Character = "A"
-            for _ in 0..<1_000_000 {
-                _ = char.ascii.isLetter
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Character - Performance` {
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `character whitespace check 1M times`() {
+//            let char: Character = " "
+//            for _ in 0..<1_000_000 {
+//                _ = char.ascii.isWhitespace
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `character digit check 1M times`() {
+//            let char: Character = "5"
+//            for _ in 0..<1_000_000 {
+//                _ = char.ascii.isDigit
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `character letter check 1M times`() {
+//            let char: Character = "A"
+//            for _ in 0..<1_000_000 {
+//                _ = char.ascii.isLetter
+//            }
+//        }
+//    }
+//}

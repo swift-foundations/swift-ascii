@@ -4,7 +4,6 @@
 // Tests for authoritative character classification predicates
 
 import Testing
-
 @testable import ASCII
 
 @Suite

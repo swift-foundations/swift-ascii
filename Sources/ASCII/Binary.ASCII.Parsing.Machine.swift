@@ -1,7 +1,7 @@
 // Binary.ASCII.Parsing.Machine.swift
 // Machine-based ASCII parsing infrastructure
 
-public import Binary_Parsing_Primitives
+public import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing {
     /// Namespace for Machine-based ASCII parsers.

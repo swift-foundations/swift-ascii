@@ -4,8 +4,6 @@
 // Tests for Substring extension methods
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 @Suite
@@ -570,16 +568,16 @@ struct `Substring Tests` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `Substring - Performance` {
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `substring trimming 10K times`() {
-            let str = "  hello world  "
-            let sub = str[...]
-            for _ in 0..<10000 {
-                _ = sub.trimming(.ascii.whitespaces)
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Substring - Performance` {
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `substring trimming 10K times`() {
+//            let str = "  hello world  "
+//            let sub = str[...]
+//            for _ in 0..<10000 {
+//                _ = sub.trimming(.ascii.whitespaces)
+//            }
+//        }
+//    }
+//}

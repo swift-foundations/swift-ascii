@@ -1,7 +1,7 @@
 // Binary.ASCII.Parsing.Machine.Decimal.swift
 // Machine-based ASCII decimal integer parsers
 
-public import Binary_Parsing_Primitives
+public import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing.Machine {
     /// Namespace for decimal integer parsing operations.
@@ -14,7 +14,7 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
     /// Tracks both the multiplier (power of 10) and running sum to enable
     /// combining with the required first digit.
     @usableFromInline
-    struct FoldState<T: FixedWidthInteger> {
+    struct FoldState<T: FixedWidthInteger & Sendable>: Sendable {
         @usableFromInline var multiplier: T
         @usableFromInline var sum: T
 
@@ -44,10 +44,10 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
     /// - Parameter type: The unsigned integer type to parse into.
     /// - Returns: A Machine parser for unsigned decimal integers.
     @inlinable
-    public static func unsigned<T: UnsignedInteger & FixedWidthInteger>(
+    public static func unsigned<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ type: T.Type = T.self
-    ) -> Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<T> {
-        typealias M = Binary_Parsing_Primitives.Binary.Bytes.Machine
+    ) -> Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<T> {
+        typealias M = Binary_Parser_Primitives.Binary.Bytes.Machine
 
         return M.build { builder -> M.Expression<T> in
             // Parse a single ASCII digit, convert to numeric value
@@ -98,10 +98,10 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
     /// - Parameter type: The signed integer type to parse into.
     /// - Returns: A Machine parser for signed decimal integers.
     @inlinable
-    public static func signed<T: SignedInteger & FixedWidthInteger>(
+    public static func signed<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ type: T.Type = T.self
-    ) -> Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<T> {
-        typealias M = Binary_Parsing_Primitives.Binary.Bytes.Machine
+    ) -> Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<T> {
+        typealias M = Binary_Parser_Primitives.Binary.Bytes.Machine
 
         return M.build { builder -> M.Expression<T> in
             // Parse optional sign: -1 for '-', +1 for '+' or no sign

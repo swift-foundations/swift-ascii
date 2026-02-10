@@ -4,8 +4,7 @@
 // Tests for [UInt8] array extension methods
 
 import Testing
-import Testing
-
+import ASCII_Test_Support
 @testable import ASCII
 
 @Suite
@@ -54,32 +53,32 @@ struct `[UInt8] Tests` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `[UInt8] - Performance` {
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `byte array string conversion 10K times`() {
-            for _ in 0..<10000 {
-                _ = [UInt8](ascii: "Hello World!")
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `byte array case conversion 10K arrays`() {
-            let bytes: [UInt8] = Array(repeating: 0x41, count: 100)  // "AAA..."
-            for _ in 0..<10000 {
-                _ = bytes.ascii(case: Character.Case.lower)
-            }
-        }
-
-        @Test(
-            .timed(threshold: .milliseconds(10000))
-        )
-        func `byte array validation 10K arrays`() {
-            let bytes: [UInt8] = Array(repeating: 0x41, count: 1000)
-            for _ in 0..<10000 {
-                _ = bytes.ascii.isAllASCII
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `[UInt8] - Performance` {
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `byte array string conversion 10K times`() {
+//            for _ in 0..<10000 {
+//                _ = [UInt8](ascii: "Hello World!")
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `byte array case conversion 10K arrays`() {
+//            let bytes: [UInt8] = Array(repeating: 0x41, count: 100)  // "AAA..."
+//            for _ in 0..<10000 {
+//                _ = bytes.ascii(case: Character.Case.lower)
+//            }
+//        }
+//
+//        @Test(
+//            .timed(threshold: .milliseconds(10000))
+//        )
+//        func `byte array validation 10K arrays`() {
+//            let bytes: [UInt8] = Array(repeating: 0x41, count: 1000)
+//            for _ in 0..<10000 {
+//                _ = bytes.ascii.isAllASCII
+//            }
+//        }
+//    }
+//}

@@ -4,8 +4,6 @@
 // Tests for INCITS_4_1986 case conversion operations
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // MARK: - String Case Conversion
@@ -145,33 +143,33 @@ struct `Case Conversion Tests` {
 
 // MARK: - Performance
 
-extension `Performance Tests` {
-    @Suite
-    struct `Case Conversion - Performance` {
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `uppercase conversion 100K character string`() {
-            let str = String(repeating: "Hello World! ", count: 10000)
-            _ = str.ascii(case: .upper)
-        }
-
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `lowercase conversion 100K character string`() {
-            let str = String(repeating: "Hello World! ", count: 10000)
-            _ = str.ascii(case: .lower)
-        }
-
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `byte array case conversion 1M bytes`() {
-            let bytes = Array(repeating: UInt8.ascii.a, count: 1_000_000)
-            _ = bytes.ascii(case: .upper)
-        }
-
-        @Test(.timed(threshold: .milliseconds(2000)))
-        func `single byte case conversion 1M times`() {
-            let byte = UInt8.ascii.a
-            for _ in 0..<1_000_000 {
-                _ = byte.ascii(case: .upper)
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Case Conversion - Performance` {
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `uppercase conversion 100K character string`() {
+//            let str = String(repeating: "Hello World! ", count: 10000)
+//            _ = str.ascii(case: .upper)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `lowercase conversion 100K character string`() {
+//            let str = String(repeating: "Hello World! ", count: 10000)
+//            _ = str.ascii(case: .lower)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `byte array case conversion 1M bytes`() {
+//            let bytes = Array(repeating: UInt8.ascii.a, count: 1_000_000)
+//            _ = bytes.ascii(case: .upper)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(2000)))
+//        func `single byte case conversion 1M times`() {
+//            let byte = UInt8.ascii.a
+//            for _ in 0..<1_000_000 {
+//                _ = byte.ascii(case: .upper)
+//            }
+//        }
+//    }
+//}

@@ -4,7 +4,6 @@
 // Tests for authoritative string classification operations
 
 import Testing
-
 @testable import ASCII
 
 @Suite

@@ -4,7 +4,6 @@
 // Tests for authoritative line ending detection operations
 
 import Testing
-
 @testable import ASCII
 
 @Suite

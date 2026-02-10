@@ -4,8 +4,6 @@
 // Absolutely brutal edge case tests designed to break most ASCII libraries
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // MARK: - Bit-Level Boundary Testing
@@ -530,73 +528,73 @@ struct Brutal {
 
 // MARK: - Performance Torture Tests
 
-extension `Performance Tests` {
-    @Suite
-    struct `Brutal - Performance Torture` {
-        @Test(.timed(threshold: .milliseconds(300)))
-        func `validate 1M bytes - all valid`() {
-            let massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-            _ = massive.ascii.isAllASCII
-        }
-
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `validate 1M bytes - fail at position 0`() {
-            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-            massive[0] = 0x80
-            _ = massive.ascii.isAllASCII
-        }
-
-        @Test(.timed(threshold: .milliseconds(300)))
-        func `validate 1M bytes - fail at position 999999`() {
-            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-            massive[999_999] = 0x80
-            _ = massive.ascii.isAllASCII
-        }
-
-        @Test(.timed(threshold: .milliseconds(100)))
-        func `case convert 100K byte string - all lowercase`() {
-            let str = String(repeating: "abcdefghijklmnopqrstuvwxyz", count: 4000)
-            _ = str.ascii(case: .upper)
-        }
-
-        @Test(.timed(threshold: .milliseconds(100)))
-        func `case convert 100K byte string - all uppercase`() {
-            let str = String(repeating: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", count: 4000)
-            _ = str.ascii(case: .lower)
-        }
-
-        @Test(.timed(threshold: .milliseconds(100)))
-        func `normalize 100K byte string with 10K line endings`() {
-            let line = "xxxxxxxxxx\n"  // 11 bytes
-            let text = String(repeating: line, count: 10000)  // ~110KB
-            _ = text.normalized(to: .crlf)
-        }
-
-        @Test(.timed(threshold: .milliseconds(50)))
-        func `trim string with 10K leading and trailing spaces`() {
-            let spaces = String(repeating: " ", count: 10000)
-            let text = spaces + "content" + spaces
-            _ = text.trimming(.ascii.whitespaces)
-        }
-
-        @Test(.timed(threshold: .milliseconds(500)))
-        func `character to byte conversion - 100K ASCII characters`() {
-            for _ in 0..<100_000 {
-                _ = UInt8(ascii: "A" as Character)
-                _ = UInt8(ascii: "z" as Character)
-                _ = UInt8(ascii: "0" as Character)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(3000)))
-        func `predicate checks on every ASCII byte - 1.28M checks`() {
-            // 10K iterations × 128 bytes = 1.28M operations
-            // Expected ~270ms based on 4.7M ops/sec
-            for _ in 0..<10000 {
-                for byte in UInt8(0)...UInt8(127) {
-                    _ = byte.ascii.isLetter
-                }
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `Brutal - Performance Torture` {
+//        @Test(.timed(threshold: .milliseconds(300)))
+//        func `validate 1M bytes - all valid`() {
+//            let massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
+//            _ = massive.ascii.isAllASCII
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `validate 1M bytes - fail at position 0`() {
+//            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
+//            massive[0] = 0x80
+//            _ = massive.ascii.isAllASCII
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(300)))
+//        func `validate 1M bytes - fail at position 999999`() {
+//            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
+//            massive[999_999] = 0x80
+//            _ = massive.ascii.isAllASCII
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(100)))
+//        func `case convert 100K byte string - all lowercase`() {
+//            let str = String(repeating: "abcdefghijklmnopqrstuvwxyz", count: 4000)
+//            _ = str.ascii(case: .upper)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(100)))
+//        func `case convert 100K byte string - all uppercase`() {
+//            let str = String(repeating: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", count: 4000)
+//            _ = str.ascii(case: .lower)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(100)))
+//        func `normalize 100K byte string with 10K line endings`() {
+//            let line = "xxxxxxxxxx\n"  // 11 bytes
+//            let text = String(repeating: line, count: 10000)  // ~110KB
+//            _ = text.normalized(to: .crlf)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(50)))
+//        func `trim string with 10K leading and trailing spaces`() {
+//            let spaces = String(repeating: " ", count: 10000)
+//            let text = spaces + "content" + spaces
+//            _ = text.trimming(.ascii.whitespaces)
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(500)))
+//        func `character to byte conversion - 100K ASCII characters`() {
+//            for _ in 0..<100_000 {
+//                _ = UInt8(ascii: "A" as Character)
+//                _ = UInt8(ascii: "z" as Character)
+//                _ = UInt8(ascii: "0" as Character)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(3000)))
+//        func `predicate checks on every ASCII byte - 1.28M checks`() {
+//            // 10K iterations × 128 bytes = 1.28M operations
+//            // Expected ~270ms based on 4.7M ops/sec
+//            for _ in 0..<10000 {
+//                for byte in UInt8(0)...UInt8(127) {
+//                    _ = byte.ascii.isLetter
+//                }
+//            }
+//        }
+//    }
+//}

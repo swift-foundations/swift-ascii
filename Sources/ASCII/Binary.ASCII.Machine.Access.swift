@@ -1,7 +1,7 @@
 // Binary.ASCII.Parsing.Machine.Access.swift
 // Zero-copy accessor wrapper for Machine parsers
 
-public import Binary_Parsing_Primitives
+public import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing.Machine {
     /// Accessor wrapper providing zero-copy `parser.ascii.whole/prefix` ergonomics.
@@ -11,10 +11,10 @@ extension Binary.ASCII.Parsing.Machine {
     /// `withBorrowed` path for zero-copy parsing.
     public struct Access<Output> {
         @usableFromInline
-        internal let parser: Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<Output>
+        internal let parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
 
         @inlinable
-        internal init(_ parser: Binary_Parsing_Primitives.Binary.Bytes.Machine.Parser<Output>) {
+        internal init(_ parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>) {
             self.parser = parser
         }
 

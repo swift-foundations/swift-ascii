@@ -1,7 +1,7 @@
 // Binary.ASCII.Parsing.Machine.Access.Whole.swift
 // Zero-copy whole-input parsing wrapper for Machine parsers
 
-public import Binary_Parsing_Primitives
+public import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.

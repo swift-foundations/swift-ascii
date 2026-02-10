@@ -17,7 +17,8 @@ let package = Package(
     dependencies: [
         .package(path: "../../swift-standards/swift-incits-4-1986"),
         .package(path: "../../swift-primitives/swift-binary-primitives"),
-        .package(path: "../../swift-primitives/swift-parsing-primitives"),
+        .package(path: "../../swift-primitives/swift-parser-primitives"),
+        .package(path: "../../swift-primitives/swift-binary-parser-primitives"),
         .package(path: "../../swift-primitives/swift-serialization-primitives"),
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
         .package(path: "../../swift-primitives/swift-string-primitives")
@@ -27,13 +28,22 @@ let package = Package(
             name: "ASCII",
             dependencies: [
                 .product(name: "INCITS 4 1986", package: "swift-incits-4-1986"),
-                .product(name: "Binary Parsing Primitives", package: "swift-binary-primitives"),
-                .product(name: "Parsing Primitives", package: "swift-parsing-primitives"),
+                .product(name: "Binary Parser Primitives", package: "swift-binary-parser-primitives"),
+                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "Serialization Primitives", package: "swift-serialization-primitives"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
                 .product(name: "String Primitives", package: "swift-string-primitives")
             ]
-        )
+        ),
+        .target(
+            name: "ASCII Test Support",
+            dependencies: ["ASCII"],
+            path: "Tests/Support"
+        ),
+        .testTarget(
+            name: "ASCII Tests",
+            dependencies: ["ASCII", "ASCII Test Support"]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )

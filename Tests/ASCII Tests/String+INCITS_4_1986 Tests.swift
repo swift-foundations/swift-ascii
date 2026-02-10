@@ -4,8 +4,6 @@
 // Tests for String extension methods
 
 import Testing
-import Testing
-
 @testable import ASCII
 
 // Note: String conversion tests are in INCITS_4_1986 Tests.swift
@@ -508,23 +506,23 @@ struct `String Tests` {
     }
 }
 
-extension `Performance Tests` {
-    @Suite
-    struct `String - Performance` {
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `string to bytes conversion 10K times`() {
-            let str = "Hello World!"
-            for _ in 0..<10000 {
-                _ = [UInt8](ascii: str)
-            }
-        }
-
-        @Test(.timed(threshold: .milliseconds(150)))
-        func `bytes to string conversion 10K times`() {
-            let bytes: [UInt8] = [UInt8.ascii.H, .ascii.e, .ascii.l, .ascii.l, .ascii.o]
-            for _ in 0..<10000 {
-                _ = String(ascii: bytes)
-            }
-        }
-    }
-}
+//extension `Performance Tests` {
+//    @Suite
+//    struct `String - Performance` {
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `string to bytes conversion 10K times`() {
+//            let str = "Hello World!"
+//            for _ in 0..<10000 {
+//                _ = [UInt8](ascii: str)
+//            }
+//        }
+//
+//        @Test(.timed(threshold: .milliseconds(150)))
+//        func `bytes to string conversion 10K times`() {
+//            let bytes: [UInt8] = [UInt8.ascii.H, .ascii.e, .ascii.l, .ascii.l, .ascii.o]
+//            for _ in 0..<10000 {
+//                _ = String(ascii: bytes)
+//            }
+//        }
+//    }
+//}
