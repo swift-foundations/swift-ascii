@@ -2,6 +2,7 @@
 // Zero-copy whole-input parsing wrapper for Machine parsers
 
 public import Binary_Parser_Primitives
+public import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.
@@ -21,26 +22,24 @@ extension Binary.ASCII.Parsing.Machine.Access {
 
 extension Binary.ASCII.Parsing.Machine.Access.Whole {
     /// Parse entire byte array.
-    ///
-    /// Uses zero-copy borrowed path. Fails if any bytes remain after parsing.
-    ///
-    /// - Parameter bytes: The bytes to parse.
-    /// - Returns: The parsed value.
-    /// - Throws: `Machine.Fault` if parsing fails or input remains.
     @inlinable
     public func call(_ bytes: [UInt8]) throws(Binary.Bytes.Machine.Fault) -> Output {
         try Binary.Bytes.withBorrowed.whole(bytes, parser)
     }
 
+    /// Parse entire contiguous storage.
+    @inlinable
+    public func call<C: Memory.Contiguous.`Protocol`>(
+        _ source: borrowing C
+    ) throws(Binary.Bytes.Machine.Fault) -> Output
+    where C: ~Copyable, C.Element == UInt8 {
+        try Binary.Bytes.withBorrowed.whole(source, parser)
+    }
+
     /// Parse entire string (UTF-8).
-    ///
-    /// Uses zero-copy borrowed path. Fails if any bytes remain after parsing.
-    ///
-    /// - Parameter string: The string to parse.
-    /// - Returns: The parsed value.
-    /// - Throws: `Machine.Fault` if parsing fails or input remains.
     @inlinable
     public func call(_ string: some StringProtocol) throws(Binary.Bytes.Machine.Fault) -> Output {
-        try call(Array(string.utf8))
+        let bytes: [UInt8] = .init(string.utf8)
+        return try call(bytes)
     }
 }

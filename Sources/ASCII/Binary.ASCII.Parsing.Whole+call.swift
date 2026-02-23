@@ -1,16 +1,13 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
+public import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Whole {
     /// Parse entire byte array.
-    ///
-    /// - Parameter bytes: The bytes to parse.
-    /// - Returns: The parsed value.
-    /// - Throws: Parser failure or `.end(remaining:)` if bytes remain (remaining = bytes, not characters).
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parser_Primitives.Binary.Bytes.Input) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
-            let value: P.Output
+    public func call(_ bytes: [UInt8]) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.ParseOutput {
+        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parser_Primitives.Binary.Bytes.Input) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.ParseOutput in
+            let value: P.ParseOutput
             do throws(P.Failure) {
                 value = try parser.parse(&input)
             } catch {
@@ -23,28 +20,24 @@ extension Binary.ASCII.Parsing.Whole {
         }
     }
 
-    /// Parse entire byte collection.
-    ///
-    /// - Parameter bytes: The byte collection to parse.
-    /// - Returns: The parsed value.
-    /// - Throws: Parser failure or `.end(remaining:)` if bytes remain (remaining = bytes, not characters).
+    /// Parse entire contiguous storage.
     @inlinable
-    public func call<Bytes: Collection>(
-        _ bytes: Bytes
-    ) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
-    where Bytes.Element == UInt8 {
-        try call(Array(bytes))
+    public func call<C: Memory.Contiguous.`Protocol`>(
+        _ source: borrowing C
+    ) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.ParseOutput
+    where C: ~Copyable, C.Element == UInt8 {
+        try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.ParseOutput in
+            let bytes: [UInt8] = .init(buffer)
+            return try call(bytes)
+        }
     }
 
-    /// Parse entire string.
-    ///
-    /// - Parameter string: The string to parse (UTF-8 encoded).
-    /// - Returns: The parsed value.
-    /// - Throws: Parser failure or `.end(remaining:)` if bytes remain (remaining = UTF-8 code units, not characters).
+    /// Parse entire string (UTF-8 encoded).
     @inlinable
     public func call(
         _ string: some StringProtocol
-    ) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try call(Array(string.utf8))
+    ) throws(Parser.Error.Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.ParseOutput {
+        let bytes: [UInt8] = .init(string.utf8)
+        return try call(bytes)
     }
 }

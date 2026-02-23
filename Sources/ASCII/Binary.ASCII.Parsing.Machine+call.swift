@@ -2,20 +2,12 @@
 // Zero-copy borrowed parsing APIs for Machine parsers
 
 public import Binary_Parser_Primitives
+public import Memory_Primitives
 
 // MARK: - Direct withBorrowed APIs
 
 extension Binary.ASCII.Parsing.Machine {
     /// Parse bytes using zero-copy borrowed path.
-    ///
-    /// This is the most efficient parsing path, with no copying or allocation
-    /// for the input data. The parser runs directly on borrowed memory.
-    ///
-    /// - Parameters:
-    ///   - bytes: The bytes to parse.
-    ///   - parser: The Machine parser to execute.
-    /// - Returns: The parsed value.
-    /// - Throws: `Machine.Fault` on parsing failure.
     @inlinable
     public static func parse<Output>(
         _ bytes: [UInt8],
@@ -24,19 +16,24 @@ extension Binary.ASCII.Parsing.Machine {
         try Binary_Parser_Primitives.Binary.Bytes.withBorrowed(bytes, parser)
     }
 
+    /// Parse contiguous storage using zero-copy borrowed path.
+    @inlinable
+    public static func parse<C: Memory.Contiguous.`Protocol`, Output>(
+        _ source: borrowing C,
+        with parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
+    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> Output
+    where C: ~Copyable, C.Element == UInt8 {
+        try Binary_Parser_Primitives.Binary.Bytes.withBorrowed(source, parser)
+    }
+
     /// Parse string (UTF-8) using zero-copy borrowed path.
-    ///
-    /// - Parameters:
-    ///   - string: The string to parse (UTF-8 encoded).
-    ///   - parser: The Machine parser to execute.
-    /// - Returns: The parsed value.
-    /// - Throws: `Machine.Fault` on parsing failure.
     @inlinable
     public static func parse<Output>(
         _ string: some StringProtocol,
         with parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> Output {
-        try parse(Array(string.utf8), with: parser)
+        let bytes: [UInt8] = .init(string.utf8)
+        return try parse(bytes, with: parser)
     }
 }
 
@@ -44,15 +41,6 @@ extension Binary.ASCII.Parsing.Machine {
 
 extension Binary.ASCII.Parsing.Machine {
     /// Parse an unsigned decimal integer from bytes.
-    ///
-    /// Uses zero-copy borrowed parsing with the `fold` combinator for
-    /// zero-allocation accumulation.
-    ///
-    /// - Parameters:
-    ///   - bytes: The bytes to parse.
-    ///   - type: The unsigned integer type to parse into.
-    /// - Returns: The parsed unsigned integer.
-    /// - Throws: `Machine.Fault` if parsing fails.
     @inlinable
     public static func parseUnsignedDecimal<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ bytes: [UInt8],
@@ -62,12 +50,6 @@ extension Binary.ASCII.Parsing.Machine {
     }
 
     /// Parse an unsigned decimal integer from a string.
-    ///
-    /// - Parameters:
-    ///   - string: The string to parse (UTF-8 encoded).
-    ///   - type: The unsigned integer type to parse into.
-    /// - Returns: The parsed unsigned integer.
-    /// - Throws: `Machine.Fault` if parsing fails.
     @inlinable
     public static func parseUnsignedDecimal<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ string: some StringProtocol,
@@ -77,15 +59,6 @@ extension Binary.ASCII.Parsing.Machine {
     }
 
     /// Parse a signed decimal integer from bytes.
-    ///
-    /// Uses zero-copy borrowed parsing with the `fold` combinator for
-    /// zero-allocation accumulation.
-    ///
-    /// - Parameters:
-    ///   - bytes: The bytes to parse.
-    ///   - type: The signed integer type to parse into.
-    /// - Returns: The parsed signed integer.
-    /// - Throws: `Machine.Fault` if parsing fails.
     @inlinable
     public static func parseSignedDecimal<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ bytes: [UInt8],
@@ -95,12 +68,6 @@ extension Binary.ASCII.Parsing.Machine {
     }
 
     /// Parse a signed decimal integer from a string.
-    ///
-    /// - Parameters:
-    ///   - string: The string to parse (UTF-8 encoded).
-    ///   - type: The signed integer type to parse into.
-    /// - Returns: The parsed signed integer.
-    /// - Throws: `Machine.Fault` if parsing fails.
     @inlinable
     public static func parseSignedDecimal<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ string: some StringProtocol,
