@@ -7,57 +7,6 @@
 public import Binary_Primitives
 import Standard_Library_Extensions
 
-// MARK: - ASCII Namespace Access
-
-extension UInt8 {
-    // MARK: - Namespace Access
-
-    /// Access to ASCII type-level constants and methods
-    ///
-    /// Provides static access to all ASCII character constants and static utility methods.
-    /// Use this to access ASCII byte values without needing to specify the full namespace.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let letterA = UInt8.ascii.A        // 0x41
-    /// let space = UInt8.ascii.sp         // 0x20
-    /// let tab = UInt8.ascii.htab         // 0x09
-    /// ```
-    ///
-    /// ## See Also
-    ///
-    /// - ``ASCII``
-    /// - ``INCITS_4_1986``
-    public static var ascii: Binary.ASCII.Type {
-        Binary.ASCII.self
-    }
-
-    /// Access to ASCII instance methods for this byte
-    ///
-    /// Provides instance-level access to ASCII character classification and manipulation methods.
-    /// Use this to query properties of a byte or perform ASCII-specific operations.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let byte: UInt8 = 0x41
-    /// byte.ascii.isLetter      // true
-    /// byte.ascii.isUppercase   // true
-    /// byte.ascii(case: .lower) // 0x61 ('a')
-    ///
-    /// UInt8.ascii.sp.ascii.isWhitespace  // true
-    /// ```
-    ///
-    /// ## See Also
-    ///
-    /// - ``ASCII``
-    /// - ``INCITS_4_1986``
-    public var ascii: Binary.ASCII {
-        Binary.ASCII(byte: self)
-    }
-}
-
 extension Binary {
 
     /// ASCII operations namespace for UInt8
