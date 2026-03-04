@@ -6,8 +6,8 @@ public import Memory_Primitives
 extension Binary.ASCII.Parsing.Prefix {
     /// Parse prefix of byte array.
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.ParseOutput, Index<UInt8>.Count> {
-        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parser_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.ParseOutput, Index<UInt8>.Count> in
+    public func call(_ bytes: [UInt8]) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> {
+        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parser_Primitives.Binary.Bytes.Input) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> in
             let value = try parser.parse(&input)
             return .init(value: value, count: input.consumedCount)
         }
@@ -17,9 +17,9 @@ extension Binary.ASCII.Parsing.Prefix {
     @inlinable
     public func call<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
-    ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.ParseOutput, Index<UInt8>.Count>
+    ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count>
     where C: ~Copyable, C.Element == UInt8 {
-        try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.ParseOutput, Index<UInt8>.Count> in
+        try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> in
             let bytes: [UInt8] = .init(buffer)
             return try call(bytes)
         }
@@ -29,7 +29,7 @@ extension Binary.ASCII.Parsing.Prefix {
     @inlinable
     public func call(
         _ string: some StringProtocol
-    ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.ParseOutput, Index<UInt8>.Count> {
+    ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> {
         let bytes: [UInt8] = .init(string.utf8)
         return try call(bytes)
     }
