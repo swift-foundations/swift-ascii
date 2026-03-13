@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "ASCII", targets: ["ASCII"])
     ],
     dependencies: [
-        .package(path: "../../swift-standards/swift-incits-4-1986"),
+        .package(path: "../../swift-incits/swift-incits-4-1986"),
         .package(path: "../../swift-primitives/swift-ascii-primitives"),
         .package(path: "../../swift-primitives/swift-binary-primitives"),
         .package(path: "../../swift-primitives/swift-parser-primitives"),
