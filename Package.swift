@@ -12,7 +12,8 @@ let package = Package(
         .visionOS(.v26)
     ],
     products: [
-        .library(name: "ASCII", targets: ["ASCII"])
+        .library(name: "ASCII", targets: ["ASCII"]),
+        .library(name: "ASCII Test Support", targets: ["ASCII Test Support"])
     ],
     dependencies: [
         .package(path: "../../swift-incits/swift-incits-4-1986"),
