@@ -513,14 +513,14 @@ struct `Edge Cases Tests` {
 
         @Test
         func `crlf constant is exactly two bytes`() {
-            #expect(INCITS_4_1986.ControlCharacters.crlf.count == 2)
-            #expect(INCITS_4_1986.ControlCharacters.crlf == [UInt8.ascii.cr, UInt8.ascii.lf])
+            #expect(INCITS_4_1986.Character.Control.crlf.count == 2)
+            #expect(INCITS_4_1986.Character.Control.crlf == [UInt8.ascii.cr, UInt8.ascii.lf])
         }
 
         @Test
         func `crlf order is CR then LF`() {
-            #expect(INCITS_4_1986.ControlCharacters.crlf[0] == UInt8.ascii.cr)
-            #expect(INCITS_4_1986.ControlCharacters.crlf[1] == UInt8.ascii.lf)
+            #expect(INCITS_4_1986.Character.Control.crlf[0] == UInt8.ascii.cr)
+            #expect(INCITS_4_1986.Character.Control.crlf[1] == UInt8.ascii.lf)
         }
     }
 }

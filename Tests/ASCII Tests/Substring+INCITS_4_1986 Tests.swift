@@ -525,31 +525,31 @@ struct `Substring Tests` {
     @Suite
     struct `Substring.ASCII - detectedLineEnding` {
         @Test(arguments: [
-            ("line1\nline2", INCITS_4_1986.FormatEffectors.LineEnding.lf),
-            ("line1\n", INCITS_4_1986.FormatEffectors.LineEnding.lf),
-            ("\n", INCITS_4_1986.FormatEffectors.LineEnding.lf),
+            ("line1\nline2", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
+            ("line1\n", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
+            ("\n", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
         ])
-        func `detects LF`(str: String, expected: INCITS_4_1986.FormatEffectors.LineEnding) {
+        func `detects LF`(str: String, expected: INCITS_4_1986.FormatEffectors.Line.Ending) {
             let sub = str[...]
             #expect(sub.ascii.detectedLineEnding() == expected)
         }
 
         @Test(arguments: [
-            ("line1\rline2", INCITS_4_1986.FormatEffectors.LineEnding.cr),
-            ("line1\r", INCITS_4_1986.FormatEffectors.LineEnding.cr),
-            ("\r", INCITS_4_1986.FormatEffectors.LineEnding.cr),
+            ("line1\rline2", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
+            ("line1\r", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
+            ("\r", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
         ])
-        func `detects CR`(str: String, expected: INCITS_4_1986.FormatEffectors.LineEnding) {
+        func `detects CR`(str: String, expected: INCITS_4_1986.FormatEffectors.Line.Ending) {
             let sub = str[...]
             #expect(sub.ascii.detectedLineEnding() == expected)
         }
 
         @Test(arguments: [
-            ("line1\r\nline2", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
-            ("line1\r\n", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
-            ("\r\n", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
+            ("line1\r\nline2", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
+            ("line1\r\n", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
+            ("\r\n", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
         ])
-        func `detects CRLF`(str: String, expected: INCITS_4_1986.FormatEffectors.LineEnding) {
+        func `detects CRLF`(str: String, expected: INCITS_4_1986.FormatEffectors.Line.Ending) {
             let sub = str[...]
             #expect(sub.ascii.detectedLineEnding() == expected)
         }

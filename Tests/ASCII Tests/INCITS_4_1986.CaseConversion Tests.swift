@@ -1,4 +1,4 @@
-// INCITS_4_1986.CaseConversion Tests.swift
+// INCITS_4_1986.Case.Conversion Tests.swift
 // swift-incits-4-1986
 //
 // Tests for INCITS_4_1986 case conversion operations
@@ -128,7 +128,7 @@ struct `Case Conversion Tests` {
             let a = UInt8(ascii: "a")!
             let A = UInt8(ascii: "A")!
             #expect(a - A == 32)
-            #expect(a - A == INCITS_4_1986.CaseConversion.offset)
+            #expect(a - A == INCITS_4_1986.Case.Conversion.offset)
         }
 
         @Test(arguments: Array(zip(UInt8.ascii.a...UInt8.ascii.z, UInt8.ascii.A...UInt8.ascii.Z)))

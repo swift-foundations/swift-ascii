@@ -1,7 +1,7 @@
-// INCITS_4_1986.ControlCharacters Tests.swift
+// INCITS_4_1986.Character.Control Tests.swift
 // swift-incits-4-1986
 //
-// Tests for INCITS_4_1986.ControlCharacters (33 characters: 0x00-0x1F, 0x7F)
+// Tests for INCITS_4_1986.Character.Control (33 characters: 0x00-0x1F, 0x7F)
 
 import Testing
 @testable import ASCII
@@ -110,10 +110,10 @@ struct `Control Characters` {
         @Test
         func `control characters accessible directly`() {
             // Verify direct access without ControlCharacters namespace
-            #expect(UInt8.ascii.nul == INCITS_4_1986.ControlCharacters.nul)
-            #expect(UInt8.ascii.lf == INCITS_4_1986.ControlCharacters.lf)
-            #expect(UInt8.ascii.cr == INCITS_4_1986.ControlCharacters.cr)
-            #expect(UInt8.ascii.del == INCITS_4_1986.ControlCharacters.del)
+            #expect(UInt8.ascii.nul == INCITS_4_1986.Character.Control.nul)
+            #expect(UInt8.ascii.lf == INCITS_4_1986.Character.Control.lf)
+            #expect(UInt8.ascii.cr == INCITS_4_1986.Character.Control.cr)
+            #expect(UInt8.ascii.del == INCITS_4_1986.Character.Control.del)
         }
     }
 }

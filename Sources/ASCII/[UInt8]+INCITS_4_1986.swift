@@ -153,7 +153,7 @@ extension [UInt8] {
     /// - ``String/LineEnding``
     /// - ``INCITS_4_1986/crlf``
     /// - ``ASCII/crlf``
-    public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.LineEnding) {
+    public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending) {
         switch lineEnding {
         case .lf: self = [UInt8.ascii.lf]
         case .cr: self = [UInt8.ascii.cr]
@@ -234,7 +234,7 @@ extension [UInt8].ASCII {
     /// - ``INCITS_4_1986/crlf``
     /// - ``ascii(lineEnding:)``
     public static var crlf: [UInt8] {
-        INCITS_4_1986.ControlCharacters.crlf
+        INCITS_4_1986.Character.Control.crlf
     }
 
     /// ASCII whitespace bytes

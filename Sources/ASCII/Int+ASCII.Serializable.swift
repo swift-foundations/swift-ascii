@@ -42,11 +42,11 @@ extension Binary.ASCII.Decimal {
         // Handle sign
         if index < bytes.endIndex {
             let first = bytes[index]
-            if first == INCITS_4_1986.GraphicCharacters.hyphen {
+            if first == INCITS_4_1986.Character.Graphic.hyphen {
                 isNegative = true
                 index = bytes.index(after: index)
                 position += 1
-            } else if first == INCITS_4_1986.GraphicCharacters.plusSign {
+            } else if first == INCITS_4_1986.Character.Graphic.plusSign {
                 index = bytes.index(after: index)
                 position += 1
             }
@@ -77,7 +77,7 @@ extension Binary.ASCII.Decimal {
         var position = 0
 
         // Handle optional plus sign
-        if index < bytes.endIndex && bytes[index] == INCITS_4_1986.GraphicCharacters.plusSign {
+        if index < bytes.endIndex && bytes[index] == INCITS_4_1986.Character.Graphic.plusSign {
             index = bytes.index(after: index)
             position += 1
         }

@@ -1,4 +1,4 @@
-// INCITS_4_1986.FormatEffectors.LineEnding Tests.swift
+// INCITS_4_1986.FormatEffectors.Line.Ending Tests.swift
 // swift-incits-4-1986
 //
 // Tests for INCITS_4_1986 line ending normalization
@@ -11,14 +11,14 @@ struct `FormatEffectors Tests` {
     @Suite
     struct `Line Ending Normalization - Correctness` {
         @Test(arguments: [
-            ("hello\nworld", INCITS_4_1986.FormatEffectors.LineEnding.lf, "hello\nworld"),
+            ("hello\nworld", INCITS_4_1986.FormatEffectors.Line.Ending.lf, "hello\nworld"),
             ("hello\nworld", .cr, "hello\rworld"),
             ("hello\nworld", .crlf, "hello\r\nworld"),
             ("hello\r\nworld", .lf, "hello\nworld"),
             ("hello\rworld", .lf, "hello\nworld"),
         ])
         func `line ending normalization`(
-            input: String, to: INCITS_4_1986.FormatEffectors.LineEnding, expected: String
+            input: String, to: INCITS_4_1986.FormatEffectors.Line.Ending, expected: String
         ) {
             #expect(input.normalized(to: to) == expected)
         }
@@ -34,16 +34,16 @@ struct `FormatEffectors Tests` {
 
     @Suite
     struct `Line Ending Normalization - Idempotence` {
-        @Test(arguments: [INCITS_4_1986.FormatEffectors.LineEnding.lf, .cr, .crlf])
-        func `normalization is idempotent`(ending: INCITS_4_1986.FormatEffectors.LineEnding) {
+        @Test(arguments: [INCITS_4_1986.FormatEffectors.Line.Ending.lf, .cr, .crlf])
+        func `normalization is idempotent`(ending: INCITS_4_1986.FormatEffectors.Line.Ending) {
             let text = "hello\nworld\r\ntest\rend"
             let first = text.normalized(to: ending)
             let second = first.normalized(to: ending)
             #expect(first == second, "Normalizing twice should be idempotent")
         }
 
-        @Test(arguments: [INCITS_4_1986.FormatEffectors.LineEnding.lf, .cr, .crlf])
-        func `text without line endings unchanged`(ending: INCITS_4_1986.FormatEffectors.LineEnding) {
+        @Test(arguments: [INCITS_4_1986.FormatEffectors.Line.Ending.lf, .cr, .crlf])
+        func `text without line endings unchanged`(ending: INCITS_4_1986.FormatEffectors.Line.Ending) {
             let text = "no line endings here"
             #expect(text.normalized(to: ending) == text)
         }

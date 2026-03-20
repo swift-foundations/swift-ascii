@@ -11,6 +11,6 @@ extension ASCII.Byte {
     /// Non-letter bytes are returned unchanged.
     @inlinable
     public func callAsFunction(case: Character.Case) -> UInt8 {
-        INCITS_4_1986.CaseConversion.convert(rawValue, to: `case`)
+        INCITS_4_1986.Case.Conversion.convert(rawValue, to: `case`)
     }
 }

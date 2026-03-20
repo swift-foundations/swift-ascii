@@ -50,7 +50,7 @@ extension StringProtocol {
     /// ```
     public static func normalized<S: StringProtocol>(
         _ s: S,
-        to lineEnding: INCITS_4_1986.FormatEffectors.LineEnding
+        to lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending
     ) -> S {
         return .init(decoding: INCITS_4_1986.normalized([UInt8](s.utf8), to: lineEnding), as: UTF8.self)
     }
@@ -79,7 +79,7 @@ extension StringProtocol {
     ///
     /// - ``INCITS_4_1986/normalized(_:to:as:)``
     public func normalized(
-        to lineEnding: INCITS_4_1986.FormatEffectors.LineEnding
+        to lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending
     ) -> Self {
         Self.normalized(self, to: lineEnding)
     }
@@ -125,7 +125,7 @@ extension StringProtocol {
     /// - ``LineEnding``
     /// - ``INCITS_4_1986/crlf``
     /// - ``normalized(to:as:)``
-    public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.LineEnding) {
+    public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending) {
         self.init(decoding: [UInt8](ascii: lineEnding), as: UTF8.self)
     }
 }
@@ -155,8 +155,8 @@ extension StringProtocol {
     ///
     /// // Using INCITS constants
     /// let bytes: [UInt8] = [
-    ///     INCITS_4_1986.GraphicCharacters.H,
-    ///     INCITS_4_1986.GraphicCharacters.i
+    ///     INCITS_4_1986.Character.Graphic.H,
+    ///     INCITS_4_1986.Character.Graphic.i
     /// ]
     /// let text = String(ascii: bytes)  // "Hi"
     ///

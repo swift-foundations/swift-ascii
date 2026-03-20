@@ -13,34 +13,34 @@ struct `INCITS_4_1986.LineEndingDetection Tests` {
     @Suite
     struct `detect() Method Tests` {
         @Test(arguments: [
-            ("line1\nline2", INCITS_4_1986.FormatEffectors.LineEnding.lf),
-            ("line1\n", INCITS_4_1986.FormatEffectors.LineEnding.lf),
-            ("\n", INCITS_4_1986.FormatEffectors.LineEnding.lf),
-            ("test\nmore\nlines", INCITS_4_1986.FormatEffectors.LineEnding.lf),
+            ("line1\nline2", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
+            ("line1\n", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
+            ("\n", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
+            ("test\nmore\nlines", INCITS_4_1986.FormatEffectors.Line.Ending.lf),
         ])
-        func `detects LF line endings`(input: (String, INCITS_4_1986.FormatEffectors.LineEnding)) {
+        func `detects LF line endings`(input: (String, INCITS_4_1986.FormatEffectors.Line.Ending)) {
             let (str, expected) = input
             #expect(INCITS_4_1986.LineEndingDetection.detect(str) == expected)
         }
 
         @Test(arguments: [
-            ("line1\rline2", INCITS_4_1986.FormatEffectors.LineEnding.cr),
-            ("line1\r", INCITS_4_1986.FormatEffectors.LineEnding.cr),
-            ("\r", INCITS_4_1986.FormatEffectors.LineEnding.cr),
-            ("test\rmore\rlines", INCITS_4_1986.FormatEffectors.LineEnding.cr),
+            ("line1\rline2", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
+            ("line1\r", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
+            ("\r", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
+            ("test\rmore\rlines", INCITS_4_1986.FormatEffectors.Line.Ending.cr),
         ])
-        func `detects CR line endings`(input: (String, INCITS_4_1986.FormatEffectors.LineEnding)) {
+        func `detects CR line endings`(input: (String, INCITS_4_1986.FormatEffectors.Line.Ending)) {
             let (str, expected) = input
             #expect(INCITS_4_1986.LineEndingDetection.detect(str) == expected)
         }
 
         @Test(arguments: [
-            ("line1\r\nline2", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
-            ("line1\r\n", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
-            ("\r\n", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
-            ("test\r\nmore\r\nlines", INCITS_4_1986.FormatEffectors.LineEnding.crlf),
+            ("line1\r\nline2", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
+            ("line1\r\n", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
+            ("\r\n", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
+            ("test\r\nmore\r\nlines", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
         ])
-        func `detects CRLF line endings`(input: (String, INCITS_4_1986.FormatEffectors.LineEnding)) {
+        func `detects CRLF line endings`(input: (String, INCITS_4_1986.FormatEffectors.Line.Ending)) {
             let (str, expected) = input
             #expect(INCITS_4_1986.LineEndingDetection.detect(str) == expected)
         }
