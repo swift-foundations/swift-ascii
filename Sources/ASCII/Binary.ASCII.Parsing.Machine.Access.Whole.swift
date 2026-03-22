@@ -2,7 +2,7 @@
 // Zero-copy whole-input parsing wrapper for Machine parsers
 
 public import Binary_Parser_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.

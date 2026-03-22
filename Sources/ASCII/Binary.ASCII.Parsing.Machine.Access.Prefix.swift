@@ -3,7 +3,7 @@
 
 public import Binary_Parser_Primitives
 public import Serialization_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Prefix parsing capability for Machine parsers.

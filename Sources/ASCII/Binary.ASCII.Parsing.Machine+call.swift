@@ -2,7 +2,7 @@
 // Zero-copy borrowed parsing APIs for Machine parsers
 
 public import Binary_Parser_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 // MARK: - Direct withBorrowed APIs
 

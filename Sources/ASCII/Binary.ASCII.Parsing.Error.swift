@@ -1,5 +1,5 @@
 public import Binary_Primitives
-public import Binary_Parser_Primitives
+internal import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing {
     /// Error type for ASCII parsing operations.

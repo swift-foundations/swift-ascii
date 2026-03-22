@@ -1,7 +1,7 @@
 public import Parser_Primitives
 public import Binary_Primitives
 public import Serialization_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 extension Binary.ASCII.Access where P.Output: Sendable {
     @inlinable

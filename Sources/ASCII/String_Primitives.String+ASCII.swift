@@ -41,6 +41,6 @@ extension String_Primitives.String {
         }
         (unsafe buffer)[count] = String_Primitives.String.terminator
 
-        self.init(adopting: buffer, count: count)
+        unsafe self.init(adopting: buffer, count: count)
     }
 }

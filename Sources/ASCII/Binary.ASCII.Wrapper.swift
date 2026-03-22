@@ -77,8 +77,8 @@ extension Binary.ASCII.Wrapper {
         var buffer: ContiguousArray<UInt8> = []
         Wrapped.serialize(ascii: wrapped, into: &buffer)
         var result: Result<R, E>!
-        buffer.withUnsafeBufferPointer { bufferPointer in
-            let span = Span(_unsafeElements: bufferPointer)
+        unsafe buffer.withUnsafeBufferPointer { bufferPointer in
+            let span = unsafe Span(_unsafeElements: bufferPointer)
             do throws(E) {
                 result = .success(try body(span))
             } catch {

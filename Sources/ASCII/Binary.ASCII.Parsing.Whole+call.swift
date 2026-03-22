@@ -1,6 +1,6 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Whole {
     /// Parse entire byte array.
@@ -26,8 +26,8 @@ extension Binary.ASCII.Parsing.Whole {
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
     where C: ~Copyable, C.Element == UInt8 {
-        try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
-            let bytes: [UInt8] = .init(buffer)
+        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+            let bytes: [UInt8] = unsafe .init(buffer)
             return try call(bytes)
         }
     }

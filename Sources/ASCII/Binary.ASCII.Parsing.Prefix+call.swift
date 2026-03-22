@@ -1,7 +1,7 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
 public import Serialization_Primitives
-public import Memory_Primitives
+internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Prefix {
     /// Parse prefix of byte array.
@@ -19,8 +19,8 @@ extension Binary.ASCII.Parsing.Prefix {
         _ source: borrowing C
     ) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count>
     where C: ~Copyable, C.Element == UInt8 {
-        try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> in
-            let bytes: [UInt8] = .init(buffer)
+        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(P.Failure) -> Serialization_Primitives.Serialization.Parsing.Prefix.Result<P.Output, Index<UInt8>.Count> in
+            let bytes: [UInt8] = unsafe .init(buffer)
             return try call(bytes)
         }
     }

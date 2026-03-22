@@ -51,7 +51,7 @@ extension Binary.ASCII.Equals {
                 let byte = unsafe pointer[i]
                 // Early exit if we hit NUL before matching all literal bytes
                 // or if any byte doesn't match
-                guard byte != 0, byte == literal[i] else { return false }
+                guard byte != 0, unsafe (byte == literal[i]) else { return false }
             }
             // All literal bytes matched; verify terminator follows
             return unsafe pointer[count] == 0
