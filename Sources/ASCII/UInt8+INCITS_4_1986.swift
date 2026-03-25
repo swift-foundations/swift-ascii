@@ -28,7 +28,7 @@ extension UInt8 {
     ///
     /// ## Performance
     ///
-    /// This initializer is marked `@inline(__always)` for optimal performance, delegating to
+    /// This initializer is marked `@inline(always)` for optimal performance, delegating to
     /// the Swift standard library's `Character.asciiValue` property.
     ///
     /// ## Usage
@@ -52,7 +52,7 @@ extension UInt8 {
     ///
     /// - ``INCITS_4_1986``
     /// - ``ASCII``
-    @inline(__always)
+    @inline(always)
     public init?(ascii character: Character) {
         guard let value = character.asciiValue else { return nil }
         self = value
@@ -441,7 +441,7 @@ extension Binary.ASCII {
     /// ## See Also
     ///
     /// - ``UInt8/init(ascii:)``
-    @inline(__always)
+    @inline(always)
     public static func unchecked(_ character: Character) -> UInt8 {
         character.utf8.first!
     }
