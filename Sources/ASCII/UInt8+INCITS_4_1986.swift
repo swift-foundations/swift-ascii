@@ -10,54 +10,7 @@ public import Binary_Primitives
 import Standard_Library_Extensions
 
 // MARK: - Character to Byte Conversion
-
-extension UInt8 {
-    /// Creates ASCII byte from a character with validation
-    ///
-    /// Converts a Swift `Character` to its ASCII byte value, returning `nil` if the character
-    /// is outside the ASCII range (U+0000 to U+007F). This initializer validates that the character
-    /// fits within the 7-bit US-ASCII encoding before conversion.
-    ///
-    /// ## Validation
-    ///
-    /// Only characters in the range U+0000 to U+007F (0-127 decimal) are valid ASCII.
-    /// Any character requiring more than 7 bits to encode will return `nil`:
-    /// - Accented letters (é, ñ, ü, etc.) → `nil`
-    /// - Emoji (🌍, 😀, etc.) → `nil`
-    /// - Extended Unicode → `nil`
-    ///
-    /// ## Performance
-    ///
-    /// This initializer is marked `@inline(always)` for optimal performance, delegating to
-    /// the Swift standard library's `Character.asciiValue` property.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Valid ASCII characters
-    /// UInt8(ascii: "A")     // 65 (0x41)
-    /// UInt8(ascii: "0")     // 48 (0x30)
-    /// UInt8(ascii: " ")     // 32 (0x20)
-    /// UInt8(ascii: "\n")    // 10 (0x0A)
-    ///
-    /// // Non-ASCII characters
-    /// UInt8(ascii: "🌍")    // nil (emoji)
-    /// UInt8(ascii: "é")     // nil (accented letter)
-    /// UInt8(ascii: "中")    // nil (CJK character)
-    /// ```
-    ///
-    /// - Parameter ascii: The character to convert to ASCII byte
-    ///
-    /// ## See Also
-    ///
-    /// - ``INCITS_4_1986``
-    /// - ``ASCII``
-    @inline(always)
-    public init?(ascii character: Character) {
-        guard let value = character.asciiValue else { return nil }
-        self = value
-    }
-}
+// UInt8(ascii: Character) moved to ASCII Primitives (L1).
 
 extension Binary.ASCII {
     // MARK: - ASCII Validation
