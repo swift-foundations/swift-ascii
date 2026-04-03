@@ -56,7 +56,7 @@ extension Binary.ASCII.Decimal {
 
         while index < bytes.endIndex {
             let byte = bytes[index]
-            guard let digit = INCITS_4_1986.NumericParsing.digit(byte) else {
+            guard let digit = INCITS_4_1986.Numeric.Parsing.digit(byte) else {
                 throw .invalidByte(position: position, found: byte)
             }
             result = result * 10 + T(digit)
@@ -86,7 +86,7 @@ extension Binary.ASCII.Decimal {
 
         while index < bytes.endIndex {
             let byte = bytes[index]
-            guard let digit = INCITS_4_1986.NumericParsing.digit(byte) else {
+            guard let digit = INCITS_4_1986.Numeric.Parsing.digit(byte) else {
                 throw .invalidByte(position: position, found: byte)
             }
             result = result * 10 + T(digit)
@@ -108,7 +108,7 @@ extension Int: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: Int,
         into buffer: inout Buffer
     ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.NumericSerialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -128,7 +128,7 @@ extension Int64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: Int64,
         into buffer: inout Buffer
     ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.NumericSerialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -150,7 +150,7 @@ extension UInt: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: UInt,
         into buffer: inout Buffer
     ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.NumericSerialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -170,7 +170,7 @@ extension UInt64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: UInt64,
         into buffer: inout Buffer
     ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.NumericSerialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable

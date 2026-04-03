@@ -74,7 +74,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isWhitespace(_:)``
     @_transparent
     public var isWhitespace: Bool {
-        INCITS_4_1986.CharacterClassification.isWhitespace(byte)
+        INCITS_4_1986.Classification.isWhitespace(byte)
     }
 
     /// Tests if byte is ASCII control character
@@ -112,7 +112,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isControl(_:)``
     @_transparent
     public var isControl: Bool {
-        INCITS_4_1986.CharacterClassification.isControl(byte)
+        INCITS_4_1986.Classification.isControl(byte)
     }
 
     /// Tests if byte is ASCII visible (non-whitespace printable) character
@@ -148,7 +148,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isVisible(_:)``
     @_transparent
     public var isVisible: Bool {
-        INCITS_4_1986.CharacterClassification.isVisible(byte)
+        INCITS_4_1986.Classification.isVisible(byte)
     }
 
     /// Tests if byte is ASCII printable (graphic) character
@@ -185,7 +185,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isPrintable(_:)``
     @_transparent
     public var isPrintable: Bool {
-        INCITS_4_1986.CharacterClassification.isPrintable(byte)
+        INCITS_4_1986.Classification.isPrintable(byte)
     }
 
     // MARK: - Character Classification
@@ -197,7 +197,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isDigit(_:)``
     @_transparent
     public var isDigit: Bool {
-        INCITS_4_1986.CharacterClassification.isDigit(byte)
+        INCITS_4_1986.Classification.isDigit(byte)
     }
 
     /// Tests if byte is ASCII letter ('A'...'Z' or 'a'...'z')
@@ -207,7 +207,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isLetter(_:)``
     @_transparent
     public var isLetter: Bool {
-        INCITS_4_1986.CharacterClassification.isLetter(byte)
+        INCITS_4_1986.Classification.isLetter(byte)
     }
 
     /// Tests if byte is ASCII alphanumeric (digit or letter)
@@ -217,7 +217,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isAlphanumeric(_:)``
     @_transparent
     public var isAlphanumeric: Bool {
-        INCITS_4_1986.CharacterClassification.isAlphanumeric(byte)
+        INCITS_4_1986.Classification.isAlphanumeric(byte)
     }
 
     /// Tests if byte is ASCII hexadecimal digit ('0'...'9', 'A'...'F', 'a'...'f')
@@ -227,7 +227,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isHexDigit(_:)``
     @_transparent
     public var isHexDigit: Bool {
-        INCITS_4_1986.CharacterClassification.isHexDigit(byte)
+        INCITS_4_1986.Classification.isHexDigit(byte)
     }
 
     /// Tests if byte is ASCII uppercase letter ('A'...'Z')
@@ -237,7 +237,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isUppercase(_:)``
     @_transparent
     public var isUppercase: Bool {
-        INCITS_4_1986.CharacterClassification.isUppercase(byte)
+        INCITS_4_1986.Classification.isUppercase(byte)
     }
 
     /// Tests if byte is ASCII lowercase letter ('a'...'z')
@@ -247,7 +247,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/CharacterClassification/isLowercase(_:)``
     @_transparent
     public var isLowercase: Bool {
-        INCITS_4_1986.CharacterClassification.isLowercase(byte)
+        INCITS_4_1986.Classification.isLowercase(byte)
     }
 
     @_transparent
@@ -284,7 +284,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/NumericParsing/digit(_:)``
     @inlinable
     public static func ascii(digit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.NumericParsing.digit(byte)
+        INCITS_4_1986.Numeric.Parsing.digit(byte)
     }
 }
 
@@ -317,7 +317,7 @@ extension Binary.ASCII {
     /// - ``INCITS_4_1986/NumericParsing/hexDigit(_:)``
     @inlinable
     public static func ascii(hexDigit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.NumericParsing.hexDigit(byte)
+        INCITS_4_1986.Numeric.Parsing.hexDigit(byte)
     }
 }
 
@@ -327,7 +327,7 @@ extension Binary.ASCII {
     /// Enables the convenient syntax: `UInt8(ascii: digit: byte)`
     @inlinable
     public static func callAsFunction(digit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.NumericParsing.digit(byte)
+        INCITS_4_1986.Numeric.Parsing.digit(byte)
     }
 
     /// Parses an ASCII hex digit byte via call syntax
@@ -335,7 +335,7 @@ extension Binary.ASCII {
     /// Enables the convenient syntax: `UInt8(ascii: hexDigit: byte)`
     @inlinable
     public static func callAsFunction(hexDigit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.NumericParsing.hexDigit(byte)
+        INCITS_4_1986.Numeric.Parsing.hexDigit(byte)
     }
 
     /// Returns the byte if it's valid ASCII, nil otherwise
