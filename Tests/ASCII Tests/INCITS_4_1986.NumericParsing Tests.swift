@@ -1,4 +1,4 @@
-// INCITS_4_1986.NumericParsing Tests.swift
+// INCITS_4_1986.Numeric.Parsing Tests.swift
 // swift-incits-4-1986
 //
 // Tests for authoritative numeric parsing operations
@@ -7,22 +7,22 @@ import Testing
 @testable import ASCII
 
 @Suite
-struct `INCITS_4_1986.NumericParsing Tests` {
+struct `INCITS_4_1986.Numeric.Parsing Tests` {
     @Suite
     struct `Decimal Digit Parsing` {
         @Test
         func `parses digit '0' as 0`() {
-            #expect(INCITS_4_1986.NumericParsing.digit(INCITS_4_1986.Character.Graphic.`0`) == 0)
+            #expect(INCITS_4_1986.Numeric.Parsing.digit(INCITS_4_1986.Character.Graphic.`0`) == 0)
         }
 
         @Test
         func `parses digit '1' as 1`() {
-            #expect(INCITS_4_1986.NumericParsing.digit(INCITS_4_1986.Character.Graphic.`1`) == 1)
+            #expect(INCITS_4_1986.Numeric.Parsing.digit(INCITS_4_1986.Character.Graphic.`1`) == 1)
         }
 
         @Test
         func `parses digit '9' as 9`() {
-            #expect(INCITS_4_1986.NumericParsing.digit(INCITS_4_1986.Character.Graphic.`9`) == 9)
+            #expect(INCITS_4_1986.Numeric.Parsing.digit(INCITS_4_1986.Character.Graphic.`9`) == 9)
         }
 
         @Test
@@ -41,7 +41,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
             ]
 
             for (digitByte, expectedValue) in digits {
-                #expect(INCITS_4_1986.NumericParsing.digit(digitByte) == expectedValue)
+                #expect(INCITS_4_1986.Numeric.Parsing.digit(digitByte) == expectedValue)
             }
         }
 
@@ -53,7 +53,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
             UInt8(0x3A),  // After '9'
         ])
         func `returns nil for non-digit bytes`(byte: UInt8) {
-            #expect(INCITS_4_1986.NumericParsing.digit(byte) == nil)
+            #expect(INCITS_4_1986.Numeric.Parsing.digit(byte) == nil)
         }
     }
 
@@ -61,39 +61,39 @@ struct `INCITS_4_1986.NumericParsing Tests` {
     struct `Hexadecimal Digit Parsing` {
         @Test
         func `parses hex digit '0' as 0`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.`0`) == 0)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.`0`) == 0)
         }
 
         @Test
         func `parses hex digit '9' as 9`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.`9`) == 9)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.`9`) == 9)
         }
 
         @Test
         func `parses hex digit 'A' as 10`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.A) == 10)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.A) == 10)
         }
 
         @Test
         func `parses hex digit 'F' as 15`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.F) == 15)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.F) == 15)
         }
 
         @Test
         func `parses hex digit 'a' as 10`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.a) == 10)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.a) == 10)
         }
 
         @Test
         func `parses hex digit 'f' as 15`() {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(INCITS_4_1986.Character.Graphic.f) == 15)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(INCITS_4_1986.Character.Graphic.f) == 15)
         }
 
         @Test
         func `parses all decimal digits 0-9`() {
             for i in UInt8(0)...UInt8(9) {
                 let digitByte = INCITS_4_1986.Character.Graphic.`0` + i
-                #expect(INCITS_4_1986.NumericParsing.hexDigit(digitByte) == i)
+                #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(digitByte) == i)
             }
         }
 
@@ -101,7 +101,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
         func `parses all uppercase hex letters A-F`() {
             for i in UInt8(0)...UInt8(5) {
                 let letterByte = INCITS_4_1986.Character.Graphic.A + i
-                #expect(INCITS_4_1986.NumericParsing.hexDigit(letterByte) == 10 + i)
+                #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(letterByte) == 10 + i)
             }
         }
 
@@ -109,7 +109,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
         func `parses all lowercase hex letters a-f`() {
             for i in UInt8(0)...UInt8(5) {
                 let letterByte = INCITS_4_1986.Character.Graphic.a + i
-                #expect(INCITS_4_1986.NumericParsing.hexDigit(letterByte) == 10 + i)
+                #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(letterByte) == 10 + i)
             }
         }
 
@@ -122,7 +122,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
             INCITS_4_1986.Character.Control.lf,
         ])
         func `returns nil for non-hex bytes`(byte: UInt8) {
-            #expect(INCITS_4_1986.NumericParsing.hexDigit(byte) == nil)
+            #expect(INCITS_4_1986.Numeric.Parsing.hexDigit(byte) == nil)
         }
     }
 
@@ -132,7 +132,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
         func `digit round-trip for 0-9`() {
             for value in UInt8(0)...UInt8(9) {
                 let digitByte = INCITS_4_1986.Character.Graphic.`0` + value
-                let parsed = INCITS_4_1986.NumericParsing.digit(digitByte)
+                let parsed = INCITS_4_1986.Numeric.Parsing.digit(digitByte)
                 #expect(parsed == value)
             }
         }
@@ -159,7 +159,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
             ]
 
             for (index, hexChar) in hexChars.enumerated() {
-                let parsed = INCITS_4_1986.NumericParsing.hexDigit(hexChar)
+                let parsed = INCITS_4_1986.Numeric.Parsing.hexDigit(hexChar)
                 #expect(parsed == UInt8(index))
             }
         }
@@ -186,7 +186,7 @@ struct `INCITS_4_1986.NumericParsing Tests` {
             ]
 
             for (index, hexChar) in hexChars.enumerated() {
-                let parsed = INCITS_4_1986.NumericParsing.hexDigit(hexChar)
+                let parsed = INCITS_4_1986.Numeric.Parsing.hexDigit(hexChar)
                 #expect(parsed == UInt8(index))
             }
         }
@@ -200,8 +200,8 @@ struct `INCITS_4_1986.NumericParsing Tests` {
                 let upperByte = INCITS_4_1986.Character.Graphic.A + i
                 let lowerByte = INCITS_4_1986.Character.Graphic.a + i
 
-                let upperValue = INCITS_4_1986.NumericParsing.hexDigit(upperByte)
-                let lowerValue = INCITS_4_1986.NumericParsing.hexDigit(lowerByte)
+                let upperValue = INCITS_4_1986.Numeric.Parsing.hexDigit(upperByte)
+                let lowerValue = INCITS_4_1986.Numeric.Parsing.hexDigit(lowerByte)
 
                 #expect(upperValue == lowerValue)
                 #expect(upperValue == 10 + i)
