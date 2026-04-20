@@ -17,7 +17,6 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../swift-incits/swift-incits-4-1986"),
-        .package(path: "../../swift-primitives/swift-ascii-primitives"),
         .package(path: "../../swift-primitives/swift-base62-primitives"),
         .package(path: "../../swift-primitives/swift-binary-primitives"),
         .package(path: "../../swift-primitives/swift-ascii-serializer-primitives"),
@@ -32,7 +31,6 @@ let package = Package(
             name: "ASCII",
             dependencies: [
                 .product(name: "INCITS 4 1986", package: "swift-incits-4-1986"),
-                .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
                 .product(name: "Base62 Primitives", package: "swift-base62-primitives"),
                 .product(name: "Binary Parser Primitives", package: "swift-binary-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
