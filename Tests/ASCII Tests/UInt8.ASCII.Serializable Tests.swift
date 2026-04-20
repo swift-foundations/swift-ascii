@@ -143,60 +143,60 @@ extension DelimitedMessage: CustomStringConvertible {}
 
 @Suite("Serializable - Context-Free Types")
 struct ContextFreeSerializableTests {
-    @Test("Parse from bytes using init(ascii:)")
-    func parseFromBytes() throws {
+    @Test
+    func `Parse from bytes using init(ascii:)`() throws {
         let bytes: [UInt8] = Array("hello-world".utf8)
         let token: Token = try .init(ascii: bytes)
 
         #expect(token.rawValue == "hello-world")
     }
 
-    @Test("Parse from bytes using init(ascii:in:) with Void")
-    func parseFromBytesWithVoidContext() throws {
+    @Test
+    func `Parse from bytes using init(ascii:in:) with Void`() throws {
         let bytes: [UInt8] = Array("test123".utf8)
         let token: Token = try .init(ascii: bytes, in: ())
 
         #expect(token.rawValue == "test123")
     }
 
-    @Test("Parse from string using init(_:)")
-    func parseFromString() throws {
+    @Test
+    func `Parse from string using init(_:)`() throws {
         let token: Token = try .init("my-token")
 
         #expect(token.rawValue == "my-token")
     }
 
-    @Test("String literal initialization")
-    func stringLiteral() {
+    @Test
+    func `String literal initialization`() {
         let token: Token = "literal-token"
 
         #expect(token.rawValue == "literal-token")
     }
 
-    @Test("Serialize to bytes")
-    func serializeToBytes() throws {
+    @Test
+    func `Serialize to bytes`() throws {
         let token: Token = try .init("hello")
 
         #expect(Token.serialize(token) == Array("hello".utf8))
     }
 
-    @Test("Convert to String")
-    func convertToString() throws {
+    @Test
+    func `Convert to String`() throws {
         let token: Token = try .init("world")
 
         #expect(String(token) == "world")
     }
 
-    @Test("Round-trip: bytes → Token → bytes")
-    func roundTripBytes() throws {
+    @Test
+    func `Round-trip: bytes → Token → bytes`() throws {
         let original: [UInt8] = Array("round-trip".utf8)
         let token: Token = try .init(ascii: original)
 
         #expect(Token.serialize(token) == original)
     }
 
-    @Test("Round-trip: string → Token → string")
-    func roundTripString() throws {
+    @Test
+    func `Round-trip: string → Token → string`() throws {
         let original = "test-value"
         let token: Token = try .init(original)
         let result = String(token)
@@ -204,8 +204,8 @@ struct ContextFreeSerializableTests {
         #expect(result == original)
     }
 
-    @Test("Invalid input throws error")
-    func invalidInput() {
+    @Test
+    func `Invalid input throws error`() {
         let bytes: [UInt8] = Array("hello world".utf8)  // space is invalid
 
         #expect(throws: Token.Error.self) {
@@ -213,8 +213,8 @@ struct ContextFreeSerializableTests {
         }
     }
 
-    @Test("Empty input throws error")
-    func emptyInput() {
+    @Test
+    func `Empty input throws error`() {
         let bytes: [UInt8] = []
 
         #expect(throws: Token.Error.empty) {
@@ -227,8 +227,8 @@ struct ContextFreeSerializableTests {
 
 @Suite("Serializable - Context-Dependent Types")
 struct ContextDependentSerializableTests {
-    @Test("Parse with context using init(ascii:in:)")
-    func parseWithContext() throws {
+    @Test
+    func `Parse with context using init(ascii:in:)`() throws {
         let bytes: [UInt8] = Array("foo|bar|baz".utf8)
         let context = DelimitedMessage.Context(delimiter: .ascii.verticalLine)
 
@@ -238,8 +238,8 @@ struct ContextDependentSerializableTests {
         #expect(message.delimiter == .ascii.verticalLine)
     }
 
-    @Test("Different delimiters produce different parses")
-    func differentDelimiters() throws {
+    @Test
+    func `Different delimiters produce different parses`() throws {
         let bytes: [UInt8] = Array("a,b|c".utf8)
 
         // Parse with comma delimiter
@@ -253,8 +253,8 @@ struct ContextDependentSerializableTests {
         #expect(pipeMessage.parts == ["a,b", "c"])
     }
 
-    @Test("Serialize to bytes")
-    func serializeToBytes() throws {
+    @Test
+    func `Serialize to bytes`() throws {
         let message = DelimitedMessage(
             __unchecked: (),
             parts: ["hello", "world"],
@@ -264,8 +264,8 @@ struct ContextDependentSerializableTests {
         #expect(DelimitedMessage.serialize(message) == Array("hello-world".utf8))
     }
 
-    @Test("Round-trip: bytes → Message → bytes")
-    func roundTrip() throws {
+    @Test
+    func `Round-trip: bytes → Message → bytes`() throws {
         let original: [UInt8] = Array("one:two:three".utf8)
         let context = DelimitedMessage.Context(delimiter: .ascii.colon)
 
@@ -274,8 +274,8 @@ struct ContextDependentSerializableTests {
         #expect(DelimitedMessage.serialize(message) == original)
     }
 
-    @Test("Convert to String via serialize")
-    func convertToString() throws {
+    @Test
+    func `Convert to String via serialize`() throws {
         let message = DelimitedMessage(
             __unchecked: (),
             parts: ["a", "b", "c"],
@@ -287,8 +287,8 @@ struct ContextDependentSerializableTests {
         #expect(string == "a;b;c")
     }
 
-    @Test("Empty input throws error")
-    func emptyInput() {
+    @Test
+    func `Empty input throws error`() {
         let bytes: [UInt8] = []
         let context = DelimitedMessage.Context(delimiter: .ascii.comma)
 
@@ -297,8 +297,8 @@ struct ContextDependentSerializableTests {
         }
     }
 
-    @Test("Context-dependent type does NOT have init(_: String)")
-    func noStringInit() {
+    @Test
+    func `Context-dependent type does NOT have init(_: String)`() {
         // This test documents that context-dependent types
         // don't get the automatic init(_: StringProtocol) convenience.
         // The following would not compile:
@@ -317,8 +317,8 @@ struct ContextDependentSerializableTests {
 
 @Suite("Serializable - Category Theory Properties")
 struct CategoryTheoryTests {
-    @Test("Void context is the unit type (terminal object)")
-    func voidIsTerminal() {
+    @Test
+    func `Void context is the unit type (terminal object)`() {
         // In category theory, Void is the terminal object.
         // There's exactly one value: ()
         // A function (Void × A) → B is isomorphic to A → B
@@ -333,8 +333,8 @@ struct CategoryTheoryTests {
         #expect(viaConvenience == viaExplicit)
     }
 
-    @Test("Serialization is context-free (value is self-describing)")
-    func serializationIsContextFree() throws {
+    @Test
+    func `Serialization is context-free (value is self-describing)`() throws {
         // Even for context-dependent types, serialization doesn't need context.
         // The value itself contains all information needed to serialize.
 
@@ -348,8 +348,8 @@ struct CategoryTheoryTests {
         #expect(DelimitedMessage.serialize(message) == Array("x,y".utf8))
     }
 
-    @Test("Parse-serialize round-trip is identity (for well-formed input)")
-    func parseSerializeIsIdentity() throws {
+    @Test
+    func `Parse-serialize round-trip is identity (for well-formed input)`() throws {
         // For well-formed input, parse ∘ serialize = id
         let original: [UInt8] = Array("valid-token".utf8)
 
@@ -381,8 +381,8 @@ struct StreamingConformanceTests {
 
     // MARK: - Automatic Conformance
 
-    @Test("ASCII.Serializable types automatically conform to Binary.Serializable")
-    func automaticConformance() throws {
+    @Test
+    func `ASCII.Serializable types automatically conform to Binary.Serializable`() throws {
         let token: Token = try .init("my-token")
 
         // Token conforms to Binary.Serializable via ASCII.Serializable
@@ -392,8 +392,8 @@ struct StreamingConformanceTests {
         #expect(buffer == Array("my-token".utf8))
     }
 
-    @Test("Context-dependent types also conform to Binary.Serializable")
-    func contextDependentConformance() {
+    @Test
+    func `Context-dependent types also conform to Binary.Serializable`() {
         let message = DelimitedMessage(
             __unchecked: (),
             parts: ["a", "b", "c"],
@@ -409,8 +409,8 @@ struct StreamingConformanceTests {
 
     // MARK: - Buffer-Based Serialization
 
-    @Test("Serialize into buffer using serialize(into:)")
-    func serializeIntoBuffer() throws {
+    @Test
+    func `Serialize into buffer using serialize(into:)`() throws {
         let token: Token = try .init("hello-world")
 
         // Ideal streaming usage pattern
@@ -420,8 +420,8 @@ struct StreamingConformanceTests {
         #expect(buffer == Array("hello-world".utf8))
     }
 
-    @Test("Get bytes using .bytes property")
-    func bytesProperty() throws {
+    @Test
+    func `Get bytes using .bytes property`() throws {
         let token: Token = try .init("swift-token")
 
         // Convenience property from Binary.Serializable
@@ -430,8 +430,8 @@ struct StreamingConformanceTests {
         #expect(bytes == Array("swift-token".utf8))
     }
 
-    @Test("Append to existing buffer content")
-    func appendToExistingBuffer() throws {
+    @Test
+    func `Append to existing buffer content`() throws {
         let token: Token = try .init("suffix")
 
         var buffer: [UInt8] = Array("prefix-".utf8)
@@ -442,8 +442,8 @@ struct StreamingConformanceTests {
 
     // MARK: - Composition with Streaming Types
 
-    @Test("ASCII types compose with pure streaming types")
-    func composeWithStreaming() throws {
+    @Test
+    func `ASCII types compose with pure streaming types`() throws {
         let anchor = try HTMLAnchor(
             href: .init("example-link"),
             text: "Click here"
@@ -454,8 +454,8 @@ struct StreamingConformanceTests {
         #expect(result == "<a href=\"example-link\">Click here</a>")
     }
 
-    @Test("Multiple ASCII types serialize into shared buffer")
-    func multipleTypesIntoBuffer() throws {
+    @Test
+    func `Multiple ASCII types serialize into shared buffer`() throws {
         let token1: Token = try .init("first")
         let token2: Token = try .init("second")
         let message = DelimitedMessage(
@@ -475,8 +475,8 @@ struct StreamingConformanceTests {
         #expect(buffer == Array("first-second|a:b".utf8))
     }
 
-    @Test("Pre-allocate buffer for efficiency")
-    func preAllocatedBuffer() throws {
+    @Test
+    func `Pre-allocate buffer for efficiency`() throws {
         let tokens = try (1...10).map { try Token("token-\($0)") }
 
         var buffer: [UInt8] = []
@@ -496,8 +496,8 @@ struct StreamingConformanceTests {
 
     // MARK: - Round-Trip via Streaming
 
-    @Test("Round-trip through buffer produces same result as static serialize")
-    func roundTripEquivalence() throws {
+    @Test
+    func `Round-trip through buffer produces same result as static serialize`() throws {
         let token: Token = try .init("roundtrip-test")
 
         // Via static serialize
@@ -520,8 +520,8 @@ struct StreamingConformanceTests {
 @Suite("Serializable - Streaming API Patterns")
 struct StreamingAPIPatternTests {
 
-    @Test("Pattern: Direct buffer writing for server response")
-    func directBufferWriting() throws {
+    @Test
+    func `Pattern: Direct buffer writing for server response`() throws {
         // Simulating building an HTTP-like response
         var response: [UInt8] = []
 
@@ -535,8 +535,8 @@ struct StreamingAPIPatternTests {
         #expect(result == "X-Token: auth-token-123\r\n")
     }
 
-    @Test("Pattern: Building HTML with embedded RFC types")
-    func htmlWithRFCTypes() throws {
+    @Test
+    func `Pattern: Building HTML with embedded RFC types`() throws {
         let anchor = try HTMLAnchor(
             href: .init("https-link"),
             text: "Visit site"
@@ -552,8 +552,8 @@ struct StreamingAPIPatternTests {
         #expect(string == "<a href=\"https-link\">Visit site</a>")
     }
 
-    @Test("Pattern: Reusable buffer for batch processing")
-    func reusableBufferPattern() throws {
+    @Test
+    func `Pattern: Reusable buffer for batch processing`() throws {
         var buffer: [UInt8] = []
         var results: [[UInt8]] = []
 
@@ -572,8 +572,8 @@ struct StreamingAPIPatternTests {
         #expect(results[2] == Array("gamma".utf8))
     }
 
-    @Test("Pattern: Streaming type wrapping ASCII type")
-    func streamingWrapper() throws {
+    @Test
+    func `Pattern: Streaming type wrapping ASCII type`() throws {
         // HTMLAnchor is a streaming type that wraps Token (ASCII type)
         struct Document: Binary.Serializable {
             let title: Token
@@ -710,8 +710,8 @@ struct InfiniteRecursionPreventionTests {
     ///     }
     /// }
     /// ```
-    @Test("Correct pattern avoids infinite recursion")
-    func correctPatternWorks() throws {
+    @Test
+    func `Correct pattern avoids infinite recursion`() throws {
         let email = try CorrectEmailAddress("user@example.com")
 
         // These should all work without infinite recursion:
@@ -724,16 +724,16 @@ struct InfiniteRecursionPreventionTests {
         #expect(bytes == Array("user@example.com".utf8))
     }
 
-    @Test("RawValue is synthesized from serialization")
-    func rawValueFromSerialization() throws {
+    @Test
+    func `RawValue is synthesized from serialization`() throws {
         let email = try CorrectEmailAddress("test@domain.org")
 
         // rawValue should be derived from serialize(ascii:into:)
         #expect(email.rawValue == "test@domain.org")
     }
 
-    @Test("Round-trip through rawValue")
-    func roundTripThroughRawValue() throws {
+    @Test
+    func `Round-trip through rawValue`() throws {
         let original = try CorrectEmailAddress("hello@world.net")
 
         // rawValue → String → bytes → parse → compare
@@ -743,8 +743,8 @@ struct InfiniteRecursionPreventionTests {
         #expect(original == restored)
     }
 
-    @Test("Serialization does not access rawValue")
-    func serializationIndependentOfRawValue() throws {
+    @Test
+    func `Serialization does not access rawValue`() throws {
         let email = try CorrectEmailAddress("direct@serialize.test")
 
         // serialize(ascii:into:) should work without ever touching rawValue
@@ -756,8 +756,8 @@ struct InfiniteRecursionPreventionTests {
 
     // MARK: - API Design Guidance
 
-    @Test("Checklist for Binary.ASCII.RawRepresentable conformance")
-    func conformanceChecklist() throws {
+    @Test
+    func `Checklist for Binary.ASCII.RawRepresentable conformance`() throws {
         // This test serves as documentation for the required pattern:
         //
         // ✅ 1. Implement serialize(ascii:into:) explicitly
