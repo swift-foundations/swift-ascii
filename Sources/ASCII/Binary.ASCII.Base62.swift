@@ -5,7 +5,7 @@
 //  Base62 digit parsing following the ASCII.Parsing.digit() / hexDigit() pattern.
 //
 
-public import Base62_Primitives
+public import Binary_Base_Primitives
 
 extension Binary.ASCII {
     /// Namespace for Base62 digit operations.
@@ -46,7 +46,7 @@ extension Binary.ASCII.Base62 {
     @inlinable
     public static func digit(
         _ byte: UInt8,
-        using alphabet: Base62_Primitives.Alphabet = .default
+        using alphabet: Binary.Base.`62`.Alphabet = .default
     ) -> UInt8? {
         alphabet.decode(byte)
     }
@@ -60,7 +60,7 @@ extension Binary.ASCII.Base62 {
     @inlinable
     public static func isDigit(
         _ byte: UInt8,
-        using alphabet: Base62_Primitives.Alphabet = .default
+        using alphabet: Binary.Base.`62`.Alphabet = .default
     ) -> Bool {
         alphabet.isValid(byte)
     }
