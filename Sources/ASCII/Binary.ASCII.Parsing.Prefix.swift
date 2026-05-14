@@ -1,6 +1,5 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
-internal import Serialization_Primitives
 
 extension Binary.ASCII.Parsing {
     /// Capability wrapper for prefix ASCII parsing.

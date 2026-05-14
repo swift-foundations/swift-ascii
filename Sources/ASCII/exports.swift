@@ -7,4 +7,3 @@
 @_exported public import Binary_Primitives
 @_exported public import Binary_ASCII_Serializable_Primitives
 internal import Parser_Primitives
-@_exported public import Serialization_Primitives
