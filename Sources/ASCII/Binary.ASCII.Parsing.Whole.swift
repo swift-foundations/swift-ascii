@@ -7,7 +7,7 @@ extension Binary.ASCII.Parsing {
     /// Wraps a parser and provides `call` methods that parse entire input,
     /// failing if any bytes remain. Uses borrowed fast paths when available.
     public struct Whole<P: Parser.`Protocol` & Sendable>: Sendable
-    where P.Input == Binary_Parser_Primitives.Binary.Bytes.Input {
+    where P.Input == Byte.Input {
         @usableFromInline
         internal let parser: P
 

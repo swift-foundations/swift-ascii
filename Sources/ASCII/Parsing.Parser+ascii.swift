@@ -1,7 +1,7 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
 
-extension Parser.`Protocol` where Self: Sendable, Input == Binary_Parser_Primitives.Binary.Bytes.Input {
+extension Parser.`Protocol` where Self: Sendable, Input == Byte.Input {
     /// Access to ASCII parsing capabilities.
     ///
     /// Provides `whole` and `prefix` methods for parsing ASCII strings and bytes.

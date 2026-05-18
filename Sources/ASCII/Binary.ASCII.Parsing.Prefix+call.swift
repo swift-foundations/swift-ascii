@@ -6,7 +6,7 @@ extension Binary.ASCII.Parsing.Prefix {
     /// Parse prefix of byte array.
     @inlinable
     public func call(_ bytes: [UInt8]) throws(P.Failure) -> (value: P.Output, count: Index<UInt8>.Count) {
-        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Binary_Parser_Primitives.Binary.Bytes.Input) throws(P.Failure) -> (value: P.Output, count: Index<UInt8>.Count) in
+        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Byte.Input) throws(P.Failure) -> (value: P.Output, count: Index<UInt8>.Count) in
             let value = try parser.parse(&input)
             return (value: value, count: input.consumedCount)
         }
