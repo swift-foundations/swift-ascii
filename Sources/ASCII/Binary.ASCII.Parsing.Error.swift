@@ -1,4 +1,5 @@
 public import Binary_Primitives
+public import Byte_Primitives
 internal import Binary_Parser_Primitives
 
 extension Binary.ASCII.Parsing {
@@ -7,6 +8,6 @@ extension Binary.ASCII.Parsing {
         /// Input was not fully consumed.
         ///
         /// - Parameter remaining: Count of bytes (UTF-8 code units) remaining, not characters.
-        case end(remaining: Index<UInt8>.Count)
+        case end(remaining: Index<Byte>.Count)
     }
 }
