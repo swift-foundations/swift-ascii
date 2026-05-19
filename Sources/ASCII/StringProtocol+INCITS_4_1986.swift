@@ -219,6 +219,9 @@ extension StringProtocol {
     /// - Parameter value: Any type conforming to Binary.ASCII.Serializable
     @_transparent
     public init<T: Binary.ASCII.Serializable>(_ value: T) {
-        self = Self(decoding: value.bytes, as: UTF8.self)
+        // String(decoding:as:) stays UInt8 (stdlib idiom); cross the byte-domain
+        // boundary via the BSLI Sequence.underlying: [UInt8] accessor.
+        let typed: [Byte] = value.bytes
+        self = Self(decoding: typed.underlying, as: UTF8.self)
     }
 }
