@@ -8,7 +8,7 @@ extension Binary.ASCII.Parsing.Prefix {
     public func call(_ bytes: [UInt8]) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) {
         try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Byte.Input) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) in
             let value = try parser.parse(&input)
-            return (value: value, count: input.consumed.retag(Byte.self))
+            return (value: value, count: input.consumed)
         }
     }
 

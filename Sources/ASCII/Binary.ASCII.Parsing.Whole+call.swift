@@ -16,7 +16,7 @@ extension Binary.ASCII.Parsing.Whole {
             if input.isEmpty {
                 return value
             }
-            throw Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count.retag(Byte.self)))
+            throw Either<P.Failure, Binary.ASCII.Parsing.Error>.right(.end(remaining: input.count))
         }
     }
 

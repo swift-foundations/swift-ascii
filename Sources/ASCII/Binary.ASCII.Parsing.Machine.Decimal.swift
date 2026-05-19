@@ -55,7 +55,7 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
                 guard byte >= 0x30 && byte <= 0x39 else {
                     throw .predicateFailed(byte: byte)
                 }
-                return T(byte - 0x30)
+                return T(byte.underlying - 0x30)
             }, in: &builder)
 
             // Fold additional digits, tracking multiplier for final combination
@@ -116,7 +116,7 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
                 guard byte >= 0x30 && byte <= 0x39 else {
                     throw .predicateFailed(byte: byte)
                 }
-                return T(byte - 0x30)
+                return T(byte.underlying - 0x30)
             }, in: &builder)
 
             // Fold additional digits, tracking multiplier for final combination
