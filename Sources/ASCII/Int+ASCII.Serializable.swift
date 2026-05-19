@@ -2,6 +2,12 @@
 // swift-ascii
 //
 // Binary.ASCII.Serializable conformances for integer types
+//
+// Substrate per the ASCII-domain retyping arc (2026-05-19): conformance
+// signatures use `Buffer.Element == Byte` / `Bytes.Element == Byte`. The
+// internal parseSigned/parseUnsigned helpers type-up at the entry boundary
+// to `ASCII.Code` so the body works against ASCII.Code constants directly
+// (decimal grammar is strict ASCII).
 
 public import INCITS_4_1986
 
@@ -21,8 +27,8 @@ extension Binary.ASCII.Decimal {
         ///
         /// - Parameters:
         ///   - position: Zero-based index where the invalid byte was found.
-        ///   - found: The actual byte value encountered.
-        case invalidByte(position: Int, found: UInt8)
+        ///   - found: The actual byte value encountered (ASCII-domain code).
+        case invalidByte(position: Int, found: ASCII.Code)
     }
 }
 
@@ -33,35 +39,35 @@ extension Binary.ASCII.Decimal {
     @inlinable
     internal static func parseSigned<T: SignedInteger & FixedWidthInteger, Bytes: Collection>(
         _ bytes: Bytes
-    ) throws(Error) -> T where Bytes.Element == UInt8 {
+    ) throws(Error) -> T where Bytes.Element == Byte {
+        // Type-up: lift to ASCII.Code at the entry boundary so the body works
+        // against ASCII.Code constants directly (decimal grammar is strict ASCII;
+        // non-ASCII bytes are fail-state).
+        let arr = Array<ASCII.Code>(bytes)
         var result: T = 0
         var isNegative = false
-        var index = bytes.startIndex
-        var position = 0
+        var index = 0
 
         // Handle sign
-        if index < bytes.endIndex {
-            let first = bytes[index]
-            if first == INCITS_4_1986.Character.Graphic.hyphen {
+        if index < arr.count {
+            let first = arr[index]
+            if first == .hyphen {
                 isNegative = true
-                index = bytes.index(after: index)
-                position += 1
-            } else if first == INCITS_4_1986.Character.Graphic.plusSign {
-                index = bytes.index(after: index)
-                position += 1
+                index += 1
+            } else if first == .plusSign {
+                index += 1
             }
         }
 
-        guard index < bytes.endIndex else { throw .empty }
+        guard index < arr.count else { throw .empty }
 
-        while index < bytes.endIndex {
-            let byte = bytes[index]
-            guard let digit = INCITS_4_1986.Numeric.Parsing.digit(byte) else {
-                throw .invalidByte(position: position, found: byte)
+        while index < arr.count {
+            let code = arr[index]
+            guard let digit = code.digitValue else {
+                throw .invalidByte(position: index, found: code)
             }
             result = result * 10 + T(digit)
-            index = bytes.index(after: index)
-            position += 1
+            index += 1
         }
 
         return isNegative ? -result : result
@@ -71,27 +77,26 @@ extension Binary.ASCII.Decimal {
     @inlinable
     internal static func parseUnsigned<T: UnsignedInteger & FixedWidthInteger, Bytes: Collection>(
         _ bytes: Bytes
-    ) throws(Error) -> T where Bytes.Element == UInt8 {
+    ) throws(Error) -> T where Bytes.Element == Byte {
+        // Type-up: lift to ASCII.Code at the entry boundary.
+        let arr = Array<ASCII.Code>(bytes)
         var result: T = 0
-        var index = bytes.startIndex
-        var position = 0
+        var index = 0
 
         // Handle optional plus sign
-        if index < bytes.endIndex && bytes[index] == INCITS_4_1986.Character.Graphic.plusSign {
-            index = bytes.index(after: index)
-            position += 1
+        if index < arr.count && arr[index] == .plusSign {
+            index += 1
         }
 
-        guard index < bytes.endIndex else { throw .empty }
+        guard index < arr.count else { throw .empty }
 
-        while index < bytes.endIndex {
-            let byte = bytes[index]
-            guard let digit = INCITS_4_1986.Numeric.Parsing.digit(byte) else {
-                throw .invalidByte(position: position, found: byte)
+        while index < arr.count {
+            let code = arr[index]
+            guard let digit = code.digitValue else {
+                throw .invalidByte(position: index, found: code)
             }
             result = result * 10 + T(digit)
-            index = bytes.index(after: index)
-            position += 1
+            index += 1
         }
 
         return result
@@ -107,15 +112,20 @@ extension Int: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii value: Int,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+    ) where Buffer.Element == Byte {
+        // INCITS_4_1986.Numeric.Serialization.serializeDecimal targets a
+        // `Buffer.Element == UInt8` substrate; bridge to the Byte-typed
+        // buffer via BSLI's `append(contentsOf: <UInt8>)` overload.
+        var byteBuffer: [UInt8] = []
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
+        buffer.append(contentsOf: byteBuffer)
     }
 
     @inlinable
     public init<Bytes: Collection>(
         ascii bytes: Bytes,
         in context: Void
-    ) throws(Error) where Bytes.Element == UInt8 {
+    ) throws(Error) where Bytes.Element == Byte {
         self = try Binary.ASCII.Decimal.parseSigned(bytes)
     }
 }
@@ -127,15 +137,17 @@ extension Int64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii value: Int64,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+    ) where Buffer.Element == Byte {
+        var byteBuffer: [UInt8] = []
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
+        buffer.append(contentsOf: byteBuffer)
     }
 
     @inlinable
     public init<Bytes: Collection>(
         ascii bytes: Bytes,
         in context: Void
-    ) throws(Error) where Bytes.Element == UInt8 {
+    ) throws(Error) where Bytes.Element == Byte {
         self = try Binary.ASCII.Decimal.parseSigned(bytes)
     }
 }
@@ -149,15 +161,17 @@ extension UInt: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii value: UInt,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+    ) where Buffer.Element == Byte {
+        var byteBuffer: [UInt8] = []
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
+        buffer.append(contentsOf: byteBuffer)
     }
 
     @inlinable
     public init<Bytes: Collection>(
         ascii bytes: Bytes,
         in context: Void
-    ) throws(Error) where Bytes.Element == UInt8 {
+    ) throws(Error) where Bytes.Element == Byte {
         self = try Binary.ASCII.Decimal.parseUnsigned(bytes)
     }
 }
@@ -169,15 +183,17 @@ extension UInt64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
     public static func serialize<Buffer: RangeReplaceableCollection>(
         ascii value: UInt64,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+    ) where Buffer.Element == Byte {
+        var byteBuffer: [UInt8] = []
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
+        buffer.append(contentsOf: byteBuffer)
     }
 
     @inlinable
     public init<Bytes: Collection>(
         ascii bytes: Bytes,
         in context: Void
-    ) throws(Error) where Bytes.Element == UInt8 {
+    ) throws(Error) where Bytes.Element == Byte {
         self = try Binary.ASCII.Decimal.parseUnsigned(bytes)
     }
 }

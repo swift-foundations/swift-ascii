@@ -5,6 +5,8 @@
 //  Tests demonstrating the Binary.ASCII.Serializable protocol
 //  with both context-free and context-dependent parsing.
 //
+//  Substrate per the ASCII-domain retyping arc (2026-05-19): conformer
+//  signatures use Bytes.Element == Byte / Buffer.Element == Byte.
 
 import Binary_Primitives
 import ASCII
@@ -54,12 +56,12 @@ extension Token: Binary.ASCII.Serializable {
 
     // Context == Void (default), so we implement init(ascii:in:) with Void context
     init<Bytes: Collection>(ascii bytes: Bytes, in context: Void) throws(Error)
-    where Bytes.Element == UInt8 {
+    where Bytes.Element == Byte {
         try self.init(String(decoding: bytes, as: UTF8.self))
     }
 
     static func serialize<Buffer>(ascii token: Self, into buffer: inout Buffer)
-    where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
+    where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         buffer.append(contentsOf: token.rawValue.utf8)
     }
 }
@@ -95,10 +97,11 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
     //    }
 
     internal static func serialize<Buffer>(ascii message: Self, into buffer: inout Buffer)
-    where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
+    where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         for (index, part) in message.parts.enumerated() {
             if index > 0 {
-                buffer.append(message.delimiter)
+                // delimiter is UInt8 arithmetic-domain; wrap to byte-domain for append.
+                buffer.append(Byte(message.delimiter))
             }
             buffer.append(contentsOf: part.utf8)
         }
@@ -114,7 +117,7 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
     }
 
     init<Bytes: Collection>(ascii bytes: Bytes, in context: Context) throws(Error)
-    where Bytes.Element == UInt8 {
+    where Bytes.Element == Byte {
         guard !bytes.isEmpty else { throw .empty }
 
         // Split on delimiter
@@ -122,11 +125,13 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
         var current: [UInt8] = []
 
         for byte in bytes {
-            if byte == context.delimiter {
+            // audit: underlying — bridge byte-domain element to UInt8 arithmetic
+            // delimiter for comparison (delimiter is UInt8 in this test type).
+            if byte.underlying == context.delimiter {
                 parts.append(String(decoding: current, as: UTF8.self))
                 current = []
             } else {
-                current.append(byte)
+                current.append(byte.underlying)
             }
         }
         // Add final part
@@ -145,7 +150,7 @@ extension DelimitedMessage: CustomStringConvertible {}
 struct ContextFreeSerializableTests {
     @Test
     func `Parse from bytes using init(ascii:)`() throws {
-        let bytes: [UInt8] = Array("hello-world".utf8)
+        let bytes: [Byte] = Array<Byte>("hello-world".utf8)
         let token: Token = try .init(ascii: bytes)
 
         #expect(token.rawValue == "hello-world")
@@ -153,7 +158,7 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Parse from bytes using init(ascii:in:) with Void`() throws {
-        let bytes: [UInt8] = Array("test123".utf8)
+        let bytes: [Byte] = Array<Byte>("test123".utf8)
         let token: Token = try .init(ascii: bytes, in: ())
 
         #expect(token.rawValue == "test123")
@@ -177,7 +182,9 @@ struct ContextFreeSerializableTests {
     func `Serialize to bytes`() throws {
         let token: Token = try .init("hello")
 
-        #expect(Token.serialize(token) == Array("hello".utf8))
+        // `Token.serialize(_:)` (from `Binary.Serializable`) returns `[UInt8]`.
+        let serialized: [UInt8] = Token.serialize(token)
+        #expect(serialized == Array("hello".utf8))
     }
 
     @Test
@@ -189,10 +196,12 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Round-trip: bytes → Token → bytes`() throws {
-        let original: [UInt8] = Array("round-trip".utf8)
+        let original: [Byte] = Array<Byte>("round-trip".utf8)
         let token: Token = try .init(ascii: original)
 
-        #expect(Token.serialize(token) == original)
+        // ASCII-typed serialize returns [Byte]
+        let serialized: [Byte] = Token.serialize(ascii: token)
+        #expect(serialized == original)
     }
 
     @Test
@@ -206,7 +215,7 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Invalid input throws error`() {
-        let bytes: [UInt8] = Array("hello world".utf8)  // space is invalid
+        let bytes: [Byte] = Array<Byte>("hello world".utf8)  // space is invalid
 
         #expect(throws: Token.Error.self) {
             try Token(ascii: bytes)
@@ -215,7 +224,7 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Empty input throws error`() {
-        let bytes: [UInt8] = []
+        let bytes: [Byte] = []
 
         #expect(throws: Token.Error.empty) {
             try Token(ascii: bytes)
@@ -229,7 +238,7 @@ struct ContextFreeSerializableTests {
 struct ContextDependentSerializableTests {
     @Test
     func `Parse with context using init(ascii:in:)`() throws {
-        let bytes: [UInt8] = Array("foo|bar|baz".utf8)
+        let bytes: [Byte] = Array<Byte>("foo|bar|baz".utf8)
         let context = DelimitedMessage.Context(delimiter: .ascii.verticalLine)
 
         let message = try DelimitedMessage(ascii: bytes, in: context)
@@ -240,7 +249,7 @@ struct ContextDependentSerializableTests {
 
     @Test
     func `Different delimiters produce different parses`() throws {
-        let bytes: [UInt8] = Array("a,b|c".utf8)
+        let bytes: [Byte] = Array<Byte>("a,b|c".utf8)
 
         // Parse with comma delimiter
         let commaContext = DelimitedMessage.Context(delimiter: .ascii.comma)
@@ -261,17 +270,21 @@ struct ContextDependentSerializableTests {
             delimiter: .ascii.hyphen
         )
 
-        #expect(DelimitedMessage.serialize(message) == Array("hello-world".utf8))
+        // `DelimitedMessage.serialize(_:)` (Binary.Serializable bridge) returns `[UInt8]`.
+        let serialized: [UInt8] = DelimitedMessage.serialize(message)
+        #expect(serialized == Array("hello-world".utf8))
     }
 
     @Test
     func `Round-trip: bytes → Message → bytes`() throws {
-        let original: [UInt8] = Array("one:two:three".utf8)
+        let original: [Byte] = Array<Byte>("one:two:three".utf8)
         let context = DelimitedMessage.Context(delimiter: .ascii.colon)
 
         let message = try DelimitedMessage(ascii: original, in: context)
 
-        #expect(DelimitedMessage.serialize(message) == original)
+        // ASCII-typed serialize returns [Byte]
+        let serialized: [Byte] = DelimitedMessage.serialize(ascii: message)
+        #expect(serialized == original)
     }
 
     @Test
@@ -289,7 +302,7 @@ struct ContextDependentSerializableTests {
 
     @Test
     func `Empty input throws error`() {
-        let bytes: [UInt8] = []
+        let bytes: [Byte] = []
         let context = DelimitedMessage.Context(delimiter: .ascii.comma)
 
         #expect(throws: DelimitedMessage.Error.empty) {
@@ -305,7 +318,7 @@ struct ContextDependentSerializableTests {
         // let message = try DelimitedMessage("a,b,c")  // Error: no context!
 
         // Instead, you must provide context:
-        let bytes: [UInt8] = Array("a,b,c".utf8)
+        let bytes: [Byte] = Array<Byte>("a,b,c".utf8)
         let context = DelimitedMessage.Context(delimiter: .ascii.comma)
         let message = try? DelimitedMessage(ascii: bytes, in: context)
 
@@ -324,7 +337,7 @@ struct CategoryTheoryTests {
         // A function (Void × A) → B is isomorphic to A → B
 
         // For context-free types, init(ascii:in:()) ≅ init(ascii:)
-        let bytes: [UInt8] = Array("test".utf8)
+        let bytes: [Byte] = Array<Byte>("test".utf8)
 
         // Both should produce identical results:
         let viaConvenience = try? Token(ascii: bytes)
@@ -345,16 +358,18 @@ struct CategoryTheoryTests {
         )
 
         // Serialize without needing any context:
-        #expect(DelimitedMessage.serialize(message) == Array("x,y".utf8))
+        let serialized: [UInt8] = DelimitedMessage.serialize(message)
+        #expect(serialized == Array("x,y".utf8))
     }
 
     @Test
     func `Parse-serialize round-trip is identity (for well-formed input)`() throws {
         // For well-formed input, parse ∘ serialize = id
-        let original: [UInt8] = Array("valid-token".utf8)
+        let original: [Byte] = Array<Byte>("valid-token".utf8)
 
         let token: Token = try .init(ascii: original)
-        #expect(Token.serialize(token) == original)
+        let serialized: [Byte] = Token.serialize(ascii: token)
+        #expect(serialized == original)
     }
 }
 
@@ -362,6 +377,10 @@ struct CategoryTheoryTests {
 
 /// Example HTML-like element that composes with ASCII.Serializable types.
 /// Demonstrates how streaming types can embed RFC/ASCII types seamlessly.
+///
+/// `HTMLAnchor` is a pure `Binary.Serializable` (UInt8 substrate). It calls
+/// the UInt8-bridged `Binary.Serializable.serialize(_:into:)` form on `href`
+/// to avoid mixing byte-domain substrates within a single UInt8 buffer.
 private struct HTMLAnchor: Binary.Serializable {
     let href: Token
     let text: String
@@ -369,7 +388,9 @@ private struct HTMLAnchor: Binary.Serializable {
     static func serialize<Buffer>(_ anchor: Self, into buffer: inout Buffer)
     where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
         buffer.append(contentsOf: "<a href=\"".utf8)
-        anchor.href.ascii.serialize(into: &buffer)  // Token conforms via ASCII.Serializable
+        // Use Binary.Serializable bridge path (UInt8 substrate) since the
+        // composing buffer is UInt8-typed.
+        Token.serialize(anchor.href, into: &buffer)
         buffer.append(contentsOf: "\">".utf8)
         buffer.append(contentsOf: anchor.text.utf8)
         buffer.append(contentsOf: "</a>".utf8)
@@ -385,11 +406,12 @@ struct StreamingConformanceTests {
     func `ASCII.Serializable types automatically conform to Binary.Serializable`() throws {
         let token: Token = try .init("my-token")
 
-        // Token conforms to Binary.Serializable via ASCII.Serializable
-        var buffer: [UInt8] = []
+        // Token conforms to Binary.Serializable via ASCII.Serializable.
+        // The ASCII wrapper path uses the Byte substrate.
+        var buffer: [Byte] = []
         token.ascii.serialize(into: &buffer)
 
-        #expect(buffer == Array("my-token".utf8))
+        #expect(buffer == Array<Byte>("my-token".utf8))
     }
 
     @Test
@@ -401,10 +423,10 @@ struct StreamingConformanceTests {
         )
 
         // DelimitedMessage conforms to Binary.Serializable via ASCII.Serializable
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         message.ascii.serialize(into: &buffer)
 
-        #expect(buffer == Array("a,b,c".utf8))
+        #expect(buffer == Array<Byte>("a,b,c".utf8))
     }
 
     // MARK: - Buffer-Based Serialization
@@ -413,19 +435,19 @@ struct StreamingConformanceTests {
     func `Serialize into buffer using serialize(into:)`() throws {
         let token: Token = try .init("hello-world")
 
-        // Ideal streaming usage pattern
-        var buffer: [UInt8] = []
+        // Ideal streaming usage pattern (ASCII substrate, [Byte] buffer).
+        var buffer: [Byte] = []
         token.ascii.serialize(into: &buffer)
 
-        #expect(buffer == Array("hello-world".utf8))
+        #expect(buffer == Array<Byte>("hello-world".utf8))
     }
 
     @Test
     func `Get bytes using .bytes property`() throws {
         let token: Token = try .init("swift-token")
 
-        // Convenience property from Binary.Serializable
-        let bytes = token.bytes
+        // Convenience property from Binary.Serializable (UInt8 bridge).
+        let bytes: [UInt8] = token.bytes
 
         #expect(bytes == Array("swift-token".utf8))
     }
@@ -434,10 +456,10 @@ struct StreamingConformanceTests {
     func `Append to existing buffer content`() throws {
         let token: Token = try .init("suffix")
 
-        var buffer: [UInt8] = Array("prefix-".utf8)
+        var buffer: [Byte] = Array<Byte>("prefix-".utf8)
         token.ascii.serialize(into: &buffer)
 
-        #expect(buffer == Array("prefix-suffix".utf8))
+        #expect(buffer == Array<Byte>("prefix-suffix".utf8))
     }
 
     // MARK: - Composition with Streaming Types
@@ -464,27 +486,27 @@ struct StreamingConformanceTests {
             delimiter: .ascii.colon
         )
 
-        // Accumulate all into one buffer
-        var buffer: [UInt8] = []
+        // Accumulate all into one buffer ([Byte] for ASCII substrate)
+        var buffer: [Byte] = []
         token1.ascii.serialize(into: &buffer)
-        buffer.append(UInt8(ascii: "-"))
+        buffer.append(Byte.ascii.hyphen)
         token2.ascii.serialize(into: &buffer)
-        buffer.append(UInt8(ascii: "|"))
+        buffer.append(Byte.ascii.verticalLine)
         message.ascii.serialize(into: &buffer)
 
-        #expect(buffer == Array("first-second|a:b".utf8))
+        #expect(buffer == Array<Byte>("first-second|a:b".utf8))
     }
 
     @Test
     func `Pre-allocate buffer for efficiency`() throws {
         let tokens = try (1...10).map { try Token("token-\($0)") }
 
-        var buffer: [UInt8] = []
+        var buffer: [Byte] = []
         buffer.reserveCapacity(200)
 
         for (index, token) in tokens.enumerated() {
             if index > 0 {
-                buffer.append(UInt8(ascii: ","))
+                buffer.append(Byte.ascii.comma)
             }
             token.ascii.serialize(into: &buffer)
         }
@@ -500,17 +522,18 @@ struct StreamingConformanceTests {
     func `Round-trip through buffer produces same result as static serialize`() throws {
         let token: Token = try .init("roundtrip-test")
 
-        // Via static serialize
+        // Via static Binary.Serializable bridge (UInt8 substrate)
         let staticBytes: [UInt8] = Token.serialize(token)
 
-        // Via streaming serialize(into:)
-        var streamingBuffer: [UInt8] = []
+        // Via streaming serialize(into:) on ASCII substrate ([Byte])
+        var streamingBuffer: [Byte] = []
         token.ascii.serialize(into: &streamingBuffer)
 
-        // Via .bytes property
-        let propertyBytes = token.bytes
+        // Via .bytes property (Binary.Serializable, UInt8)
+        let propertyBytes: [UInt8] = token.bytes
 
-        #expect(staticBytes == streamingBuffer)
+        // Compare across substrates via underlying UInt8 reading.
+        #expect(staticBytes == Array<UInt8>(streamingBuffer))
         #expect(staticBytes == propertyBytes)
     }
 }
@@ -522,8 +545,8 @@ struct StreamingAPIPatternTests {
 
     @Test
     func `Pattern: Direct buffer writing for server response`() throws {
-        // Simulating building an HTTP-like response
-        var response: [UInt8] = []
+        // Simulating building an HTTP-like response ([Byte] for ASCII substrate)
+        var response: [Byte] = []
 
         // Add header
         response.append(contentsOf: "X-Token: ".utf8)
@@ -542,8 +565,8 @@ struct StreamingAPIPatternTests {
             text: "Visit site"
         )
 
-        // Get bytes for HTTP response
-        let bytes = anchor.bytes
+        // Get bytes for HTTP response (Binary.Serializable, [UInt8])
+        let bytes: [UInt8] = anchor.bytes
 
         // Or get String for debugging/logging
         let string = String(anchor)
@@ -554,8 +577,8 @@ struct StreamingAPIPatternTests {
 
     @Test
     func `Pattern: Reusable buffer for batch processing`() throws {
-        var buffer: [UInt8] = []
-        var results: [[UInt8]] = []
+        var buffer: [Byte] = []
+        var results: [[Byte]] = []
 
         let inputs = ["alpha", "beta", "gamma"]
 
@@ -567,9 +590,9 @@ struct StreamingAPIPatternTests {
         }
 
         #expect(results.count == 3)
-        #expect(results[0] == Array("alpha".utf8))
-        #expect(results[1] == Array("beta".utf8))
-        #expect(results[2] == Array("gamma".utf8))
+        #expect(results[0] == Array<Byte>("alpha".utf8))
+        #expect(results[1] == Array<Byte>("beta".utf8))
+        #expect(results[2] == Array<Byte>("gamma".utf8))
     }
 
     @Test
@@ -582,7 +605,8 @@ struct StreamingAPIPatternTests {
             static func serialize<Buffer>(_ doc: Self, into buffer: inout Buffer)
             where Buffer: RangeReplaceableCollection, Buffer.Element == UInt8 {
                 buffer.append(contentsOf: "<html><head><title>".utf8)
-                doc.title.ascii.serialize(into: &buffer)
+                // Binary.Serializable bridge path: UInt8 substrate.
+                Token.serialize(doc.title, into: &buffer)
                 buffer.append(contentsOf: "</title></head><body>".utf8)
                 for link in doc.links {
                     link.serialize(into: &buffer)
@@ -630,10 +654,10 @@ extension CorrectEmailAddress: Binary.ASCII.Serializable {
     }
 
     init<Bytes: Collection>(ascii bytes: Bytes, in context: Void) throws(Error)
-    where Bytes.Element == UInt8 {
+    where Bytes.Element == Byte {
         guard !bytes.isEmpty else { throw .empty }
 
-        let byteArray = Array(bytes)
+        let byteArray: [Byte] = Array(bytes)
         guard let atIndex = byteArray.firstIndex(of: .ascii.commercialAt) else {
             throw .missingAtSign
         }
@@ -653,9 +677,9 @@ extension CorrectEmailAddress: Binary.ASCII.Serializable {
     static func serialize<Buffer: RangeReplaceableCollection>(
         ascii email: Self,
         into buffer: inout Buffer
-    ) where Buffer.Element == UInt8 {
+    ) where Buffer.Element == Byte {
         buffer.append(contentsOf: email.localPart.utf8)
-        buffer.append(.ascii.commercialAt)
+        buffer.append(Byte.ascii.commercialAt)
         buffer.append(contentsOf: email.domain.utf8)
     }
 }
@@ -717,7 +741,7 @@ struct InfiniteRecursionPreventionTests {
         // These should all work without infinite recursion:
         let rawValue = email.rawValue
         let description = email.description
-        let bytes = email.bytes
+        let bytes: [UInt8] = email.bytes
 
         #expect(rawValue == "user@example.com")
         #expect(description == "user@example.com")
@@ -748,10 +772,11 @@ struct InfiniteRecursionPreventionTests {
         let email = try CorrectEmailAddress("direct@serialize.test")
 
         // serialize(ascii:into:) should work without ever touching rawValue
-        var buffer: [UInt8] = []
+        // ([Byte] for ASCII substrate)
+        var buffer: [Byte] = []
         CorrectEmailAddress.serialize(ascii: email, into: &buffer)
 
-        #expect(buffer == Array("direct@serialize.test".utf8))
+        #expect(buffer == Array<Byte>("direct@serialize.test".utf8))
     }
 
     // MARK: - API Design Guidance
@@ -771,10 +796,12 @@ struct InfiniteRecursionPreventionTests {
         #expect(email.rawValue == "checklist@test.com")
         #expect(email.description == "checklist@test.com")
         #expect(String(ascii: email) == "checklist@test.com")
-        #expect(email.bytes == Array("checklist@test.com".utf8))
+        let bytes: [UInt8] = email.bytes
+        #expect(bytes == Array("checklist@test.com".utf8))
 
-        var buffer: [UInt8] = []
+        // [Byte] for ASCII substrate
+        var buffer: [Byte] = []
         email.ascii.serialize(into: &buffer)
-        #expect(buffer == Array("checklist@test.com".utf8))
+        #expect(buffer == Array<Byte>("checklist@test.com".utf8))
     }
 }
