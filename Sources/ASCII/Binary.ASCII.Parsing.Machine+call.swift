@@ -10,7 +10,7 @@ extension Binary.ASCII.Parsing.Machine {
     /// Parse bytes using zero-copy borrowed path.
     @inlinable
     public static func parse<Output>(
-        _ bytes: [UInt8],
+        _ bytes: [Byte],
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output {
         try Binary_Parser_Primitives.Binary(bytes).parse(parser)
@@ -22,8 +22,10 @@ extension Binary.ASCII.Parsing.Machine {
         _ source: borrowing C,
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output
-    where C: ~Copyable, C.Element == UInt8 {
-        try Binary_Parser_Primitives.Binary.Borrowed(source.span).parse(parser)
+    where C: ~Copyable, C.Element == Byte {
+        let span: Span<Byte> = source.span
+        let view = Binary_Parser_Primitives.Binary.Borrowed(span)
+        return try view.parse(parser)
     }
 
     /// Parse string (UTF-8) using zero-copy borrowed path.
@@ -32,7 +34,7 @@ extension Binary.ASCII.Parsing.Machine {
         _ string: some StringProtocol,
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output {
-        let bytes: [UInt8] = .init(string.utf8)
+        let bytes: [Byte] = .init(string.utf8)
         return try parse(bytes, with: parser)
     }
 }
@@ -43,7 +45,7 @@ extension Binary.ASCII.Parsing.Machine {
     /// Parse an unsigned decimal integer from bytes.
     @inlinable
     public static func parseUnsignedDecimal<T: UnsignedInteger & FixedWidthInteger & Sendable>(
-        _ bytes: [UInt8],
+        _ bytes: [Byte],
         as type: T.Type = T.self
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(bytes, with: Decimal.unsigned(type))
@@ -61,7 +63,7 @@ extension Binary.ASCII.Parsing.Machine {
     /// Parse a signed decimal integer from bytes.
     @inlinable
     public static func parseSignedDecimal<T: SignedInteger & FixedWidthInteger & Sendable>(
-        _ bytes: [UInt8],
+        _ bytes: [Byte],
         as type: T.Type = T.self
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(bytes, with: Decimal.signed(type))

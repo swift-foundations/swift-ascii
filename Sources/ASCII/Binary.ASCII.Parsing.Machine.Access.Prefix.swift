@@ -24,7 +24,7 @@ extension Binary.ASCII.Parsing.Machine.Access {
 extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
     /// Parse prefix of byte array, returning value and consumed count.
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count) {
+    public func call(_ bytes: [Byte]) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count) {
         try Binary_Parser_Primitives.Binary(bytes).parsePrefix(parser)
     }
 
@@ -33,14 +33,14 @@ extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
     public func call<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count)
-    where C: ~Copyable, C.Element == UInt8 {
+    where C: ~Copyable, C.Element == Byte {
         try Binary_Parser_Primitives.Binary.Borrowed(source.span).parsePrefix(parser)
     }
 
     /// Parse prefix of string (UTF-8), returning value and consumed count.
     @inlinable
     public func call(_ string: some StringProtocol) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count) {
-        let bytes: [UInt8] = .init(string.utf8)
+        let bytes: [Byte] = .init(string.utf8)
         return try call(bytes)
     }
 }

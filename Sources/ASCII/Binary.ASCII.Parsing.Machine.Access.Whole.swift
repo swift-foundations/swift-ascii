@@ -24,7 +24,7 @@ extension Binary.ASCII.Parsing.Machine.Access {
 extension Binary.ASCII.Parsing.Machine.Access.Whole {
     /// Parse entire byte array.
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Binary.Machine.Fault) -> Output {
+    public func call(_ bytes: [Byte]) throws(Binary.Machine.Fault) -> Output {
         try Binary(bytes).parseWhole(parser)
     }
 
@@ -33,14 +33,14 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
     public func call<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
     ) throws(Binary.Machine.Fault) -> Output
-    where C: ~Copyable, C.Element == UInt8 {
+    where C: ~Copyable, C.Element == Byte {
         try Binary.Borrowed(source.span).parseWhole(parser)
     }
 
     /// Parse entire string (UTF-8).
     @inlinable
     public func call(_ string: some StringProtocol) throws(Binary.Machine.Fault) -> Output {
-        let bytes: [UInt8] = .init(string.utf8)
+        let bytes: [Byte] = .init(string.utf8)
         return try call(bytes)
     }
 }

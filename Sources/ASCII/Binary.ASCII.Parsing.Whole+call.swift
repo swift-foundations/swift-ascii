@@ -5,7 +5,7 @@ internal import Memory_Primitives
 extension Binary.ASCII.Parsing.Whole {
     /// Parse entire byte array.
     @inlinable
-    public func call(_ bytes: [UInt8]) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
+    public func call(_ bytes: [Byte]) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
         try Binary_Parser_Primitives.Binary.withInput(bytes) { (input: inout Byte.Input) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
@@ -25,9 +25,9 @@ extension Binary.ASCII.Parsing.Whole {
     public func call<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
-    where C: ~Copyable, C.Element == UInt8 {
-        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<UInt8>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
-            let bytes: [UInt8] = unsafe .init(buffer)
+    where C: ~Copyable, C.Element == Byte {
+        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Byte>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+            let bytes: [Byte] = unsafe .init(buffer)
             return try call(bytes)
         }
     }
@@ -37,7 +37,7 @@ extension Binary.ASCII.Parsing.Whole {
     public func call(
         _ string: some StringProtocol
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        let bytes: [UInt8] = .init(string.utf8)
+        let bytes: [Byte] = .init(string.utf8)
         return try call(bytes)
     }
 }
