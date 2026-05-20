@@ -1,7 +1,15 @@
 // INCITS_4_1986.SPACE Tests.swift
 // swift-incits-4-1986
 //
-// Tests for INCITS_4_1986.SPACE character
+// Tests for INCITS_4_1986.SPACE character.
+//
+// Substrate per the ASCII-domain retyping arc (2026-05-19):
+// `UInt8.ascii.sp` resolves to `ASCII.Code` (per
+// `swift-ascii-primitives/UInt8+ASCII.swift` — `UInt8.ascii` is
+// `ASCII.Code.Type`, so `.sp` returns the `ASCII.Code` constant). The
+// classification predicates (`isWhitespace`, `isPrintable`, …) live
+// directly on `ASCII.Code` per `ASCII.Code+Classification.swift`, so
+// the test calls drop the `.ascii` step.
 
 import Testing
 @testable import ASCII
@@ -21,25 +29,25 @@ struct SPACE {
         @Test
         func `SPACE is recognized as whitespace`() {
             let sp = UInt8.ascii.sp
-            #expect(sp.ascii.isWhitespace)
+            #expect(sp.isWhitespace)
         }
 
         @Test
         func `SPACE is printable`() {
             let sp = UInt8.ascii.sp
-            #expect(sp.ascii.isPrintable)
+            #expect(sp.isPrintable)
         }
 
         @Test
         func `SPACE is not a control character`() {
             let sp = UInt8.ascii.sp
-            #expect(!sp.ascii.isControl)
+            #expect(!sp.isControl)
         }
 
         @Test
         func `SPACE is not visible (visible = graphic characters only)`() {
             let sp = UInt8.ascii.sp
-            #expect(!sp.ascii.isVisible, "SPACE is printable but not visible (visible = 0x21-0x7E)")
+            #expect(!sp.isVisible, "SPACE is printable but not visible (visible = 0x21-0x7E)")
         }
 
         @Test
@@ -65,7 +73,7 @@ struct SPACE {
 //        func `SPACE whitespace check 1M times`() {
 //            let sp = UInt8.ascii.sp
 //            for _ in 0..<1_000_000 {
-//                _ = sp.ascii.isWhitespace
+//                _ = sp.isWhitespace
 //            }
 //        }
 //    }
