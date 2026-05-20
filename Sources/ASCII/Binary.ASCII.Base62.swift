@@ -21,17 +21,17 @@ extension Binary.ASCII {
     ///
     /// ```swift
     /// // Standard alphabet: 0-9 → 0-9, A-Z → 10-35, a-z → 36-61
-    /// Binary.ASCII.Base62.digit(UInt8.ascii.A)                   // 10
-    /// Binary.ASCII.Base62.digit(UInt8.ascii.a)                   // 36
-    /// Binary.ASCII.Base62.digit(UInt8.ascii.exclamationPoint)    // nil
+    /// Binary.ASCII.Base62.digit(Byte(0x41))                  // 10  ('A')
+    /// Binary.ASCII.Base62.digit(Byte(0x61))                  // 36  ('a')
+    /// Binary.ASCII.Base62.digit(Byte(0x21))                  // nil ('!')
     ///
     /// // GMP alphabet: A-Z → 0-25, a-z → 26-51, 0-9 → 52-61
-    /// Binary.ASCII.Base62.digit(UInt8.ascii.A, using: .gmp)     // 0
-    /// Binary.ASCII.Base62.digit(UInt8.ascii.`0`, using: .gmp)   // 52
+    /// Binary.ASCII.Base62.digit(Byte(0x41), using: .gmp)     // 0   ('A')
+    /// Binary.ASCII.Base62.digit(Byte(0x30), using: .gmp)     // 52  ('0')
     ///
     /// // Validation
-    /// Binary.ASCII.Base62.isDigit(UInt8.ascii.A)                 // true
-    /// Binary.ASCII.Base62.isDigit(UInt8.ascii.exclamationPoint)  // false
+    /// Binary.ASCII.Base62.isDigit(Byte(0x41))                // true  ('A')
+    /// Binary.ASCII.Base62.isDigit(Byte(0x21))                // false ('!')
     /// ```
     public enum Base62 {}
 }
@@ -45,7 +45,7 @@ extension Binary.ASCII.Base62 {
     /// - Returns: The digit value (0-61), or `nil` if byte is not a valid Base62 digit.
     @inlinable
     public static func digit(
-        _ byte: UInt8,
+        _ byte: Byte,
         using alphabet: Binary.Base.`62`.Alphabet = .default
     ) -> UInt8? {
         alphabet.decode(byte)
@@ -59,7 +59,7 @@ extension Binary.ASCII.Base62 {
     /// - Returns: `true` if the byte is valid in the specified alphabet.
     @inlinable
     public static func isDigit(
-        _ byte: UInt8,
+        _ byte: Byte,
         using alphabet: Binary.Base.`62`.Alphabet = .default
     ) -> Bool {
         alphabet.isValid(byte)
