@@ -33,10 +33,10 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
         }
 
         @Test
-        func `line ending round-trip through bytes`() {
+        func `line ending round-trip through codes`() {
             for ending in [INCITS_4_1986.FormatEffectors.Line.Ending.lf, .cr, .crlf] {
                 let codes = [ASCII.Code](ascii: ending)
-                let string = String(ascii: [Byte](codes))!
+                let string = String(ascii: codes)
                 let expectedString = String(ascii: ending)
                 #expect(string == expectedString)
             }

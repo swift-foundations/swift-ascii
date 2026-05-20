@@ -18,7 +18,7 @@ struct `String Tests` {
         @Test
         func `string has ascii conversion method`() {
             let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
-            let string = String(ascii: [Byte](codes))
+            let string = String(ascii: codes)
             #expect(string == "Hello")
         }
 

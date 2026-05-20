@@ -187,11 +187,31 @@ extension StringProtocol {
         // [Byte] is the byte-domain substrate; bytes may be non-ASCII,
         // so this validation is the load-bearing fallibility. Callers
         // with [ASCII.Code] (whose type-level invariant already
-        // guarantees 0x00–0x7F) should bypass this and use
-        // `String(decoding: codes.lazy.map(\.underlying), as: UTF8.self)`
-        // directly.
+        // guarantees 0x00–0x7F) should reach for the non-failable
+        // ``init(ascii:)-[ASCII.Code]`` overload below.
         guard bytes.allSatisfy({ $0.underlying < 0x80 }) else { return nil }
         self.init(decoding: bytes.lazy.map(\.underlying), as: UTF8.self)
+    }
+
+    /// Creates a string from a sequence of `ASCII.Code` values.
+    ///
+    /// Non-failable — `ASCII.Code` carries its 7-bit ASCII range as a
+    /// type-system invariant, so no per-element validation is needed.
+    /// Sibling of the fallible ``init(ascii:)-[Byte]`` overload; consumers
+    /// holding `[ASCII.Code]` (e.g., from a successful `try [ASCII.Code](bytes)`
+    /// lift or from named-constant literals like `[.H, .e, .l, .l, .o]`)
+    /// should reach for this overload directly without the explicit
+    /// `[Byte](codes)` bridge.
+    ///
+    /// ## Usage
+    ///
+    /// ```swift
+    /// let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
+    /// let s = String(ascii: codes)  // "Hello"
+    /// ```
+    @inlinable
+    public init<Codes: Sequence>(ascii codes: Codes) where Codes.Element == ASCII_Primitives.ASCII.Code {
+        self.init(decoding: codes.lazy.map(\.underlying), as: UTF8.self)
     }
 
     /// Creates a single-character string from an ASCII byte with validation

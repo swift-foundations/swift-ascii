@@ -117,7 +117,7 @@ struct `StringProtocol+INCITS_4_1986 Tests` {
         @Test
         func `ascii(_:) creates string from valid ASCII bytes`() {
             let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
-            #expect(String(ascii: [Byte](codes)) == "Hello")
+            #expect(String(ascii: codes) == "Hello")
         }
 
         @Test
