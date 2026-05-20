@@ -125,8 +125,8 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
         var current: [UInt8] = []
 
         for byte in bytes {
-            // audit: underlying — bridge byte-domain element to UInt8 arithmetic
-            // delimiter for comparison (delimiter is UInt8 in this test type).
+            // Delimiter is UInt8 in this test type; bridge byte-domain element
+            // to UInt8 for arithmetic-domain equality.
             if byte.underlying == context.delimiter {
                 parts.append(String(decoding: current, as: UTF8.self))
                 current = []
