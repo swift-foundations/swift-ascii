@@ -4,7 +4,7 @@ internal import Memory_Primitives
 
 extension Binary.ASCII.Access {
     @inlinable
-    public func whole(_ bytes: [UInt8]) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
+    public func whole(_ bytes: [Byte]) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
         try Binary.ASCII.Parsing.Whole(parser).call(bytes)
     }
 
@@ -12,7 +12,7 @@ extension Binary.ASCII.Access {
     public func whole<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
-    where C: ~Copyable, C.Element == UInt8 {
+    where C: ~Copyable, C.Element == Byte {
         try Binary.ASCII.Parsing.Whole(parser).call(source)
     }
 

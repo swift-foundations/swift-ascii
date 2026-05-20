@@ -6,6 +6,7 @@
 //
 
 public import Binary_Primitives
+public import ASCII_Primitives
 
 extension StringProtocol {
     public typealias ASCII = INCITS_4_1986.ASCII<Self>
@@ -172,9 +173,16 @@ extension StringProtocol {
     ///
     /// - ``String/ascii/unchecked(_:)``
     /// - ``INCITS_4_1986``
-    public init?(ascii bytes: [UInt8]) {
-        guard bytes.ascii.isAllASCII else { return nil }
-        self.init(decoding: bytes, as: UTF8.self)
+    public init?(ascii bytes: [Byte]) {
+        // Validate each byte is in the 7-bit ASCII range (0x00–0x7F).
+        // [Byte] is the byte-domain substrate; bytes may be non-ASCII,
+        // so this validation is the load-bearing fallibility. Callers
+        // with [ASCII.Code] (whose type-level invariant already
+        // guarantees 0x00–0x7F) should bypass this and use
+        // `String(decoding: codes.lazy.map(\.underlying), as: UTF8.self)`
+        // directly.
+        guard bytes.allSatisfy({ $0.underlying < 0x80 }) else { return nil }
+        self.init(decoding: bytes.lazy.map(\.underlying), as: UTF8.self)
     }
 
     /// Creates a single-character string from an ASCII byte with validation

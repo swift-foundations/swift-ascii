@@ -3,6 +3,9 @@
 ///
 /// Bridges ASCII.Code (Layer 1) to INCITS 4-1986 case conversion (Layer 3).
 
+public import ASCII_Primitives
+public import ASCII_Primitives_Standard_Library_Integration
+
 extension ASCII.Code {
     /// Converts ASCII letter to specified case via call syntax.
     ///

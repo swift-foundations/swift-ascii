@@ -10,6 +10,7 @@
 // (decimal grammar is strict ASCII).
 
 public import INCITS_4_1986
+public import ASCII_Primitives_Standard_Library_Integration
 
 // MARK: - Decimal Namespace
 

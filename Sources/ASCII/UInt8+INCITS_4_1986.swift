@@ -7,6 +7,7 @@
 // For ASCII constants, use UInt8.ascii namespace (see UInt8+ASCII.swift)
 
 public import Binary_Primitives
+public import ASCII_Primitives_Standard_Library_Integration
 import Standard_Library_Extensions
 
 // MARK: - Character to Byte Conversion

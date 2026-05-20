@@ -4,7 +4,7 @@ internal import Memory_Primitives
 
 extension Binary.ASCII.Access where P.Output: Sendable {
     @inlinable
-    public func prefix(_ bytes: [UInt8]) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) {
+    public func prefix(_ bytes: [Byte]) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) {
         try Binary.ASCII.Parsing.Prefix(parser).call(bytes)
     }
 
@@ -12,7 +12,7 @@ extension Binary.ASCII.Access where P.Output: Sendable {
     public func prefix<C: Memory.Contiguous.`Protocol`>(
         _ source: borrowing C
     ) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count)
-    where C: ~Copyable, C.Element == UInt8 {
+    where C: ~Copyable, C.Element == Byte {
         try Binary.ASCII.Parsing.Prefix(parser).call(source)
     }
 
