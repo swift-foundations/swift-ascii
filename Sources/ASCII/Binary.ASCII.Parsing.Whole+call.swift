@@ -6,7 +6,7 @@ extension Binary.ASCII.Parsing.Whole {
     /// Parse entire byte array.
     @inlinable
     public func call(_ bytes: [UInt8]) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output {
-        try Binary_Parser_Primitives.Binary.Bytes.withInput(bytes) { (input: inout Byte.Input) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+        try Binary_Parser_Primitives.Binary.withInput(bytes) { (input: inout Byte.Input) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let value: P.Output
             do throws(P.Failure) {
                 value = try parser.parse(&input)

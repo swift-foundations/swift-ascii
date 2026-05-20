@@ -11,27 +11,27 @@ extension Binary.ASCII.Parsing.Machine {
     @inlinable
     public static func parse<Output>(
         _ bytes: [UInt8],
-        with parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> Output {
-        try Binary_Parser_Primitives.Binary.Bytes.withBorrowed(bytes, parser)
+        with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output {
+        try Binary_Parser_Primitives.Binary(bytes).parse(parser)
     }
 
     /// Parse contiguous storage using zero-copy borrowed path.
     @inlinable
     public static func parse<C: Memory.Contiguous.`Protocol`, Output>(
         _ source: borrowing C,
-        with parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> Output
+        with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == UInt8 {
-        try Binary_Parser_Primitives.Binary.Bytes.withBorrowed(source, parser)
+        try Binary_Parser_Primitives.Binary.Borrowed(source.span).parse(parser)
     }
 
     /// Parse string (UTF-8) using zero-copy borrowed path.
     @inlinable
     public static func parse<Output>(
         _ string: some StringProtocol,
-        with parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> Output {
+        with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output {
         let bytes: [UInt8] = .init(string.utf8)
         return try parse(bytes, with: parser)
     }
@@ -45,7 +45,7 @@ extension Binary.ASCII.Parsing.Machine {
     public static func parseUnsignedDecimal<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ bytes: [UInt8],
         as type: T.Type = T.self
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> T {
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(bytes, with: Decimal.unsigned(type))
     }
 
@@ -54,7 +54,7 @@ extension Binary.ASCII.Parsing.Machine {
     public static func parseUnsignedDecimal<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ string: some StringProtocol,
         as type: T.Type = T.self
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> T {
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(string, with: Decimal.unsigned(type))
     }
 
@@ -63,7 +63,7 @@ extension Binary.ASCII.Parsing.Machine {
     public static func parseSignedDecimal<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ bytes: [UInt8],
         as type: T.Type = T.self
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> T {
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(bytes, with: Decimal.signed(type))
     }
 
@@ -72,7 +72,7 @@ extension Binary.ASCII.Parsing.Machine {
     public static func parseSignedDecimal<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ string: some StringProtocol,
         as type: T.Type = T.self
-    ) throws(Binary_Parser_Primitives.Binary.Bytes.Machine.Fault) -> T {
+    ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> T {
         try parse(string, with: Decimal.signed(type))
     }
 }

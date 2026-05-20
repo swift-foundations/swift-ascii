@@ -46,8 +46,8 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
     @inlinable
     public static func unsigned<T: UnsignedInteger & FixedWidthInteger & Sendable>(
         _ type: T.Type = T.self
-    ) -> Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<T> {
-        typealias M = Binary_Parser_Primitives.Binary.Bytes.Machine
+    ) -> Binary_Parser_Primitives.Binary.Machine.Parser<T> {
+        typealias M = Binary_Parser_Primitives.Binary.Machine
 
         return M.build { builder -> M.Expression<T> in
             // Parse a single ASCII digit, convert to numeric value
@@ -100,8 +100,8 @@ extension Binary.ASCII.Parsing.Machine.Decimal {
     @inlinable
     public static func signed<T: SignedInteger & FixedWidthInteger & Sendable>(
         _ type: T.Type = T.self
-    ) -> Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<T> {
-        typealias M = Binary_Parser_Primitives.Binary.Bytes.Machine
+    ) -> Binary_Parser_Primitives.Binary.Machine.Parser<T> {
+        typealias M = Binary_Parser_Primitives.Binary.Machine
 
         return M.build { builder -> M.Expression<T> in
             // Parse optional sign: -1 for '-', +1 for '+' or no sign

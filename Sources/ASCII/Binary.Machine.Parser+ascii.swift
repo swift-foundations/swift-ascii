@@ -1,9 +1,9 @@
-// Binary.Bytes.Machine.Parser+ascii.swift
+// Binary.Machine.Parser+ascii.swift
 // Zero-copy ASCII accessor for Machine parsers
 
 public import Binary_Parser_Primitives
 
-extension Binary_Parser_Primitives.Binary.Bytes.Machine.Parser {
+extension Binary_Parser_Primitives.Binary.Machine.Parser {
     /// Access to zero-copy ASCII parsing capabilities.
     ///
     /// Provides `whole` and `prefix` methods that use the borrowed path

@@ -11,10 +11,10 @@ extension Binary.ASCII.Parsing.Machine {
     /// `withBorrowed` path for zero-copy parsing.
     public struct Access<Output> {
         @usableFromInline
-        internal let parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>
+        internal let parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
 
         @inlinable
-        internal init(_ parser: Binary_Parser_Primitives.Binary.Bytes.Machine.Parser<Output>) {
+        internal init(_ parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>) {
             self.parser = parser
         }
 
