@@ -34,7 +34,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
         _ source: borrowing C
     ) throws(Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == Byte {
-        try Binary.Borrowed(source.span).parseWhole(parser)
+        try Binary.Borrowed(source).parseWhole(parser)
     }
 
     /// Parse entire string (UTF-8).

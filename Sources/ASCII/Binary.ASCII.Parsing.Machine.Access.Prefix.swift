@@ -34,7 +34,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
         _ source: borrowing C
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {
-        try Binary_Parser_Primitives.Binary.Borrowed(source.span).parsePrefix(parser)
+        try Binary_Parser_Primitives.Binary.Borrowed(source).parsePrefix(parser)
     }
 
     /// Parse prefix of string (UTF-8), returning value and consumed count.

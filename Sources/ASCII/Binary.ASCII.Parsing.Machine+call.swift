@@ -23,9 +23,7 @@ extension Binary.ASCII.Parsing.Machine {
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == Byte {
-        let span: Span<Byte> = source.span
-        let view = Binary_Parser_Primitives.Binary.Borrowed(span)
-        return try view.parse(parser)
+        try Binary_Parser_Primitives.Binary.Borrowed(source).parse(parser)
     }
 
     /// Parse string (UTF-8) using zero-copy borrowed path.
