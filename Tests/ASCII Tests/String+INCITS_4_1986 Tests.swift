@@ -17,8 +17,8 @@ struct `String Tests` {
     struct `String - API Surface` {
         @Test
         func `string has ascii conversion method`() {
-            let bytes: [UInt8] = [UInt8.ascii.H, .ascii.e, .ascii.l, .ascii.l, .ascii.o]
-            let string = String(ascii: bytes)
+            let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
+            let string = String(ascii: [Byte](codes))
             #expect(string == "Hello")
         }
 

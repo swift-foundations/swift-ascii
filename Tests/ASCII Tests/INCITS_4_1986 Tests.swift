@@ -36,9 +36,13 @@ struct `INCITS_4_1986 - Constants Tests` {
 
     @Test
     func `case conversion offset matches letter distance`() {
-        let a = UInt8.ascii.a
-        let A = UInt8.ascii.A
-        #expect(a - A == INCITS_4_1986.Case.Conversion.offset)
+        // Arithmetic-domain bridge: `ASCII.Code` has no arithmetic by
+        // design ([API-BYTE-002]); drop to `.underlying` for the
+        // 'a' - 'A' = 0x20 distance check.
+        #expect(
+            ASCII.Code.a.underlying &- ASCII.Code.A.underlying
+                == INCITS_4_1986.Case.Conversion.offset
+        )
     }
 }
 

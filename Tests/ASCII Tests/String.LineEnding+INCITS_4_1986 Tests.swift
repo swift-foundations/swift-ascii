@@ -13,14 +13,14 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
     @Suite
     struct `INCITS_4_1986.FormatEffectors.Line.Ending - Constants` {
         @Test(arguments: [
-            (INCITS_4_1986.FormatEffectors.Line.Ending.lf, "LF", [UInt8.ascii.lf]),
-            (INCITS_4_1986.FormatEffectors.Line.Ending.cr, "CR", [UInt8.ascii.cr]),
-            (INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "CRLF", [UInt8.ascii.cr, UInt8.ascii.lf]),
+            (INCITS_4_1986.FormatEffectors.Line.Ending.lf, "LF", [ASCII.Code.lf]),
+            (INCITS_4_1986.FormatEffectors.Line.Ending.cr, "CR", [ASCII.Code.cr]),
+            (INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "CRLF", [ASCII.Code.cr, ASCII.Code.lf]),
         ])
-        func `line ending conversions to bytes`(
-            ending: INCITS_4_1986.FormatEffectors.Line.Ending, name: String, expected: [UInt8]
+        func `line ending conversions to codes`(
+            ending: INCITS_4_1986.FormatEffectors.Line.Ending, name: String, expected: [ASCII.Code]
         ) {
-            #expect([UInt8](ascii: ending) == expected, "\(name) should produce correct bytes")
+            #expect([ASCII.Code](ascii: ending) == expected, "\(name) should produce correct codes")
         }
 
         @Test(arguments: [
@@ -35,8 +35,8 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
         @Test
         func `line ending round-trip through bytes`() {
             for ending in [INCITS_4_1986.FormatEffectors.Line.Ending.lf, .cr, .crlf] {
-                let bytes = [UInt8](ascii: ending)
-                let string = String(ascii: bytes)!
+                let codes = [ASCII.Code](ascii: ending)
+                let string = String(ascii: [Byte](codes))!
                 let expectedString = String(ascii: ending)
                 #expect(string == expectedString)
             }

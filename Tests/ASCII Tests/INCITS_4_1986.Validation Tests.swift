@@ -1,7 +1,10 @@
 // INCITS_4_1986.Validation Tests.swift
 // swift-incits-4-1986
 //
-// Tests for INCITS_4_1986.isAllASCII validation
+// Tests for ASCII validation expressed through the typed-throws
+// constructor `ASCII.Code(_ byte: Byte) throws(ASCII.Code.Error)`.
+// The type system witnesses correctness: a successful `[ASCII.Code]`
+// lift from `[Byte]` IS the "all bytes are valid ASCII" predicate.
 
 import Testing
 @testable import ASCII
@@ -13,54 +16,64 @@ struct `ASCII Validation Tests` {
     @Suite
     struct `Correctness Tests` {
         @Test
-        func `Valid ASCII bytes`() {
-            let ascii: [UInt8] = [0, 65, 127]  // All valid ASCII
-            #expect(ascii.ascii.isAllASCII)
+        func `Valid ASCII bytes`() throws {
+            let bytes: [Byte] = [0x00, 0x41, 0x7F]
+            let _: [ASCII.Code] = try .init(bytes)
         }
 
         @Test
         func `Invalid ASCII bytes`() {
-            let nonAscii: [UInt8] = [65, 128, 255]  // Contains non-ASCII
-            #expect(!nonAscii.ascii.isAllASCII)
+            let bytes: [Byte] = [0x41, 0x80, 0xFF]
+            #expect(throws: ASCII.Code.Error.self) {
+                let _: [ASCII.Code] = try .init(bytes)
+            }
         }
 
         @Test
-        func `Empty array is valid ASCII`() {
-            let empty: [UInt8] = []
-            #expect(empty.ascii.isAllASCII)
+        func `Empty array is valid ASCII`() throws {
+            let codes: [ASCII.Code] = try .init([] as [Byte])
+            #expect(codes.isEmpty)
         }
 
         @Test
-        func `Boundary values`() {
-            #expect([0].ascii.isAllASCII)  // Minimum ASCII
-            #expect([127].ascii.isAllASCII)  // Maximum ASCII
-            #expect(![128].ascii.isAllASCII)  // Just above ASCII range
+        func `Boundary values`() throws {
+            let _: [ASCII.Code] = try .init([0x00] as [Byte])     // Minimum ASCII
+            let _: [ASCII.Code] = try .init([0x7F] as [Byte])     // Maximum ASCII
+            #expect(throws: ASCII.Code.Error.self) {              // Just above ASCII range
+                let _: [ASCII.Code] = try .init([0x80] as [Byte])
+            }
         }
     }
 
     @Suite
     struct `Boundary Values Tests` {
-        @Test(arguments: [UInt8.ascii.nul, 0x01, UInt8.ascii.tilde, UInt8.ascii.del])
-        func `valid ASCII bytes`(byte: UInt8) {
-            #expect([byte].ascii.isAllASCII, "Byte 0x\(String(byte, radix: 16)) should be valid ASCII")
+        @Test(arguments: [0x00, 0x01, 0x7E, 0x7F] as [Byte])
+        func `valid ASCII bytes`(byte: Byte) throws {
+            let _: ASCII.Code = try ASCII.Code(byte)
         }
 
-        @Test(arguments: [0x80, 0x81, 0xFE, 0xFF])
-        func `invalid ASCII bytes`(byte: UInt8) {
-            #expect(![byte].ascii.isAllASCII, "Byte 0x\(String(byte, radix: 16)) should be invalid ASCII")
+        @Test(arguments: [0x80, 0x81, 0xFE, 0xFF] as [Byte])
+        func `invalid ASCII bytes`(byte: Byte) {
+            #expect(throws: ASCII.Code.Error.notASCII(byte: byte)) {
+                let _: ASCII.Code = try ASCII.Code(byte)
+            }
         }
 
         @Test
-        func `all valid ASCII bytes pass validation`() {
-            let allASCII = Array(UInt8(0)...UInt8(127))
-            #expect(allASCII.ascii.isAllASCII)
+        func `all valid ASCII bytes pass validation`() throws {
+            // Byte is not Strideable per [API-BYTE-002]; iterate on UInt8
+            // with per-element Byte bridge at the lift site.
+            let allASCII = (UInt8(0)...UInt8(127)).map(Byte.init)
+            let _: [ASCII.Code] = try .init(allASCII)
         }
 
         @Test
         func `any non-ASCII byte fails validation`() {
-            for byte in UInt8(128)...UInt8(255) {
-                let mixed = [UInt8.ascii.A, byte, UInt8.ascii.B]
-                #expect(!mixed.ascii.isAllASCII, "Array containing 0x\(String(byte, radix: 16)) should fail")
+            for value in UInt8(128)...UInt8(255) {
+                let mixed: [Byte] = [0x41, Byte(value), 0x42]  // A, byte, B
+                #expect(throws: ASCII.Code.Error.self) {
+                    let _: [ASCII.Code] = try .init(mixed)
+                }
             }
         }
     }
@@ -72,23 +85,27 @@ struct `ASCII Validation Tests` {
 //    @Suite
 //    struct `ASCII Validation - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `validate 1M ASCII bytes`() {
-//            let ascii = Array(repeating: UInt8(65), count: 1_000_000)
-//            _ = ascii.ascii.isAllASCII
+//        func `validate 1M ASCII bytes`() throws {
+//            let ascii: [Byte] = Array(repeating: 0x41, count: 1_000_000)
+//            let _: [ASCII.Code] = try .init(ascii)
 //        }
 //
 //        @Test(.timed(threshold: .milliseconds(150)))
 //        func `validate 1M mixed bytes - early exit`() {
-//            var bytes = Array(repeating: UInt8(65), count: 1_000_000)
-//            bytes[100] = 128  // Non-ASCII early in array
-//            _ = bytes.ascii.isAllASCII
+//            var bytes: [Byte] = Array(repeating: 0x41, count: 1_000_000)
+//            bytes[100] = 0x80  // Non-ASCII early in array
+//            #expect(throws: ASCII.Code.Error.self) {
+//                let _: [ASCII.Code] = try .init(bytes)
+//            }
 //        }
 //
 //        @Test(.timed(threshold: .milliseconds(2000)))
 //        func `validate 1M mixed bytes - late exit`() {
-//            var bytes = Array(repeating: UInt8(65), count: 1_000_000)
-//            bytes[999_999] = 128  // Non-ASCII at end
-//            _ = bytes.ascii.isAllASCII
+//            var bytes: [Byte] = Array(repeating: 0x41, count: 1_000_000)
+//            bytes[999_999] = 0x80  // Non-ASCII at end
+//            #expect(throws: ASCII.Code.Error.self) {
+//                let _: [ASCII.Code] = try .init(bytes)
+//            }
 //        }
 //    }
 //}

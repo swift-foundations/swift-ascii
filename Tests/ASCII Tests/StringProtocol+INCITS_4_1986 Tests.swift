@@ -116,20 +116,24 @@ struct `StringProtocol+INCITS_4_1986 Tests` {
     struct `ASCII Byte Conversion Tests` {
         @Test
         func `ascii(_:) creates string from valid ASCII bytes`() {
-            let bytes: [UInt8] = [72, 101, 108, 108, 111]  // "Hello"
-            #expect(String(ascii: bytes) == "Hello")
+            let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
+            #expect(String(ascii: [Byte](codes)) == "Hello")
         }
 
         @Test
         func `ascii(_:) returns nil for non-ASCII bytes`() {
-            let bytes: [UInt8] = [72, 101, 255, 108, 111]
+            // Mixed ASCII + non-ASCII bytes — String(ascii:) returns nil
+            // because any byte ≥ 0x80 violates the 7-bit ASCII range.
+            let bytes: [Byte] = [0x48, 0x65, 0xFF, 0x6C, 0x6F]
             #expect(String(ascii: bytes) == nil)
         }
 
         @Test
         func `ascii(unchecked:) creates string without validation`() {
-            let bytes: [UInt8] = [72, 101, 108, 108, 111]
-            #expect(String.ascii.unchecked(bytes) == "Hello")
+            // `String.ascii.unchecked(_:)` takes [UInt8] (stdlib bytes); bridge
+            // via `.underlying` per element.
+            let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
+            #expect(String.ascii.unchecked(codes.map(\.underlying)) == "Hello")
         }
     }
 
