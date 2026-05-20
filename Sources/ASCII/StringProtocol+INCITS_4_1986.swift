@@ -127,7 +127,16 @@ extension StringProtocol {
     /// - ``INCITS_4_1986/crlf``
     /// - ``normalized(to:as:)``
     public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending) {
-        self.init(decoding: [UInt8](ascii: lineEnding), as: UTF8.self)
+        // Use `[ASCII.Code](ascii: lineEnding)` (the typed init defined in
+        // swift-incits-4-1986). Bridge ASCII.Code → UInt8 via per-element
+        // `.underlying` lazy map so we call stdlib's
+        // `String.init(decoding: Sequence<UInt8>, as: UTF8.self)` directly
+        // without needing the BSLI byte-domain decoding overload.
+        // Fully-qualified `ASCII_Primitives.ASCII.Code` because `Self.ASCII`
+        // (`INCITS_4_1986.ASCII<Self>`) shadows the unqualified `ASCII`
+        // namespace in a `StringProtocol` extension.
+        let codes = [ASCII_Primitives.ASCII.Code](ascii: lineEnding)
+        self.init(decoding: codes.lazy.map(\.underlying), as: UTF8.self)
     }
 }
 

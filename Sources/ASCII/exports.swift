@@ -5,5 +5,6 @@
 
 @_exported public import INCITS_4_1986
 @_exported public import Binary_Primitives
+@_exported public import Binary_Serializable_Primitives
 @_exported public import Binary_ASCII_Serializable_Primitives
 internal import Parser_Primitives

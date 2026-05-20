@@ -28,8 +28,11 @@ extension Binary.ASCII.Decimal {
         ///
         /// - Parameters:
         ///   - position: Zero-based index where the invalid byte was found.
-        ///   - found: The actual byte value encountered (ASCII-domain code).
-        case invalidByte(position: Int, found: ASCII.Code)
+        ///   - found: The byte value encountered. Carried as `Byte` (not
+        ///     `ASCII.Code`) because invalid input may include non-ASCII
+        ///     bytes (≥ 0x80) that cannot be represented as `ASCII.Code`
+        ///     under its typed-throws contract.
+        case invalidByte(position: Int, found: Byte)
     }
 }
 
@@ -41,10 +44,12 @@ extension Binary.ASCII.Decimal {
     internal static func parseSigned<T: SignedInteger & FixedWidthInteger, Bytes: Collection>(
         _ bytes: Bytes
     ) throws(Error) -> T where Bytes.Element == Byte {
-        // Type-up: lift to ASCII.Code at the entry boundary so the body works
-        // against ASCII.Code constants directly (decimal grammar is strict ASCII;
-        // non-ASCII bytes are fail-state).
-        let arr = Array<ASCII.Code>(bytes)
+        // Byte-level dispatch using named ASCII constants via `.byte`. The
+        // bulk `Array<ASCII.Code>(bytes)` lift was replaced with per-byte
+        // comparison because the SLI throwing lift loses position info, and
+        // ASCII.Code's typed-throws contract cannot carry a non-ASCII byte
+        // for the `.invalidByte(found:)` error case (now Byte-typed).
+        let arr = Array(bytes)
         var result: T = 0
         var isNegative = false
         var index = 0
@@ -52,10 +57,10 @@ extension Binary.ASCII.Decimal {
         // Handle sign
         if index < arr.count {
             let first = arr[index]
-            if first == .hyphen {
+            if first == ASCII.Code.hyphen.byte {
                 isNegative = true
                 index += 1
-            } else if first == .plusSign {
+            } else if first == ASCII.Code.plusSign.byte {
                 index += 1
             }
         }
@@ -63,10 +68,11 @@ extension Binary.ASCII.Decimal {
         guard index < arr.count else { throw .empty }
 
         while index < arr.count {
-            let code = arr[index]
-            guard let digit = code.digitValue else {
-                throw .invalidByte(position: index, found: code)
+            let byte = arr[index]
+            guard byte >= ASCII.Code.`0`.byte && byte <= ASCII.Code.`9`.byte else {
+                throw .invalidByte(position: index, found: byte)
             }
+            let digit = byte.underlying &- 0x30
             result = result * 10 + T(digit)
             index += 1
         }
@@ -79,23 +85,24 @@ extension Binary.ASCII.Decimal {
     internal static func parseUnsigned<T: UnsignedInteger & FixedWidthInteger, Bytes: Collection>(
         _ bytes: Bytes
     ) throws(Error) -> T where Bytes.Element == Byte {
-        // Type-up: lift to ASCII.Code at the entry boundary.
-        let arr = Array<ASCII.Code>(bytes)
+        // Byte-level dispatch — same rationale as parseSigned above.
+        let arr = Array(bytes)
         var result: T = 0
         var index = 0
 
         // Handle optional plus sign
-        if index < arr.count && arr[index] == .plusSign {
+        if index < arr.count && arr[index] == ASCII.Code.plusSign.byte {
             index += 1
         }
 
         guard index < arr.count else { throw .empty }
 
         while index < arr.count {
-            let code = arr[index]
-            guard let digit = code.digitValue else {
-                throw .invalidByte(position: index, found: code)
+            let byte = arr[index]
+            guard byte >= ASCII.Code.`0`.byte && byte <= ASCII.Code.`9`.byte else {
+                throw .invalidByte(position: index, found: byte)
             }
+            let digit = byte.underlying &- 0x30
             result = result * 10 + T(digit)
             index += 1
         }
