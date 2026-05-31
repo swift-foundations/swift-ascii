@@ -7,17 +7,6 @@
   "scope": "swift-ascii (swift-foundations)",
   "documents": [
     {
-      "file": "audit.md",
-      "displayName": "audit.md",
-      "topic": "Legacy audit findings: pre-publication (P0/P1/P2) + modularization (MOD-001–MOD-014) — 1 FAIL (MOD-011), 1 REVIEW (MOD-008)",
-      "date": "2026-04-08",
-      "status": "LEGACY",
-      "statusDetail": null,
-      "statusRaw": "LEGACY",
-      "tier": null,
-      "scope": null
-    },
-    {
       "file": "ascii-codable-unification.md",
       "displayName": "ASCII Codable Unification",
       "topic": "Migration scoping for unifying ASCII bidirectional codec under the family-Codable convention: feature-disposition matrix, bidirectional-shape resolution (B2 — non-refining ASCII.Serializable + ASCII.Parseable siblings), Error/Context disposition, stdlib integer dual-conformance resolution (C3), phased migration plan Φ.1–Φ.7",
