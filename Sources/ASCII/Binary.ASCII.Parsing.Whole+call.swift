@@ -26,7 +26,7 @@ extension Binary.ASCII.Parsing.Whole {
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
     where C: ~Copyable, C.Element == Byte {
-        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Byte>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
+        unsafe try source.span.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Byte>) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output in
             let bytes: [Byte] = unsafe .init(buffer)
             return try call(bytes)
         }

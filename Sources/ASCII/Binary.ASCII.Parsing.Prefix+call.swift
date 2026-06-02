@@ -18,7 +18,7 @@ extension Binary.ASCII.Parsing.Prefix {
         _ source: borrowing C
     ) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {
-        unsafe try source.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Byte>) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) in
+        unsafe try source.span.withUnsafeBufferPointer { (buffer: UnsafeBufferPointer<Byte>) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count) in
             let bytes: [Byte] = unsafe .init(buffer)
             return try call(bytes)
         }
