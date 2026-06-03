@@ -3,13 +3,16 @@
 
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
+// W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
+// `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
+internal import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.
     ///
     /// Enforces that all input must be consumed by checking the consumed count
-    /// at execution time. Delegates to `Binary.Borrowed.parseWhole` for
-    /// zero-copy execution.
+    /// at execution time. Delegates to the byte-span `parseWhole` (on
+    /// `Span.Borrowed.`Protocol``) for zero-copy execution.
     public struct Whole {
         @usableFromInline
         internal let parser: Binary.Machine.Parser<Output>
@@ -34,7 +37,8 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
         _ source: borrowing C
     ) throws(Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == Byte {
-        try Binary.Borrowed(source).parseWhole(parser)
+        // W3 PRUNE: the borrowed view IS the source's Swift.Span<Byte>.
+        try source.span.parseWhole(parser)
     }
 
     /// Parse entire string (UTF-8).

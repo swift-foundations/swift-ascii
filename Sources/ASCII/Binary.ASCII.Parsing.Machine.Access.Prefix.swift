@@ -3,13 +3,16 @@
 
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
+// W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
+// `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
+internal import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Prefix parsing capability for Machine parsers.
     ///
     /// Parses a prefix of the input without requiring all bytes to be consumed.
-    /// Delegates to `Binary.Borrowed.parsePrefix` for zero-copy execution
-    /// with consumed count.
+    /// Delegates to the byte-span `parsePrefix` (on `Span.Borrowed.`Protocol``)
+    /// for zero-copy execution with consumed count.
     public struct Prefix {
         @usableFromInline
         internal let parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
@@ -34,7 +37,8 @@ extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
         _ source: borrowing C
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {
-        try Binary_Parser_Primitives.Binary.Borrowed(source).parsePrefix(parser)
+        // W3 PRUNE: the borrowed view IS the source's Swift.Span<Byte>.
+        try source.span.parsePrefix(parser)
     }
 
     /// Parse prefix of string (UTF-8), returning value and consumed count.

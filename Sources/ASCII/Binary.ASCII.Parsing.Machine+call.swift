@@ -3,6 +3,11 @@
 
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
+// W3 PRUNE: the binary parse engine re-homed from `Binary.Borrowed` (deleted)
+// to `Span.Borrowed.`Protocol` where Element == Byte`; calling `.parse` on a
+// `Swift.Span<Byte>` needs the `Swift.Span: Span.Borrowed.`Protocol``
+// conformance in scope (Finding 3/8).
+internal import Span_Protocol_Primitives
 
 // MARK: - Direct withBorrowed APIs
 
@@ -23,7 +28,8 @@ extension Binary.ASCII.Parsing.Machine {
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == Byte {
-        try Binary_Parser_Primitives.Binary.Borrowed(source).parse(parser)
+        // W3 PRUNE: the borrowed view IS the source's Swift.Span<Byte>.
+        try source.span.parse(parser)
     }
 
     /// Parse string (UTF-8) using zero-copy borrowed path.
