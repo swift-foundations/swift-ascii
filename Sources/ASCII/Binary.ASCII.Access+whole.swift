@@ -1,3 +1,4 @@
+public import Span_Protocol_Primitives
 public import Parser_Primitives
 public import Binary_Primitives
 internal import Memory_Primitives
@@ -9,7 +10,7 @@ extension Binary.ASCII.Access {
     }
 
     @inlinable
-    public func whole<C: Memory.Contiguous.`Protocol`>(
+    public func whole<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
     where C: ~Copyable, C.Element == Byte {

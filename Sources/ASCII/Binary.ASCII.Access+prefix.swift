@@ -1,3 +1,4 @@
+public import Span_Protocol_Primitives
 public import Parser_Primitives
 public import Binary_Primitives
 internal import Memory_Primitives
@@ -9,7 +10,7 @@ extension Binary.ASCII.Access where P.Output: Sendable {
     }
 
     @inlinable
-    public func prefix<C: Memory.Contiguous.`Protocol`>(
+    public func prefix<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {

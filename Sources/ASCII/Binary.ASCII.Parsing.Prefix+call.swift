@@ -1,5 +1,6 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
+public import Span_Protocol_Primitives
 internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Prefix {
@@ -14,7 +15,7 @@ extension Binary.ASCII.Parsing.Prefix {
 
     /// Parse prefix of contiguous storage.
     @inlinable
-    public func call<C: Memory.Contiguous.`Protocol`>(
+    public func call<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(P.Failure) -> (value: P.Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {

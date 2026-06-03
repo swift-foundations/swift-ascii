@@ -5,7 +5,7 @@ public import Binary_Parser_Primitives
 internal import Memory_Primitives
 // W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
 // `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
-internal import Span_Protocol_Primitives
+public import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Prefix parsing capability for Machine parsers.
@@ -33,7 +33,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
 
     /// Parse prefix of contiguous storage, returning value and consumed count.
     @inlinable
-    public func call<C: Memory.Contiguous.`Protocol`>(
+    public func call<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count)
     where C: ~Copyable, C.Element == Byte {

@@ -5,7 +5,7 @@ public import Binary_Parser_Primitives
 internal import Memory_Primitives
 // W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
 // `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
-internal import Span_Protocol_Primitives
+public import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Whole-input parsing capability for Machine parsers.
@@ -33,7 +33,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
 
     /// Parse entire contiguous storage.
     @inlinable
-    public func call<C: Memory.Contiguous.`Protocol`>(
+    public func call<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(Binary.Machine.Fault) -> Output
     where C: ~Copyable, C.Element == Byte {

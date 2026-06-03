@@ -7,7 +7,7 @@ internal import Memory_Primitives
 // to `Span.Borrowed.`Protocol` where Element == Byte`; calling `.parse` on a
 // `Swift.Span<Byte>` needs the `Swift.Span: Span.Borrowed.`Protocol``
 // conformance in scope (Finding 3/8).
-internal import Span_Protocol_Primitives
+public import Span_Protocol_Primitives
 
 // MARK: - Direct withBorrowed APIs
 
@@ -23,7 +23,7 @@ extension Binary.ASCII.Parsing.Machine {
 
     /// Parse contiguous storage using zero-copy borrowed path.
     @inlinable
-    public static func parse<C: Memory.Contiguous.`Protocol`, Output>(
+    public static func parse<C: Span.`Protocol`, Output>(
         _ source: borrowing C,
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output

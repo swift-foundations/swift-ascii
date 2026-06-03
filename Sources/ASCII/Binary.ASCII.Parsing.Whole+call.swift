@@ -1,5 +1,6 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
+public import Span_Protocol_Primitives
 internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Whole {
@@ -22,7 +23,7 @@ extension Binary.ASCII.Parsing.Whole {
 
     /// Parse entire contiguous storage.
     @inlinable
-    public func call<C: Memory.Contiguous.`Protocol`>(
+    public func call<C: Span.`Protocol`>(
         _ source: borrowing C
     ) throws(Either<P.Failure, Binary.ASCII.Parsing.Error>) -> P.Output
     where C: ~Copyable, C.Element == Byte {
