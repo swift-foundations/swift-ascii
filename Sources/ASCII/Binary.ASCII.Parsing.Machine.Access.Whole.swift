@@ -3,8 +3,8 @@
 
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
-// W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
-// `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
+// W3 PRUNE: parse re-homed to the Span.`Protocol` byte-span seam;
+// `Swift.Span: Span.`Protocol`` conformance needed in scope (Finding 3/8).
 public import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
@@ -12,7 +12,7 @@ extension Binary.ASCII.Parsing.Machine.Access {
     ///
     /// Enforces that all input must be consumed by checking the consumed count
     /// at execution time. Delegates to the byte-span `parseWhole` (on
-    /// `Span.Borrowed.`Protocol``) for zero-copy execution.
+    /// `Span.`Protocol``) for zero-copy execution.
     public struct Whole {
         @usableFromInline
         internal let parser: Binary.Machine.Parser<Output>

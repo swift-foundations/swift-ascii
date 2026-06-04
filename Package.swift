@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/swift-incits/swift-incits-4-1986.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-base-primitives.git", branch: "main"),
         // W3 PRUNE: binary's Binary.Borrowed deleted + the parse engine
-        // re-homed to the Span.Borrowed.`Protocol` byte-span seam — path-dep
+        // re-homed to the Span.`Protocol` byte-span seam — path-dep
         // binary + binary-parser (changed) and span (the seam's conformance
         // home, imported in the 3 Machine.Access files).
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
@@ -65,7 +65,7 @@ let package = Package(
                 .product(name: "Binary ASCII Serializable Primitives", package: "swift-ascii-serializer-primitives"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
                 .product(name: "String Primitives", package: "swift-string-primitives"),
-                // W3 PRUNE: Swift.Span: Span.Borrowed.`Protocol` conformance for
+                // W3 PRUNE: Swift.Span: Span.`Protocol` conformance for
                 // the byte-span parse calls in the Machine.Access files (Finding 3/8).
                 .product(name: "Span Protocol Primitives", package: "swift-span-primitives")
             ]

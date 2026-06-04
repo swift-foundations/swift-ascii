@@ -3,15 +3,15 @@
 
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
-// W3 PRUNE: parse re-homed to the Span.Borrowed.`Protocol` byte-span seam;
-// `Swift.Span: Span.Borrowed.`Protocol`` conformance needed in scope (Finding 3/8).
+// W3 PRUNE: parse re-homed to the Span.`Protocol` byte-span seam;
+// `Swift.Span: Span.`Protocol`` conformance needed in scope (Finding 3/8).
 public import Span_Protocol_Primitives
 
 extension Binary.ASCII.Parsing.Machine.Access {
     /// Prefix parsing capability for Machine parsers.
     ///
     /// Parses a prefix of the input without requiring all bytes to be consumed.
-    /// Delegates to the byte-span `parsePrefix` (on `Span.Borrowed.`Protocol``)
+    /// Delegates to the byte-span `parsePrefix` (on `Span.`Protocol``)
     /// for zero-copy execution with consumed count.
     public struct Prefix {
         @usableFromInline

@@ -4,8 +4,8 @@
 public import Binary_Parser_Primitives
 internal import Memory_Primitives
 // W3 PRUNE: the binary parse engine re-homed from `Binary.Borrowed` (deleted)
-// to `Span.Borrowed.`Protocol` where Element == Byte`; calling `.parse` on a
-// `Swift.Span<Byte>` needs the `Swift.Span: Span.Borrowed.`Protocol``
+// to `Span.`Protocol` where Element == Byte`; calling `.parse` on a
+// `Swift.Span<Byte>` needs the `Swift.Span: Span.`Protocol``
 // conformance in scope (Finding 3/8).
 public import Span_Protocol_Primitives
 
