@@ -29,7 +29,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-binary-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-string-primitives.git", branch: "main"),
-        .package(path: "../../swift-primitives/swift-span-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-span-primitives.git", branch: "main"),
         // transitive-collision overrides (Finding 7): the binary-parser →
         // machine → graph → data-structure cluster pulls these W2/W3 packages
         // url→main, colliding with the path-dep'd W2 memory. Path-dep their
