@@ -36,7 +36,6 @@ let package = Package(
         // canonical-basename worktrees to unify identities.
         .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-cursor-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-cursor-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-memory-cursor-primitives.git", branch: "main"),
