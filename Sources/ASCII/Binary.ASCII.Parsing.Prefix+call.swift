@@ -1,6 +1,9 @@
 public import Parser_Primitives
 public import Binary_Parser_Primitives
 public import Span_Protocol_Primitives
+public import Shared_Primitive
+public import Buffer_Linear_Primitive
+public import Buffer_Linear_Primitives
 internal import Memory_Primitives
 
 extension Binary.ASCII.Parsing.Prefix {
