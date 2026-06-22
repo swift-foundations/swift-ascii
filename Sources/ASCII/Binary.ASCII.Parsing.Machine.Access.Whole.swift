@@ -28,7 +28,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Whole {
     /// Parse entire byte array.
     @inlinable
     public func call(_ bytes: [Byte]) throws(Binary.Machine.Fault) -> Output {
-        try Binary(bytes).parseWhole(parser)
+        try bytes.span.parseWhole(parser)
     }
 
     /// Parse entire contiguous storage.

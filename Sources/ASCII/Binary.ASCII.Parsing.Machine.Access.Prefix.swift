@@ -28,7 +28,7 @@ extension Binary.ASCII.Parsing.Machine.Access.Prefix where Output: Sendable {
     /// Parse prefix of byte array, returning value and consumed count.
     @inlinable
     public func call(_ bytes: [Byte]) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> (value: Output, count: Index<Byte>.Count) {
-        try Binary_Parser_Primitives.Binary(bytes).parsePrefix(parser)
+        try bytes.span.parsePrefix(parser)
     }
 
     /// Parse prefix of contiguous storage, returning value and consumed count.

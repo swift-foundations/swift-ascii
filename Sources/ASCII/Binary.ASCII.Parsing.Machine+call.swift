@@ -18,7 +18,7 @@ extension Binary.ASCII.Parsing.Machine {
         _ bytes: [Byte],
         with parser: Binary_Parser_Primitives.Binary.Machine.Parser<Output>
     ) throws(Binary_Parser_Primitives.Binary.Machine.Fault) -> Output {
-        try Binary_Parser_Primitives.Binary(bytes).parse(parser)
+        try bytes.span.parse(parser)
     }
 
     /// Parse contiguous storage using zero-copy borrowed path.
