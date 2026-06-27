@@ -121,12 +121,10 @@ extension Int: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: Int,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        // INCITS_4_1986.Numeric.Serialization.serializeDecimal targets a
-        // `Buffer.Element == UInt8` substrate; bridge to the Byte-typed
-        // buffer via BSLI's `append(contentsOf: <UInt8>)` overload.
-        var byteBuffer: [UInt8] = []
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
-        buffer.append(contentsOf: byteBuffer)
+        // serializeDecimal's primary overload is keyed on `Buffer.Element == Byte`
+        // (the @_disfavoredOverload UInt8 forwarder is unreachable here since
+        // `buffer.Element == Byte`), so serialize straight into the Byte buffer.
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -146,9 +144,7 @@ extension Int64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: Int64,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        var byteBuffer: [UInt8] = []
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
-        buffer.append(contentsOf: byteBuffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -170,9 +166,7 @@ extension UInt: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: UInt,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        var byteBuffer: [UInt8] = []
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
-        buffer.append(contentsOf: byteBuffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable
@@ -192,9 +186,7 @@ extension UInt64: @retroactive Binary.Serializable, Binary.ASCII.Serializable {
         ascii value: UInt64,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        var byteBuffer: [UInt8] = []
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &byteBuffer)
-        buffer.append(contentsOf: byteBuffer)
+        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
     }
 
     @inlinable

@@ -228,9 +228,12 @@ extension StringProtocol {
     ///
     /// - Parameter byte: The byte to validate and decode as ASCII
     /// - Returns: Single-character string if byte is valid ASCII, `nil` otherwise
-    public init?(ascii byte: UInt8) {
-        guard ASCII_Primitives.ASCII.Code(byte).isASCII else { return nil }
-        self.init(decoding: CollectionOfOne(byte), as: UTF8.self)
+    public init?(ascii byte: Byte) {
+        // Sibling of the `[Byte]` overload above; mirror its `< 0x80` ASCII
+        // guard (rather than the throwing `ASCII.Code(_: Byte)` init) and
+        // bridge to the stdlib UTF-8 decoder via `.underlying`.
+        guard byte.underlying < 0x80 else { return nil }
+        self.init(decoding: CollectionOfOne(byte.underlying), as: UTF8.self)
     }
 }
 
