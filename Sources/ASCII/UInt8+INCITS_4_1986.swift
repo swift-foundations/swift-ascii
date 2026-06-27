@@ -284,8 +284,8 @@ extension Binary.ASCII {
     ///
     /// - ``INCITS_4_1986/NumericParsing/digit(_:)``
     @inlinable
-    public static func ascii(digit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.Numeric.Parsing.digit(byte)
+    public static func ascii(digit code: ASCII.Code) -> UInt8? {
+        INCITS_4_1986.Numeric.Parsing.digit(code)
     }
 }
 
@@ -317,8 +317,8 @@ extension Binary.ASCII {
     ///
     /// - ``INCITS_4_1986/NumericParsing/hexDigit(_:)``
     @inlinable
-    public static func ascii(hexDigit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.Numeric.Parsing.hexDigit(byte)
+    public static func ascii(hexDigit code: ASCII.Code) -> UInt8? {
+        INCITS_4_1986.Numeric.Parsing.hexDigit(code)
     }
 }
 
@@ -327,16 +327,16 @@ extension Binary.ASCII {
     ///
     /// Enables the convenient syntax: `UInt8(ascii: digit: byte)`
     @inlinable
-    public static func callAsFunction(digit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.Numeric.Parsing.digit(byte)
+    public static func callAsFunction(digit code: ASCII.Code) -> UInt8? {
+        INCITS_4_1986.Numeric.Parsing.digit(code)
     }
 
     /// Parses an ASCII hex digit byte via call syntax
     ///
     /// Enables the convenient syntax: `UInt8(ascii: hexDigit: byte)`
     @inlinable
-    public static func callAsFunction(hexDigit byte: UInt8) -> UInt8? {
-        INCITS_4_1986.Numeric.Parsing.hexDigit(byte)
+    public static func callAsFunction(hexDigit code: ASCII.Code) -> UInt8? {
+        INCITS_4_1986.Numeric.Parsing.hexDigit(code)
     }
 
     /// Returns the byte if it's valid ASCII, nil otherwise
