@@ -258,7 +258,7 @@ extension StringProtocol {
     ///
     /// - Parameter value: Any type conforming to Binary.ASCII.Serializable
     @_transparent
-    public init<T: Binary.ASCII.Serializable>(_ value: T) {
+    public init<T: Binary.Serializable>(_ value: T) {
         // String(decoding:as:) stays UInt8 (stdlib idiom); cross the byte-domain
         // boundary via the BSLI Sequence.underlying: [UInt8] accessor.
         let typed: [Byte] = value.bytes
