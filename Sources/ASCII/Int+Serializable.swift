@@ -19,7 +19,7 @@ extension Int: @retroactive Binary.Serializable {
         _ value: Int,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Decimal.serialize(value, into: &buffer)
     }
 }
 
@@ -29,7 +29,7 @@ extension Int64: @retroactive Binary.Serializable {
         _ value: Int64,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Decimal.serialize(value, into: &buffer)
     }
 }
 
@@ -39,7 +39,7 @@ extension UInt: @retroactive Binary.Serializable {
         _ value: UInt,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Decimal.serialize(value, into: &buffer)
     }
 }
 
@@ -49,6 +49,6 @@ extension UInt64: @retroactive Binary.Serializable {
         _ value: UInt64,
         into buffer: inout Buffer
     ) where Buffer.Element == Byte {
-        INCITS_4_1986.Numeric.Serialization.serializeDecimal(value, into: &buffer)
+        INCITS_4_1986.Numeric.Decimal.serialize(value, into: &buffer)
     }
 }
