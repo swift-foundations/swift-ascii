@@ -1,12 +1,17 @@
 //
-//  Binary.ASCII.Serializable Tests.swift
-//  swift-incits-4-1986
+//  UInt8.ASCII.Serializable Tests.swift
+//  swift-ascii
 //
-//  Tests demonstrating the Binary.ASCII.Serializable protocol
-//  with both context-free and context-dependent parsing.
+//  Serialization tests migrated off the retired `Binary.ASCII.Serializable`
+//  tier (W4) onto `Binary.Serializable` (Byte substrate — the model the
+//  package's own Sources landed on). Parsing is expressed as plain
+//  initializers (`init(ascii:)`, `init(ascii:delimiter:)`), not a parse
+//  protocol: the flat `ASCII.Parseable` is context-free and owned by L1, so
+//  parameterized parses (a delimiter) are ordinary operation parameters.
 //
-//  Substrate per the ASCII-domain retyping arc (2026-05-19): conformer
-//  signatures use Bytes.Element == Byte / Buffer.Element == Byte.
+//  ASCII byte constants / classifiers (`.ascii.hyphen`, `byte.ascii.isAlphanumeric`)
+//  come from the live `ASCII_Primitives` module, unaffected by the tier retirement.
+//
 
 import Binary_Primitives
 import ASCII
@@ -15,7 +20,7 @@ import Testing
 // MARK: - Context-Free Type Example
 
 /// A simple token type that requires no parsing context.
-/// Demonstrates the standard Serializable conformance pattern.
+/// Serializes via `Binary.Serializable`; parses via a plain `init(ascii:)`.
 private struct Token: Sendable, Codable {
     let rawValue: String
 
@@ -52,28 +57,38 @@ extension Token {
     }
 }
 
-extension Token: Binary.ASCII.Serializable {
-
-    // Context == Void (default), so we implement init(ascii:in:) with Void context
-    init<Bytes: Collection>(ascii bytes: Bytes, in context: Void) throws(Error)
-    where Bytes.Element == Byte {
-        try self.init(String(decoding: bytes, as: UTF8.self))
-    }
-
-    static func serialize<Buffer>(ascii token: Self, into buffer: inout Buffer)
+extension Token: Binary.Serializable {
+    static func serialize<Buffer>(_ token: Self, into buffer: inout Buffer)
     where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         buffer.append(contentsOf: token.rawValue.utf8)
     }
 }
 
+extension Token {
+    /// Plain byte-parse convenience (context-free) — NOT a protocol requirement.
+    init<Bytes: Collection>(ascii bytes: Bytes) throws(Error)
+    where Bytes.Element == Byte {
+        try self.init(String(decoding: bytes, as: UTF8.self))
+    }
+}
+
 extension Token: Hashable {}
-extension Token: CustomStringConvertible {}
-extension Token: ExpressibleByStringLiteral {}
+extension Token: CustomStringConvertible {
+    var description: String { String(self) }
+}
+extension Token: ExpressibleByStringLiteral {
+    init(stringLiteral value: String) {
+        // String literals in tests are known-valid tokens.
+        self.init(__unchecked: (), rawValue: value)
+    }
+}
 
-// MARK: - Context-Dependent Type Example
+// MARK: - Parameterized (Delimiter) Type Example
 
-/// A message type that requires a delimiter to parse.
-/// Demonstrates context-dependent Serializable conformance.
+/// A message type whose parse takes a delimiter parameter.
+/// Serializes via `Binary.Serializable` (self-describing, no parameter); parses
+/// via a plain `init(ascii:delimiter:)` — the delimiter is an operation
+/// parameter, so it lives on the initializer, not a parameter-free protocol.
 struct DelimitedMessage: Sendable, Codable {
     let parts: [String]
     let delimiter: UInt8
@@ -84,19 +99,12 @@ struct DelimitedMessage: Sendable, Codable {
     }
 }
 
-extension DelimitedMessage: Binary.ASCII.Serializable {
-    //    static func serialize(ascii message: DelimitedMessage) -> [UInt8] {
-    //        var result: [UInt8] = []
-    //        for (index, part) in message.parts.enumerated() {
-    //            if index > 0 {
-    //                result.append(message.delimiter)
-    //            }
-    //            result.append(contentsOf: part.utf8)
-    //        }
-    //        return result
-    //    }
+extension DelimitedMessage: Binary.Serializable {
+    enum Error: Swift.Error, Sendable, Equatable {
+        case empty
+    }
 
-    internal static func serialize<Buffer>(ascii message: Self, into buffer: inout Buffer)
+    static func serialize<Buffer>(_ message: Self, into buffer: inout Buffer)
     where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         for (index, part) in message.parts.enumerated() {
             if index > 0 {
@@ -106,17 +114,12 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
             buffer.append(contentsOf: part.utf8)
         }
     }
+}
 
-    /// Context required for parsing - the delimiter byte
-    struct Context: Sendable {
-        let delimiter: UInt8
-    }
-
-    enum Error: Swift.Error, Sendable, Equatable {
-        case empty
-    }
-
-    init<Bytes: Collection>(ascii bytes: Bytes, in context: Context) throws(Error)
+extension DelimitedMessage {
+    /// Plain parameterized parse — the delimiter is an operation parameter,
+    /// NOT a protocol requirement (the flat parse protocol is parameter-free).
+    init<Bytes: Collection>(ascii bytes: Bytes, delimiter: UInt8) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else { throw .empty }
 
@@ -127,7 +130,7 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
         for byte in bytes {
             // Delimiter is UInt8 in this test type; bridge byte-domain element
             // to UInt8 for arithmetic-domain equality.
-            if byte.underlying == context.delimiter {
+            if byte.underlying == delimiter {
                 parts.append(String(decoding: current, as: UTF8.self))
                 current = []
             } else {
@@ -137,12 +140,14 @@ extension DelimitedMessage: Binary.ASCII.Serializable {
         // Add final part
         parts.append(String(decoding: current, as: UTF8.self))
 
-        self.init(__unchecked: (), parts: parts, delimiter: context.delimiter)
+        self.init(__unchecked: (), parts: parts, delimiter: delimiter)
     }
 }
 
 extension DelimitedMessage: Hashable {}
-extension DelimitedMessage: CustomStringConvertible {}
+extension DelimitedMessage: CustomStringConvertible {
+    var description: String { String(self) }
+}
 
 // MARK: - Context-Free Parsing Tests
 
@@ -154,14 +159,6 @@ struct ContextFreeSerializableTests {
         let token: Token = try .init(ascii: bytes)
 
         #expect(token.rawValue == "hello-world")
-    }
-
-    @Test
-    func `Parse from bytes using init(ascii:in:) with Void`() throws {
-        let bytes: [Byte] = Array<Byte>("test123".utf8)
-        let token: Token = try .init(ascii: bytes, in: ())
-
-        #expect(token.rawValue == "test123")
     }
 
     @Test
@@ -182,8 +179,7 @@ struct ContextFreeSerializableTests {
     func `Serialize to bytes`() throws {
         let token: Token = try .init("hello")
 
-        // `Token.serialize(_:)` (from `Binary.Serializable`) returns
-        // `Bytes where Bytes.Element == Byte` post-cascade.
+        // `Token.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
         let serialized: [Byte] = Token.serialize(token)
         #expect(serialized == Array<Byte>("hello".utf8))
     }
@@ -200,8 +196,7 @@ struct ContextFreeSerializableTests {
         let original: [Byte] = Array<Byte>("round-trip".utf8)
         let token: Token = try .init(ascii: original)
 
-        // ASCII-typed serialize returns [Byte]
-        let serialized: [Byte] = Token.serialize(ascii: token)
+        let serialized: [Byte] = token.bytes
         #expect(serialized == original)
     }
 
@@ -233,16 +228,15 @@ struct ContextFreeSerializableTests {
     }
 }
 
-// MARK: - Context-Dependent Parsing Tests
+// MARK: - Parameterized Parsing Tests
 
-@Suite("Serializable - Context-Dependent Types")
-struct ContextDependentSerializableTests {
+@Suite("Serializable - Parameterized (Delimiter) Types")
+struct ParameterizedSerializableTests {
     @Test
-    func `Parse with context using init(ascii:in:)`() throws {
+    func `Parse with delimiter using init(ascii:delimiter:)`() throws {
         let bytes: [Byte] = Array<Byte>("foo|bar|baz".utf8)
-        let context = DelimitedMessage.Context(delimiter: .ascii.verticalLine)
 
-        let message = try DelimitedMessage(ascii: bytes, in: context)
+        let message = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
 
         #expect(message.parts == ["foo", "bar", "baz"])
         #expect(message.delimiter == .ascii.verticalLine)
@@ -253,13 +247,11 @@ struct ContextDependentSerializableTests {
         let bytes: [Byte] = Array<Byte>("a,b|c".utf8)
 
         // Parse with comma delimiter
-        let commaContext = DelimitedMessage.Context(delimiter: .ascii.comma)
-        let commaMessage = try DelimitedMessage(ascii: bytes, in: commaContext)
+        let commaMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
         #expect(commaMessage.parts == ["a", "b|c"])
 
         // Parse with pipe delimiter
-        let pipeContext = DelimitedMessage.Context(delimiter: .ascii.verticalLine)
-        let pipeMessage = try DelimitedMessage(ascii: bytes, in: pipeContext)
+        let pipeMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
         #expect(pipeMessage.parts == ["a,b", "c"])
     }
 
@@ -271,8 +263,7 @@ struct ContextDependentSerializableTests {
             delimiter: .ascii.hyphen
         )
 
-        // `DelimitedMessage.serialize(_:)` (Binary.Serializable) returns
-        // `Bytes where Bytes.Element == Byte` post-cascade.
+        // `DelimitedMessage.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
         let serialized: [Byte] = DelimitedMessage.serialize(message)
         #expect(serialized == Array<Byte>("hello-world".utf8))
     }
@@ -280,12 +271,10 @@ struct ContextDependentSerializableTests {
     @Test
     func `Round-trip: bytes → Message → bytes`() throws {
         let original: [Byte] = Array<Byte>("one:two:three".utf8)
-        let context = DelimitedMessage.Context(delimiter: .ascii.colon)
 
-        let message = try DelimitedMessage(ascii: original, in: context)
+        let message = try DelimitedMessage(ascii: original, delimiter: .ascii.colon)
 
-        // ASCII-typed serialize returns [Byte]
-        let serialized: [Byte] = DelimitedMessage.serialize(ascii: message)
+        let serialized: [Byte] = message.bytes
         #expect(serialized == original)
     }
 
@@ -305,52 +294,34 @@ struct ContextDependentSerializableTests {
     @Test
     func `Empty input throws error`() {
         let bytes: [Byte] = []
-        let context = DelimitedMessage.Context(delimiter: .ascii.comma)
 
         #expect(throws: DelimitedMessage.Error.empty) {
-            try DelimitedMessage(ascii: bytes, in: context)
+            try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
         }
     }
 
     @Test
-    func `Context-dependent type does NOT have init(_: String)`() {
-        // This test documents that context-dependent types
-        // don't get the automatic init(_: StringProtocol) convenience.
-        // The following would not compile:
-        // let message = try DelimitedMessage("a,b,c")  // Error: no context!
+    func `Parameterized type requires a delimiter (no unparameterized init)`() {
+        // The parse is parameterized: a delimiter is always required.
+        // The following would not compile — there is no `init(_ String)` and
+        // no unparameterized `init(ascii:)`:
+        //   let message = try DelimitedMessage("a,b,c")  // Error: no delimiter!
 
-        // Instead, you must provide context:
+        // Instead, you must provide the delimiter:
         let bytes: [Byte] = Array<Byte>("a,b,c".utf8)
-        let context = DelimitedMessage.Context(delimiter: .ascii.comma)
-        let message = try? DelimitedMessage(ascii: bytes, in: context)
+        let message = try? DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
 
         #expect(message != nil)
     }
 }
 
-// MARK: - Category Theory Verification
+// MARK: - Serialization Behavior Properties
 
-@Suite("Serializable - Category Theory Properties")
-struct CategoryTheoryTests {
-    @Test
-    func `Void context is the unit type (terminal object)`() {
-        // In category theory, Void is the terminal object.
-        // There's exactly one value: ()
-        // A function (Void × A) → B is isomorphic to A → B
-
-        // For context-free types, init(ascii:in:()) ≅ init(ascii:)
-        let bytes: [Byte] = Array<Byte>("test".utf8)
-
-        // Both should produce identical results:
-        let viaConvenience = try? Token(ascii: bytes)
-        let viaExplicit = try? Token(ascii: bytes, in: ())
-
-        #expect(viaConvenience == viaExplicit)
-    }
-
+@Suite("Serializable - Serialization Behavior Properties")
+struct SerializationBehaviorTests {
     @Test
     func `Serialization is context-free (value is self-describing)`() throws {
-        // Even for context-dependent types, serialization doesn't need context.
+        // Even for parameterized-parse types, serialization needs no parameter.
         // The value itself contains all information needed to serialize.
 
         let message = DelimitedMessage(
@@ -359,7 +330,7 @@ struct CategoryTheoryTests {
             delimiter: .ascii.comma
         )
 
-        // Serialize without needing any context:
+        // Serialize without needing any parameter:
         let serialized: [Byte] = DelimitedMessage.serialize(message)
         #expect(serialized == Array<Byte>("x,y".utf8))
     }
@@ -370,20 +341,18 @@ struct CategoryTheoryTests {
         let original: [Byte] = Array<Byte>("valid-token".utf8)
 
         let token: Token = try .init(ascii: original)
-        let serialized: [Byte] = Token.serialize(ascii: token)
+        let serialized: [Byte] = token.bytes
         #expect(serialized == original)
     }
 }
 
 // MARK: - Binary.Serializable Conformance Tests
 
-/// Example HTML-like element that composes with ASCII.Serializable types.
-/// Demonstrates how streaming types can embed RFC/ASCII types seamlessly.
+/// Example HTML-like element that composes with `Binary.Serializable` types.
+/// Demonstrates how streaming types can embed ASCII-serializing types seamlessly.
 ///
-/// `HTMLAnchor` is a pure `Binary.Serializable` (Byte substrate per
-/// [API-BYTE-003] post-W2 cascade). The `.utf8` appends go through the
-/// BSLI `append(contentsOf: Sequence<UInt8>) where Element: Byte.Protocol`
-/// bridge in `Byte_Primitives_Standard_Library_Integration`.
+/// `HTMLAnchor` is a pure `Binary.Serializable` (Byte substrate). The `.utf8`
+/// appends go through the BSLI `append(contentsOf: Sequence<UInt8>)` bridge.
 private struct HTMLAnchor: Binary.Serializable {
     let href: Token
     let text: String
@@ -401,31 +370,30 @@ private struct HTMLAnchor: Binary.Serializable {
 @Suite("Serializable - Binary.Serializable Conformance")
 struct StreamingConformanceTests {
 
-    // MARK: - Automatic Conformance
+    // MARK: - Direct Conformance
 
     @Test
-    func `ASCII.Serializable types automatically conform to Binary.Serializable`() throws {
+    func `Token conforms to Binary.Serializable directly and serializes`() throws {
         let token: Token = try .init("my-token")
 
-        // Token conforms to Binary.Serializable via ASCII.Serializable.
-        // The ASCII wrapper path uses the Byte substrate.
+        // Token conforms to Binary.Serializable directly (Byte substrate).
         var buffer: [Byte] = []
-        token.ascii.serialize(into: &buffer)
+        token.serialize(into: &buffer)
 
         #expect(buffer == Array<Byte>("my-token".utf8))
     }
 
     @Test
-    func `Context-dependent types also conform to Binary.Serializable`() {
+    func `Parameterized type conforms to Binary.Serializable directly and serializes`() {
         let message = DelimitedMessage(
             __unchecked: (),
             parts: ["a", "b", "c"],
             delimiter: .ascii.comma
         )
 
-        // DelimitedMessage conforms to Binary.Serializable via ASCII.Serializable
+        // DelimitedMessage conforms to Binary.Serializable directly.
         var buffer: [Byte] = []
-        message.ascii.serialize(into: &buffer)
+        message.serialize(into: &buffer)
 
         #expect(buffer == Array<Byte>("a,b,c".utf8))
     }
@@ -436,9 +404,9 @@ struct StreamingConformanceTests {
     func `Serialize into buffer using serialize(into:)`() throws {
         let token: Token = try .init("hello-world")
 
-        // Ideal streaming usage pattern (ASCII substrate, [Byte] buffer).
+        // Ideal streaming usage pattern ([Byte] buffer).
         var buffer: [Byte] = []
-        token.ascii.serialize(into: &buffer)
+        token.serialize(into: &buffer)
 
         #expect(buffer == Array<Byte>("hello-world".utf8))
     }
@@ -447,8 +415,7 @@ struct StreamingConformanceTests {
     func `Get bytes using .bytes property`() throws {
         let token: Token = try .init("swift-token")
 
-        // `.bytes` convenience from Binary.Serializable returns `[Byte]`
-        // post-cascade.
+        // `.bytes` convenience from Binary.Serializable returns `[Byte]`.
         let bytes: [Byte] = token.bytes
 
         #expect(bytes == Array<Byte>("swift-token".utf8))
@@ -459,7 +426,7 @@ struct StreamingConformanceTests {
         let token: Token = try .init("suffix")
 
         var buffer: [Byte] = Array<Byte>("prefix-".utf8)
-        token.ascii.serialize(into: &buffer)
+        token.serialize(into: &buffer)
 
         #expect(buffer == Array<Byte>("prefix-suffix".utf8))
     }
@@ -488,13 +455,13 @@ struct StreamingConformanceTests {
             delimiter: .ascii.colon
         )
 
-        // Accumulate all into one buffer ([Byte] for ASCII substrate)
+        // Accumulate all into one buffer ([Byte])
         var buffer: [Byte] = []
-        token1.ascii.serialize(into: &buffer)
+        token1.serialize(into: &buffer)
         buffer.append(Byte.ascii.hyphen)
-        token2.ascii.serialize(into: &buffer)
+        token2.serialize(into: &buffer)
         buffer.append(Byte.ascii.verticalLine)
-        message.ascii.serialize(into: &buffer)
+        message.serialize(into: &buffer)
 
         #expect(buffer == Array<Byte>("first-second|a:b".utf8))
     }
@@ -510,7 +477,7 @@ struct StreamingConformanceTests {
             if index > 0 {
                 buffer.append(Byte.ascii.comma)
             }
-            token.ascii.serialize(into: &buffer)
+            token.serialize(into: &buffer)
         }
 
         let result = String(decoding: buffer, as: UTF8.self)
@@ -524,12 +491,12 @@ struct StreamingConformanceTests {
     func `Round-trip through buffer produces same result as static serialize`() throws {
         let token: Token = try .init("roundtrip-test")
 
-        // Via static Binary.Serializable (returns [Byte] post-cascade).
+        // Via static Binary.Serializable (returns [Byte]).
         let staticBytes: [Byte] = Token.serialize(token)
 
-        // Via streaming serialize(into:) on ASCII substrate ([Byte]).
+        // Via streaming serialize(into:) ([Byte]).
         var streamingBuffer: [Byte] = []
-        token.ascii.serialize(into: &streamingBuffer)
+        token.serialize(into: &streamingBuffer)
 
         // Via .bytes property (Binary.Serializable, [Byte]).
         let propertyBytes: [Byte] = token.bytes
@@ -547,13 +514,13 @@ struct StreamingAPIPatternTests {
 
     @Test
     func `Pattern: Direct buffer writing for server response`() throws {
-        // Simulating building an HTTP-like response ([Byte] for ASCII substrate)
+        // Simulating building an HTTP-like response ([Byte])
         var response: [Byte] = []
 
         // Add header
         response.append(contentsOf: "X-Token: ".utf8)
         let token: Token = try .init("auth-token-123")
-        token.ascii.serialize(into: &response)
+        token.serialize(into: &response)
         response.append(contentsOf: "\r\n".utf8)
 
         let result = String(decoding: response, as: UTF8.self)
@@ -561,13 +528,13 @@ struct StreamingAPIPatternTests {
     }
 
     @Test
-    func `Pattern: Building HTML with embedded RFC types`() throws {
+    func `Pattern: Building HTML with embedded types`() throws {
         let anchor = try HTMLAnchor(
             href: .init("https-link"),
             text: "Visit site"
         )
 
-        // Get bytes for HTTP response (Binary.Serializable, [Byte] post-cascade).
+        // Get bytes for HTTP response (Binary.Serializable, [Byte]).
         let bytes: [Byte] = anchor.bytes
 
         // Or get String for debugging/logging
@@ -587,7 +554,7 @@ struct StreamingAPIPatternTests {
         for input in inputs {
             buffer.removeAll(keepingCapacity: true)
             let token: Token = try .init(input)
-            token.ascii.serialize(into: &buffer)
+            token.serialize(into: &buffer)
             results.append(buffer)
         }
 
@@ -599,7 +566,7 @@ struct StreamingAPIPatternTests {
 
     @Test
     func `Pattern: Streaming type wrapping ASCII type`() throws {
-        // HTMLAnchor is a streaming type that wraps Token (ASCII type)
+        // HTMLAnchor is a streaming type that wraps Token
         struct Document: Binary.Serializable {
             let title: Token
             let links: [HTMLAnchor]
@@ -634,10 +601,15 @@ struct StreamingAPIPatternTests {
 
 // MARK: - Infinite Recursion Prevention Tests
 
-/// Example type demonstrating the CORRECT pattern for Binary.ASCII.RawRepresentable
+/// Example type demonstrating the CORRECT pattern for a `Binary.Serializable`
+/// type that also conforms to `Swift.RawRepresentable` with a `String` raw value
+/// derived from serialization.
 ///
-/// Types conforming to both `Binary.ASCII.Serializable` and `Binary.ASCII.RawRepresentable`
-/// MUST implement `serialize(ascii:into:)` explicitly to avoid infinite recursion.
+/// Such a type MUST implement `serialize(_:into:)` explicitly. Relying on the
+/// `Binary.Serializable where Self: RawRepresentable, RawValue: StringProtocol`
+/// default (which serializes `rawValue.utf8`) would recurse when `rawValue` is
+/// itself derived from serialization (`String(self)`):
+///   rawValue → String(self) → serialize (default) → rawValue → …
 private struct CorrectEmailAddress: Sendable, Codable, Hashable {
     let localPart: String
     let domain: String
@@ -648,13 +620,29 @@ private struct CorrectEmailAddress: Sendable, Codable, Hashable {
     }
 }
 
-extension CorrectEmailAddress: Binary.ASCII.Serializable {
+extension CorrectEmailAddress: Binary.Serializable {
     enum Error: Swift.Error, Sendable, Equatable {
         case empty
         case missingAtSign
     }
 
-    init<Bytes: Collection>(ascii bytes: Bytes, in context: Void) throws(Error)
+    /// CORRECT: Explicit serialize implementation that does NOT use `rawValue`.
+    ///
+    /// This is REQUIRED because the `RawRepresentable`-defaulted serialize would
+    /// read `rawValue` (= `String(self)` = serialize), causing infinite recursion.
+    static func serialize<Buffer: RangeReplaceableCollection>(
+        _ email: Self,
+        into buffer: inout Buffer
+    ) where Buffer.Element == Byte {
+        buffer.append(contentsOf: email.localPart.utf8)
+        buffer.append(Byte.ascii.commercialAt)
+        buffer.append(contentsOf: email.domain.utf8)
+    }
+}
+
+extension CorrectEmailAddress {
+    /// Plain byte-parse convenience (context-free).
+    init<Bytes: Collection>(ascii bytes: Bytes) throws(Error)
     where Bytes.Element == Byte {
         guard !bytes.isEmpty else { throw .empty }
 
@@ -670,71 +658,44 @@ extension CorrectEmailAddress: Binary.ASCII.Serializable {
         )
     }
 
-    /// CORRECT: Explicit serialize implementation that does NOT use rawValue
-    ///
-    /// This is REQUIRED when conforming to Binary.ASCII.RawRepresentable.
-    /// Using rawValue here would cause infinite recursion because:
-    ///   rawValue → String(ascii: self) → serialize(ascii:into:) → rawValue → ...
-    static func serialize<Buffer: RangeReplaceableCollection>(
-        ascii email: Self,
-        into buffer: inout Buffer
-    ) where Buffer.Element == Byte {
-        buffer.append(contentsOf: email.localPart.utf8)
-        buffer.append(Byte.ascii.commercialAt)
-        buffer.append(contentsOf: email.domain.utf8)
+    init(_ value: String) throws(Error) {
+        try self.init(ascii: [Byte](value.utf8))
     }
 }
 
-extension CorrectEmailAddress: Binary.ASCII.RawRepresentable {
-    typealias RawValue = String
+extension CorrectEmailAddress: Swift.RawRepresentable {
+    /// Raw value derived from serialization (not stored).
+    var rawValue: String { String(self) }
+
+    init?(rawValue: String) {
+        try? self.init(rawValue)
+    }
 }
 
-extension CorrectEmailAddress: CustomStringConvertible {}
+extension CorrectEmailAddress: CustomStringConvertible {
+    var description: String { String(self) }
+}
 
 @Suite("Serializable - Infinite Recursion Prevention")
 struct InfiniteRecursionPreventionTests {
 
     // MARK: - Documentation of the Problem
 
-    /// This test documents the infinite recursion problem that occurs when
-    /// a type conforms to both Binary.ASCII.Serializable and Binary.ASCII.RawRepresentable
-    /// WITHOUT providing an explicit serialize(ascii:into:) implementation.
-    ///
-    /// ## The Problem Pattern (DO NOT USE)
-    ///
-    /// ```swift
-    /// // WRONG: This causes infinite recursion!
-    /// extension MyType: Binary.ASCII.Serializable {
-    ///     // Relying on default implementation from RawRepresentable
-    /// }
-    ///
-    /// extension MyType: Binary.ASCII.RawRepresentable {
-    ///     typealias RawValue = String
-    /// }
-    /// ```
+    /// Documents the infinite-recursion hazard for a `Binary.Serializable` type
+    /// that also conforms to `Swift.RawRepresentable` (`RawValue: StringProtocol`)
+    /// with a `rawValue` derived from serialization, WITHOUT an explicit
+    /// `serialize(_:into:)`.
     ///
     /// ## Why It Crashes
     ///
-    /// 1. `rawValue` getter (from Binary.ASCII.RawRepresentable) calls `String(ascii: self)`
-    /// 2. `String(ascii:)` calls `T.serialize(ascii:into:)` to get bytes
-    /// 3. Default `serialize(ascii:into:)` for RawRepresentable uses `rawValue.utf8`
-    /// 4. This accesses `rawValue` again → INFINITE RECURSION → Stack overflow
+    /// 1. `rawValue` (derived) evaluates `String(self)`, which serializes.
+    /// 2. The `RawRepresentable`-defaulted `serialize(_:into:)` reads `rawValue.utf8`.
+    /// 3. That reads `rawValue` again → INFINITE RECURSION → stack overflow.
     ///
     /// ## The Solution
     ///
-    /// Always provide an explicit `serialize(ascii:into:)` that does NOT use `rawValue`:
-    ///
-    /// ```swift
-    /// extension MyType: Binary.ASCII.Serializable {
-    ///     static func serialize<Buffer: RangeReplaceableCollection>(
-    ///         ascii value: Self,
-    ///         into buffer: inout Buffer
-    ///     ) where Buffer.Element == UInt8 {
-    ///         // Serialize directly from stored properties, NOT from rawValue
-    ///         buffer.append(contentsOf: value.someProperty.utf8)
-    ///     }
-    /// }
-    /// ```
+    /// Provide an explicit `serialize(_:into:)` that serializes from stored
+    /// properties, NOT from `rawValue`.
     @Test
     func `Correct pattern avoids infinite recursion`() throws {
         let email = try CorrectEmailAddress("user@example.com")
@@ -750,10 +711,10 @@ struct InfiniteRecursionPreventionTests {
     }
 
     @Test
-    func `RawValue is synthesized from serialization`() throws {
+    func `RawValue is derived from serialization`() throws {
         let email = try CorrectEmailAddress("test@domain.org")
 
-        // rawValue should be derived from serialize(ascii:into:)
+        // rawValue should be derived from serialize(_:into:)
         #expect(email.rawValue == "test@domain.org")
     }
 
@@ -772,10 +733,9 @@ struct InfiniteRecursionPreventionTests {
     func `Serialization does not access rawValue`() throws {
         let email = try CorrectEmailAddress("direct@serialize.test")
 
-        // serialize(ascii:into:) should work without ever touching rawValue
-        // ([Byte] for ASCII substrate)
+        // serialize(_:into:) should work without ever touching rawValue ([Byte])
         var buffer: [Byte] = []
-        CorrectEmailAddress.serialize(ascii: email, into: &buffer)
+        CorrectEmailAddress.serialize(email, into: &buffer)
 
         #expect(buffer == Array<Byte>("direct@serialize.test".utf8))
     }
@@ -783,12 +743,12 @@ struct InfiniteRecursionPreventionTests {
     // MARK: - API Design Guidance
 
     @Test
-    func `Checklist for Binary.ASCII.RawRepresentable conformance`() throws {
+    func `Checklist for Binary.Serializable + RawRepresentable conformance`() throws {
         // This test serves as documentation for the required pattern:
         //
-        // ✅ 1. Implement serialize(ascii:into:) explicitly
+        // ✅ 1. Implement serialize(_:into:) explicitly
         // ✅ 2. Do NOT use rawValue in serialize implementation
-        // ✅ 3. Add `typealias RawValue = String` to RawRepresentable conformance
+        // ✅ 3. Add `Swift.RawRepresentable` with a derived `rawValue`
         // ✅ 4. Test that rawValue, description, and bytes all work
 
         let email = try CorrectEmailAddress("checklist@test.com")
@@ -796,13 +756,13 @@ struct InfiniteRecursionPreventionTests {
         // All of these should work without recursion:
         #expect(email.rawValue == "checklist@test.com")
         #expect(email.description == "checklist@test.com")
-        #expect(String(ascii: email) == "checklist@test.com")
+        #expect(String(email) == "checklist@test.com")
         let bytes: [Byte] = email.bytes
         #expect(bytes == Array<Byte>("checklist@test.com".utf8))
 
-        // [Byte] for ASCII substrate
+        // [Byte] buffer
         var buffer: [Byte] = []
-        email.ascii.serialize(into: &buffer)
+        email.serialize(into: &buffer)
         #expect(buffer == Array<Byte>("checklist@test.com".utf8))
     }
 }

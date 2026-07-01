@@ -20,7 +20,6 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-binary-base-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-ascii-serializer-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
@@ -37,7 +36,6 @@ let package = Package(
                 .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
                 .product(name: "Binary Parser Primitives", package: "swift-binary-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
-                .product(name: "Binary ASCII Serializable Primitives", package: "swift-ascii-serializer-primitives"),
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
                 .product(name: "String Primitives", package: "swift-string-primitives"),
                 // W3 PRUNE: Swift.Span: Span.`Protocol` conformance for
