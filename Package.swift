@@ -18,10 +18,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swift-incits/swift-incits-4-1986.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-base-primitives.git", branch: "main"),
-        // W3 PRUNE: binary's Binary.Borrowed deleted + the parse engine
-        // re-homed to the Span.`Protocol` byte-span seam — path-dep
-        // binary + binary-parser (changed) and span (the seam's conformance
-        // home, imported in the 3 Machine.Access files).
         .package(url: "https://github.com/swift-primitives/swift-binary-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-binary-serializer-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-ascii-serializer-primitives.git", branch: "main"),
@@ -29,29 +25,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-binary-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-string-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-span-primitives.git", branch: "main"),
-        // transitive-collision overrides (Finding 7): the binary-parser →
-        // machine → graph → data-structure cluster pulls these W2/W3 packages
-        // url→main, colliding with the path-dep'd W2 memory. Path-dep their
-        // canonical-basename worktrees to unify identities.
-        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-cursor-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-memory-cursor-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-memory-iterator-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-storage-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-storage-split-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-buffer-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-buffer-ring-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-buffer-linear-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-buffer-slots-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-hash-table-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-set-ordered-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-heap-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-stack-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main")
+        .package(url: "https://github.com/swift-primitives/swift-span-primitives.git", branch: "main")
     ],
     targets: [
         .target(
@@ -59,6 +33,7 @@ let package = Package(
             dependencies: [
                 .product(name: "INCITS 4 1986", package: "swift-incits-4-1986"),
                 .product(name: "Binary Base Primitives", package: "swift-binary-base-primitives"),
+                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Binary Serializable Primitives", package: "swift-binary-serializer-primitives"),
                 .product(name: "Binary Parser Primitives", package: "swift-binary-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
