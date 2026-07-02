@@ -1,6 +1,6 @@
 # .github/metadata.yaml
 # Triaged by AI-assisted bulk pass (2026-04-29).
-description: "ASCII for Swift."
+description: "ASCII validation, case conversion, and line-ending normalization for strings, characters, and integers in Swift."
 topics:
   - foundations
   - ascii
