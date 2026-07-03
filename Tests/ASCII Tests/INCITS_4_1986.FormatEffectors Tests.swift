@@ -4,6 +4,7 @@
 // Tests for INCITS_4_1986 line ending normalization
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -18,7 +19,9 @@ struct `FormatEffectors Tests` {
             ("hello\rworld", .lf, "hello\nworld"),
         ])
         func `line ending normalization`(
-            input: String, to: INCITS_4_1986.FormatEffectors.Line.Ending, expected: String
+            input: String,
+            to: INCITS_4_1986.FormatEffectors.Line.Ending,
+            expected: String
         ) {
             #expect(input.normalized(to: to) == expected)
         }
@@ -50,7 +53,7 @@ struct `FormatEffectors Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Line Ending Normalization - Performance` {
 //        @Test(.timed(threshold: .milliseconds(50)))
@@ -66,4 +69,4 @@ struct `FormatEffectors Tests` {
 //            _ = text.normalized(to: .lf)
 //        }
 //    }
-//}
+// }

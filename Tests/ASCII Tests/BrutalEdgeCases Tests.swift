@@ -16,6 +16,7 @@
 //   test logic reads more naturally as a predicate.
 
 import Testing
+
 @testable import ASCII
 
 // File-private helper bridging "is [Byte] all ASCII?" to the
@@ -66,7 +67,8 @@ struct Brutal {
             if byte.ascii.isLetter {
                 let cycle = byte.ascii(case: .upper).ascii(case: .lower).ascii(case: .upper)
                 #expect(
-                    cycle == byte.ascii(case: .upper), "Case involution failed for 0x\(String(byte, radix: 16))"
+                    cycle == byte.ascii(case: .upper),
+                    "Case involution failed for 0x\(String(byte, radix: 16))"
                 )
             }
         }
@@ -162,7 +164,8 @@ struct Brutal {
 
             for byte in surrogateRangeBytes {
                 #expect(
-                    !isAllASCII([byte]), "Surrogate-range byte 0x\(String(byte.underlying, radix: 16)) should be rejected"
+                    !isAllASCII([byte]),
+                    "Surrogate-range byte 0x\(String(byte.underlying, radix: 16)) should be rejected"
                 )
             }
         }
@@ -570,7 +573,7 @@ struct Brutal {
 
 // MARK: - Performance Torture Tests
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Brutal - Performance Torture` {
 //        @Test(.timed(threshold: .milliseconds(300)))
@@ -639,4 +642,4 @@ struct Brutal {
 //            }
 //        }
 //    }
-//}
+// }

@@ -12,6 +12,7 @@
 // the test calls drop the `.ascii` step.
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -59,7 +60,7 @@ struct SPACE {
 
 // MARK: - Performance
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `SPACE - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -77,4 +78,4 @@ struct SPACE {
 //            }
 //        }
 //    }
-//}
+// }

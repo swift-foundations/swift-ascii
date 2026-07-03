@@ -4,6 +4,7 @@
 // Tests for UInt8 ASCII namespace and predicates
 
 import Testing
+
 @testable import ASCII
 
 // Note: UInt8 constant tests are in INCITS_4_1986.GraphicCharacters Tests, INCITS_4_1986.ControlCharacters Tests, etc.
@@ -68,7 +69,7 @@ struct `UInt8 Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `UInt8 - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -90,4 +91,4 @@ struct `UInt8 Tests` {
 //            }
 //        }
 //    }
-//}
+// }

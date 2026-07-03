@@ -4,6 +4,7 @@
 // Tests for Set<Character> ASCII whitespace constants
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -72,7 +73,7 @@ struct `Set<Character>` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Set<Character> - Performance` {
 //        @Test(.timed(threshold: .milliseconds(50)))
@@ -95,4 +96,4 @@ struct `Set<Character>` {
 //            }
 //        }
 //    }
-//}
+// }

@@ -4,6 +4,7 @@
 // Tests for StringProtocol extension methods
 
 import Testing
+
 @testable import ASCII
 
 @Suite

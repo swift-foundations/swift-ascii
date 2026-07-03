@@ -13,8 +13,8 @@
 //  come from the live `ASCII_Primitives` module, unaffected by the tier retirement.
 //
 
-import Binary_Primitives
 import ASCII
+import Binary_Primitives
 import Testing
 
 // MARK: - Context-Free Type Example
@@ -155,7 +155,7 @@ extension DelimitedMessage: CustomStringConvertible {
 struct ContextFreeSerializableTests {
     @Test
     func `Parse from bytes using init(ascii:)`() throws {
-        let bytes: [Byte] = Array<Byte>("hello-world".utf8)
+        let bytes: [Byte] = [Byte]("hello-world".utf8)
         let token: Token = try .init(ascii: bytes)
 
         #expect(token.rawValue == "hello-world")
@@ -181,7 +181,7 @@ struct ContextFreeSerializableTests {
 
         // `Token.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
         let serialized: [Byte] = Token.serialize(token)
-        #expect(serialized == Array<Byte>("hello".utf8))
+        #expect(serialized == [Byte]("hello".utf8))
     }
 
     @Test
@@ -193,7 +193,7 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Round-trip: bytes → Token → bytes`() throws {
-        let original: [Byte] = Array<Byte>("round-trip".utf8)
+        let original: [Byte] = [Byte]("round-trip".utf8)
         let token: Token = try .init(ascii: original)
 
         let serialized: [Byte] = token.bytes
@@ -211,7 +211,7 @@ struct ContextFreeSerializableTests {
 
     @Test
     func `Invalid input throws error`() {
-        let bytes: [Byte] = Array<Byte>("hello world".utf8)  // space is invalid
+        let bytes: [Byte] = [Byte]("hello world".utf8)  // space is invalid
 
         #expect(throws: Token.Error.self) {
             try Token(ascii: bytes)
@@ -234,7 +234,7 @@ struct ContextFreeSerializableTests {
 struct ParameterizedSerializableTests {
     @Test
     func `Parse with delimiter using init(ascii:delimiter:)`() throws {
-        let bytes: [Byte] = Array<Byte>("foo|bar|baz".utf8)
+        let bytes: [Byte] = [Byte]("foo|bar|baz".utf8)
 
         let message = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
 
@@ -244,7 +244,7 @@ struct ParameterizedSerializableTests {
 
     @Test
     func `Different delimiters produce different parses`() throws {
-        let bytes: [Byte] = Array<Byte>("a,b|c".utf8)
+        let bytes: [Byte] = [Byte]("a,b|c".utf8)
 
         // Parse with comma delimiter
         let commaMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
@@ -265,12 +265,12 @@ struct ParameterizedSerializableTests {
 
         // `DelimitedMessage.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
         let serialized: [Byte] = DelimitedMessage.serialize(message)
-        #expect(serialized == Array<Byte>("hello-world".utf8))
+        #expect(serialized == [Byte]("hello-world".utf8))
     }
 
     @Test
     func `Round-trip: bytes → Message → bytes`() throws {
-        let original: [Byte] = Array<Byte>("one:two:three".utf8)
+        let original: [Byte] = [Byte]("one:two:three".utf8)
 
         let message = try DelimitedMessage(ascii: original, delimiter: .ascii.colon)
 
@@ -308,7 +308,7 @@ struct ParameterizedSerializableTests {
         //   let message = try DelimitedMessage("a,b,c")  // Error: no delimiter!
 
         // Instead, you must provide the delimiter:
-        let bytes: [Byte] = Array<Byte>("a,b,c".utf8)
+        let bytes: [Byte] = [Byte]("a,b,c".utf8)
         let message = try? DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
 
         #expect(message != nil)
@@ -332,13 +332,13 @@ struct SerializationBehaviorTests {
 
         // Serialize without needing any parameter:
         let serialized: [Byte] = DelimitedMessage.serialize(message)
-        #expect(serialized == Array<Byte>("x,y".utf8))
+        #expect(serialized == [Byte]("x,y".utf8))
     }
 
     @Test
     func `Parse-serialize round-trip is identity (for well-formed input)`() throws {
         // For well-formed input, parse ∘ serialize = id
-        let original: [Byte] = Array<Byte>("valid-token".utf8)
+        let original: [Byte] = [Byte]("valid-token".utf8)
 
         let token: Token = try .init(ascii: original)
         let serialized: [Byte] = token.bytes
@@ -380,7 +380,7 @@ struct StreamingConformanceTests {
         var buffer: [Byte] = []
         token.serialize(into: &buffer)
 
-        #expect(buffer == Array<Byte>("my-token".utf8))
+        #expect(buffer == [Byte]("my-token".utf8))
     }
 
     @Test
@@ -395,7 +395,7 @@ struct StreamingConformanceTests {
         var buffer: [Byte] = []
         message.serialize(into: &buffer)
 
-        #expect(buffer == Array<Byte>("a,b,c".utf8))
+        #expect(buffer == [Byte]("a,b,c".utf8))
     }
 
     // MARK: - Buffer-Based Serialization
@@ -408,7 +408,7 @@ struct StreamingConformanceTests {
         var buffer: [Byte] = []
         token.serialize(into: &buffer)
 
-        #expect(buffer == Array<Byte>("hello-world".utf8))
+        #expect(buffer == [Byte]("hello-world".utf8))
     }
 
     @Test
@@ -418,17 +418,17 @@ struct StreamingConformanceTests {
         // `.bytes` convenience from Binary.Serializable returns `[Byte]`.
         let bytes: [Byte] = token.bytes
 
-        #expect(bytes == Array<Byte>("swift-token".utf8))
+        #expect(bytes == [Byte]("swift-token".utf8))
     }
 
     @Test
     func `Append to existing buffer content`() throws {
         let token: Token = try .init("suffix")
 
-        var buffer: [Byte] = Array<Byte>("prefix-".utf8)
+        var buffer: [Byte] = [Byte]("prefix-".utf8)
         token.serialize(into: &buffer)
 
-        #expect(buffer == Array<Byte>("prefix-suffix".utf8))
+        #expect(buffer == [Byte]("prefix-suffix".utf8))
     }
 
     // MARK: - Composition with Streaming Types
@@ -463,7 +463,7 @@ struct StreamingConformanceTests {
         buffer.append(Byte.ascii.verticalLine)
         message.serialize(into: &buffer)
 
-        #expect(buffer == Array<Byte>("first-second|a:b".utf8))
+        #expect(buffer == [Byte]("first-second|a:b".utf8))
     }
 
     @Test
@@ -540,7 +540,7 @@ struct StreamingAPIPatternTests {
         // Or get String for debugging/logging
         let string = String(anchor)
 
-        #expect(bytes == Array<Byte>(string.utf8))
+        #expect(bytes == [Byte](string.utf8))
         #expect(string == "<a href=\"https-link\">Visit site</a>")
     }
 
@@ -559,9 +559,9 @@ struct StreamingAPIPatternTests {
         }
 
         #expect(results.count == 3)
-        #expect(results[0] == Array<Byte>("alpha".utf8))
-        #expect(results[1] == Array<Byte>("beta".utf8))
-        #expect(results[2] == Array<Byte>("gamma".utf8))
+        #expect(results[0] == [Byte]("alpha".utf8))
+        #expect(results[1] == [Byte]("beta".utf8))
+        #expect(results[2] == [Byte]("gamma".utf8))
     }
 
     @Test
@@ -707,7 +707,7 @@ struct InfiniteRecursionPreventionTests {
 
         #expect(rawValue == "user@example.com")
         #expect(description == "user@example.com")
-        #expect(bytes == Array<Byte>("user@example.com".utf8))
+        #expect(bytes == [Byte]("user@example.com".utf8))
     }
 
     @Test
@@ -737,7 +737,7 @@ struct InfiniteRecursionPreventionTests {
         var buffer: [Byte] = []
         CorrectEmailAddress.serialize(email, into: &buffer)
 
-        #expect(buffer == Array<Byte>("direct@serialize.test".utf8))
+        #expect(buffer == [Byte]("direct@serialize.test".utf8))
     }
 
     // MARK: - API Design Guidance
@@ -758,11 +758,11 @@ struct InfiniteRecursionPreventionTests {
         #expect(email.description == "checklist@test.com")
         #expect(String(email) == "checklist@test.com")
         let bytes: [Byte] = email.bytes
-        #expect(bytes == Array<Byte>("checklist@test.com".utf8))
+        #expect(bytes == [Byte]("checklist@test.com".utf8))
 
         // [Byte] buffer
         var buffer: [Byte] = []
         email.serialize(into: &buffer)
-        #expect(buffer == Array<Byte>("checklist@test.com".utf8))
+        #expect(buffer == [Byte]("checklist@test.com".utf8))
     }
 }

@@ -4,6 +4,7 @@
 // Tests for String extension methods
 
 import Testing
+
 @testable import ASCII
 
 // Note: String conversion tests are in INCITS_4_1986 Tests.swift
@@ -506,7 +507,7 @@ struct `String Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `String - Performance` {
 //        @Test(.timed(threshold: .milliseconds(150)))
@@ -525,4 +526,4 @@ struct `String Tests` {
 //            }
 //        }
 //    }
-//}
+// }

@@ -16,8 +16,9 @@
 // SCOPE per the handoff brief (renames require design discussion); the
 // file body has been migrated in place.
 
-import Testing
 import ASCII_Test_Support
+import Testing
+
 @testable import ASCII
 
 // File-private helper bridging "is [Byte] all ASCII?" to the
@@ -68,15 +69,15 @@ struct `[UInt8] Tests` {
             // `[ASCII.Code].ascii.whitespaces` per
             // `[ASCII.Code]+INCITS_4_1986.ASCII.swift`.
             let ws = [ASCII.Code].ascii.whitespaces
-            #expect(ws.contains(.sp))      // Space
-            #expect(ws.contains(.htab))    // Tab
-            #expect(ws.contains(.lf))      // LF
-            #expect(ws.contains(.cr))      // CR
+            #expect(ws.contains(.sp))  // Space
+            #expect(ws.contains(.htab))  // Tab
+            #expect(ws.contains(.lf))  // LF
+            #expect(ws.contains(.cr))  // CR
         }
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `[UInt8] - Performance` {
 //        @Test(.timed(threshold: .milliseconds(150)))
@@ -104,4 +105,4 @@ struct `[UInt8] Tests` {
 //            }
 //        }
 //    }
-//}
+// }

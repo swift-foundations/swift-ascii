@@ -4,12 +4,13 @@
 // Tests that verify linear performance scaling with no regression at higher workloads
 
 import Testing
+
 @testable import ASCII
 
 // MARK: - Linear Scaling Verification
 
-//@Suite
-//struct `Linear Scaling Tests` {
+// @Suite
+// struct `Linear Scaling Tests` {
 //    @Suite
 //    struct `Linear Scaling Benchmarks` {
 //        @Test(.timed(threshold: .milliseconds(10)))
@@ -121,7 +122,7 @@ import Testing
 //            _ = text.trimming(.ascii.whitespaces)
 //        }
 //    }
-//}
+// }
 
 // MARK: - Performance Analysis Comments
 

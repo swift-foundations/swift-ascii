@@ -10,6 +10,7 @@
 // the receiving API (`String.ascii.unchecked`) takes stdlib bytes.
 
 import Testing
+
 @testable import ASCII
 
 // MARK: - String Case Conversion
@@ -142,10 +143,14 @@ struct `Case Conversion Tests` {
             #expect(a - A == INCITS_4_1986.Case.Conversion.offset)
         }
 
-        @Test(arguments: Array(zip(
-            UInt8.ascii.a.underlying...UInt8.ascii.z.underlying,
-            UInt8.ascii.A.underlying...UInt8.ascii.Z.underlying
-        )))
+        @Test(
+            arguments: Array(
+                zip(
+                    UInt8.ascii.a.underlying...UInt8.ascii.z.underlying,
+                    UInt8.ascii.A.underlying...UInt8.ascii.Z.underlying
+                )
+            )
+        )
         func `all letter pairs have correct offset`(lower: UInt8, upper: UInt8) {
             // Range iteration requires Strideable; `ASCII.Code` is not Strideable
             // per [API-BYTE-002], so drop to `.underlying` (UInt8) for the
@@ -160,7 +165,7 @@ struct `Case Conversion Tests` {
 
 // MARK: - Performance
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Case Conversion - Performance` {
 //        @Test(.timed(threshold: .milliseconds(50)))
@@ -189,4 +194,4 @@ struct `Case Conversion Tests` {
 //            }
 //        }
 //    }
-//}
+// }

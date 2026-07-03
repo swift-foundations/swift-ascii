@@ -4,6 +4,7 @@
 // Tests for Character extension predicates
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -189,7 +190,7 @@ struct `Character Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Character - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -216,4 +217,4 @@ struct `Character Tests` {
 //            }
 //        }
 //    }
-//}
+// }

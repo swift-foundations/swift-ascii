@@ -4,6 +4,7 @@
 // Tests for INCITS_4_1986.FormatEffectors.Line.Ending support
 
 import Testing
+
 @testable import ASCII
 
 // MARK: - Line Ending Constants
@@ -18,7 +19,9 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
             (INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "CRLF", [ASCII.Code.cr, ASCII.Code.lf]),
         ])
         func `line ending conversions to codes`(
-            ending: INCITS_4_1986.FormatEffectors.Line.Ending, name: String, expected: [ASCII.Code]
+            ending: INCITS_4_1986.FormatEffectors.Line.Ending,
+            name: String,
+            expected: [ASCII.Code]
         ) {
             #expect([ASCII.Code](ascii: ending) == expected, "\(name) should produce correct codes")
         }
@@ -46,7 +49,7 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
 
 // MARK: - Performance
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `INCITS_4_1986.FormatEffectors.Line.Ending - Performance` {
 //        @Test(.timed(threshold: .milliseconds(200)))
@@ -58,4 +61,4 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
 //            }
 //        }
 //    }
-//}
+// }

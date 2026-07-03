@@ -4,6 +4,7 @@
 // Tests for INCITS_4_1986 string trimming operations
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -62,7 +63,7 @@ struct `StringOperator Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `String Trimming - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -79,4 +80,4 @@ struct `StringOperator Tests` {
 //            _ = text.trimming(Set<Character>.ascii.whitespaces)
 //        }
 //    }
-//}
+// }

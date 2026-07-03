@@ -4,6 +4,7 @@
 // Tests for module-level INCITS_4_1986 namespace
 
 import Testing
+
 @testable import ASCII
 
 // MARK: - Module Constants
@@ -48,7 +49,7 @@ struct `INCITS_4_1986 - Constants Tests` {
 
 // MARK: - Performance
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `INCITS_4_1986 - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -61,4 +62,4 @@ struct `INCITS_4_1986 - Constants Tests` {
 //            }
 //        }
 //    }
-//}
+// }

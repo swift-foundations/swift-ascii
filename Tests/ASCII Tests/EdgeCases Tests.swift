@@ -13,6 +13,7 @@
 //   because `ASCII.Code` has no arithmetic by design per [API-BYTE-002].
 
 import Testing
+
 @testable import ASCII
 
 // File-private helper bridging "is [Byte] all ASCII?" to the
@@ -552,7 +553,7 @@ struct `Edge Cases Tests` {
 
 // MARK: - Performance Edge Cases
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Edge Cases - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -610,4 +611,4 @@ struct `Edge Cases Tests` {
 //            }
 //        }
 //    }
-//}
+// }

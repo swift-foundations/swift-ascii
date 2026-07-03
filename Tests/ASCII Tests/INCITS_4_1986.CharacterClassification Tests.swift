@@ -4,6 +4,7 @@
 // Tests for authoritative character classification predicates
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -138,7 +139,8 @@ struct `INCITS_4_1986.Classification Tests` {
         @Test(
             arguments: Array(INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us) + [
                 INCITS_4_1986.Character.Control.del
-            ])
+            ]
+        )
         func `rejects control characters as visible`(byte: UInt8) {
             #expect(!INCITS_4_1986.Classification.isVisible(byte))
         }
@@ -159,7 +161,8 @@ struct `INCITS_4_1986.Classification Tests` {
         @Test(
             arguments: Array(INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us) + [
                 INCITS_4_1986.Character.Control.del
-            ])
+            ]
+        )
         func `rejects control characters as printable`(byte: UInt8) {
             #expect(!INCITS_4_1986.Classification.isPrintable(byte))
         }

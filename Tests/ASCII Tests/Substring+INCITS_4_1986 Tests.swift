@@ -4,6 +4,7 @@
 // Tests for Substring extension methods
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -568,7 +569,7 @@ struct `Substring Tests` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Substring - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -580,4 +581,4 @@ struct `Substring Tests` {
 //            }
 //        }
 //    }
-//}
+// }

@@ -7,6 +7,7 @@
 // lift from `[Byte]` IS the "all bytes are valid ASCII" predicate.
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -37,9 +38,9 @@ struct `ASCII Validation Tests` {
 
         @Test
         func `Boundary values`() throws {
-            let _: [ASCII.Code] = try .init([0x00] as [Byte])     // Minimum ASCII
-            let _: [ASCII.Code] = try .init([0x7F] as [Byte])     // Maximum ASCII
-            #expect(throws: ASCII.Code.Error.self) {              // Just above ASCII range
+            let _: [ASCII.Code] = try .init([0x00] as [Byte])  // Minimum ASCII
+            let _: [ASCII.Code] = try .init([0x7F] as [Byte])  // Maximum ASCII
+            #expect(throws: ASCII.Code.Error.self) {  // Just above ASCII range
                 let _: [ASCII.Code] = try .init([0x80] as [Byte])
             }
         }
@@ -81,7 +82,7 @@ struct `ASCII Validation Tests` {
 
 // MARK: - Performance
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `ASCII Validation - Performance` {
 //        @Test(.timed(threshold: .milliseconds(2000)))
@@ -108,4 +109,4 @@ struct `ASCII Validation Tests` {
 //            }
 //        }
 //    }
-//}
+// }

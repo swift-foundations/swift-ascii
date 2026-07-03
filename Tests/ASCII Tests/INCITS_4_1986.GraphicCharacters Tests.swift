@@ -4,6 +4,7 @@
 // Tests for INCITS_4_1986.GraphicCharacters (94 characters: 0x21-0x7E)
 
 import Testing
+
 @testable import ASCII
 
 @Suite
@@ -72,7 +73,7 @@ struct `Graphic Characters` {
     }
 }
 
-//extension `Performance Tests` {
+// extension `Performance Tests` {
 //    @Suite
 //    struct `Graphic Characters - Performance` {
 //        @Test(.timed(threshold: .milliseconds(200)))
@@ -84,4 +85,4 @@ struct `Graphic Characters` {
 //            }
 //        }
 //    }
-//}
+// }

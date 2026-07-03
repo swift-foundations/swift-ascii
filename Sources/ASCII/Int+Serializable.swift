@@ -10,8 +10,8 @@
 // so the former in-consumer `Binary.ASCII.Decimal.parse*` helpers are dropped
 // rather than re-homed.
 
-public import INCITS_4_1986
 public import ASCII_Primitives_Standard_Library_Integration
+public import INCITS_4_1986
 
 extension Int: @retroactive Binary.Serializable {
     @inlinable
