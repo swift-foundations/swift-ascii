@@ -20,6 +20,7 @@ import Testing
 // MARK: - Context-Free Type Example
 
 /// A simple token type that requires no parsing context.
+///
 /// Serializes via `Binary.Serializable`; parses via a plain `init(ascii:)`.
 private struct Token: Sendable, Codable {
     let rawValue: String
@@ -86,6 +87,7 @@ extension Token: ExpressibleByStringLiteral {
 // MARK: - Parameterized (Delimiter) Type Example
 
 /// A message type whose parse takes a delimiter parameter.
+///
 /// Serializes via `Binary.Serializable` (self-describing, no parameter); parses
 /// via a plain `init(ascii:delimiter:)` — the delimiter is an operation
 /// parameter, so it lives on the initializer, not a parameter-free protocol.
@@ -349,6 +351,7 @@ struct SerializationBehaviorTests {
 // MARK: - Binary.Serializable Conformance Tests
 
 /// Example HTML-like element that composes with `Binary.Serializable` types.
+///
 /// Demonstrates how streaming types can embed ASCII-serializing types seamlessly.
 ///
 /// `HTMLAnchor` is a pure `Binary.Serializable` (Byte substrate). The `.utf8`

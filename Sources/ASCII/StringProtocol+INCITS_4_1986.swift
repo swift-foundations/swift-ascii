@@ -40,6 +40,10 @@ extension StringProtocol {
 }
 
 extension StringProtocol {
+    // False-positive position: `<S: StringProtocol>` is a generic-parameter
+    // constraint — `Self` here would demand identity, not conformance
+    // (P1a sequence/comparison precedent).
+    // swiftlint:disable prefer_self_in_static_references
     /// Normalizes ASCII line endings in string to the specified style
     ///
     /// Convenience method that delegates to byte-level `normalized(_:to:)`.
@@ -55,6 +59,7 @@ extension StringProtocol {
     ) -> S {
         return .init(decoding: INCITS_4_1986.normalized([UInt8](s.utf8), to: lineEnding), as: UTF8.self)
     }
+    // swiftlint:enable prefer_self_in_static_references
 
     /// Normalizes ASCII line endings to the specified style
     ///
