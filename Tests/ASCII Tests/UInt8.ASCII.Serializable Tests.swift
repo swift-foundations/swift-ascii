@@ -359,7 +359,9 @@ struct SerializationBehaviorTests {
 private struct HTMLAnchor: Binary.Serializable {
     let href: Token
     let text: String
+}
 
+extension HTMLAnchor {
     static func serialize<Buffer>(_ anchor: Self, into buffer: inout Buffer)
     where Buffer: RangeReplaceableCollection, Buffer.Element == Byte {
         buffer.append(contentsOf: "<a href=\"".utf8)
