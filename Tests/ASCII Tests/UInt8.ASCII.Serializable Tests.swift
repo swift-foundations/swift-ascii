@@ -153,167 +153,171 @@ extension DelimitedMessage: CustomStringConvertible {
 
 // MARK: - Context-Free Parsing Tests
 
-@Suite("Serializable - Context-Free Types")
-struct ContextFreeSerializableTests {
-    @Test
-    func `Parse from bytes using init(ascii:)`() throws {
-        let bytes: [Byte] = [Byte]("hello-world".utf8)
-        let token: Token = try .init(ascii: bytes)
+extension Token {
+    @Suite("Serializable - Context-Free Types")
+    struct Test {
+        @Test
+        func `Parse from bytes using init(ascii:)`() throws {
+            let bytes: [Byte] = [Byte]("hello-world".utf8)
+            let token: Token = try .init(ascii: bytes)
 
-        #expect(token.rawValue == "hello-world")
-    }
-
-    @Test
-    func `Parse from string using init(_:)`() throws {
-        let token: Token = try .init("my-token")
-
-        #expect(token.rawValue == "my-token")
-    }
-
-    @Test
-    func `String literal initialization`() {
-        let token: Token = "literal-token"
-
-        #expect(token.rawValue == "literal-token")
-    }
-
-    @Test
-    func `Serialize to bytes`() throws {
-        let token: Token = try .init("hello")
-
-        // `Token.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
-        let serialized: [Byte] = Token.serialize(token)
-        #expect(serialized == [Byte]("hello".utf8))
-    }
-
-    @Test
-    func `Convert to String`() throws {
-        let token: Token = try .init("world")
-
-        #expect(String(token) == "world")
-    }
-
-    @Test
-    func `Round-trip: bytes → Token → bytes`() throws {
-        let original: [Byte] = [Byte]("round-trip".utf8)
-        let token: Token = try .init(ascii: original)
-
-        let serialized: [Byte] = token.bytes
-        #expect(serialized == original)
-    }
-
-    @Test
-    func `Round-trip: string → Token → string`() throws {
-        let original = "test-value"
-        let token: Token = try .init(original)
-        let result = String(token)
-
-        #expect(result == original)
-    }
-
-    @Test
-    func `Invalid input throws error`() {
-        let bytes: [Byte] = [Byte]("hello world".utf8)  // space is invalid
-
-        #expect(throws: Token.Error.self) {
-            try Token(ascii: bytes)
+            #expect(token.rawValue == "hello-world")
         }
-    }
 
-    @Test
-    func `Empty input throws error`() {
-        let bytes: [Byte] = []
+        @Test
+        func `Parse from string using init(_:)`() throws {
+            let token: Token = try .init("my-token")
 
-        #expect(throws: Token.Error.empty) {
-            try Token(ascii: bytes)
+            #expect(token.rawValue == "my-token")
+        }
+
+        @Test
+        func `String literal initialization`() {
+            let token: Token = "literal-token"
+
+            #expect(token.rawValue == "literal-token")
+        }
+
+        @Test
+        func `Serialize to bytes`() throws {
+            let token: Token = try .init("hello")
+
+            // `Token.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
+            let serialized: [Byte] = Token.serialize(token)
+            #expect(serialized == [Byte]("hello".utf8))
+        }
+
+        @Test
+        func `Convert to String`() throws {
+            let token: Token = try .init("world")
+
+            #expect(String(token) == "world")
+        }
+
+        @Test
+        func `Round-trip: bytes → Token → bytes`() throws {
+            let original: [Byte] = [Byte]("round-trip".utf8)
+            let token: Token = try .init(ascii: original)
+
+            let serialized: [Byte] = token.bytes
+            #expect(serialized == original)
+        }
+
+        @Test
+        func `Round-trip: string → Token → string`() throws {
+            let original = "test-value"
+            let token: Token = try .init(original)
+            let result = String(token)
+
+            #expect(result == original)
+        }
+
+        @Test
+        func `Invalid input throws error`() {
+            let bytes: [Byte] = [Byte]("hello world".utf8)  // space is invalid
+
+            #expect(throws: Token.Error.self) {
+                try Token(ascii: bytes)
+            }
+        }
+
+        @Test
+        func `Empty input throws error`() {
+            let bytes: [Byte] = []
+
+            #expect(throws: Token.Error.empty) {
+                try Token(ascii: bytes)
+            }
         }
     }
 }
 
 // MARK: - Parameterized Parsing Tests
 
-@Suite("Serializable - Parameterized (Delimiter) Types")
-struct ParameterizedSerializableTests {
-    @Test
-    func `Parse with delimiter using init(ascii:delimiter:)`() throws {
-        let bytes: [Byte] = [Byte]("foo|bar|baz".utf8)
+extension DelimitedMessage {
+    @Suite("Serializable - Parameterized (Delimiter) Types")
+    struct Test {
+        @Test
+        func `Parse with delimiter using init(ascii:delimiter:)`() throws {
+            let bytes: [Byte] = [Byte]("foo|bar|baz".utf8)
 
-        let message = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
+            let message = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
 
-        #expect(message.parts == ["foo", "bar", "baz"])
-        #expect(message.delimiter == .ascii.verticalLine)
-    }
-
-    @Test
-    func `Different delimiters produce different parses`() throws {
-        let bytes: [Byte] = [Byte]("a,b|c".utf8)
-
-        // Parse with comma delimiter
-        let commaMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
-        #expect(commaMessage.parts == ["a", "b|c"])
-
-        // Parse with pipe delimiter
-        let pipeMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
-        #expect(pipeMessage.parts == ["a,b", "c"])
-    }
-
-    @Test
-    func `Serialize to bytes`() throws {
-        let message = DelimitedMessage(
-            __unchecked: (),
-            parts: ["hello", "world"],
-            delimiter: .ascii.hyphen
-        )
-
-        // `DelimitedMessage.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
-        let serialized: [Byte] = DelimitedMessage.serialize(message)
-        #expect(serialized == [Byte]("hello-world".utf8))
-    }
-
-    @Test
-    func `Round-trip: bytes → Message → bytes`() throws {
-        let original: [Byte] = [Byte]("one:two:three".utf8)
-
-        let message = try DelimitedMessage(ascii: original, delimiter: .ascii.colon)
-
-        let serialized: [Byte] = message.bytes
-        #expect(serialized == original)
-    }
-
-    @Test
-    func `Convert to String via serialize`() throws {
-        let message = DelimitedMessage(
-            __unchecked: (),
-            parts: ["a", "b", "c"],
-            delimiter: .ascii.semicolon
-        )
-
-        let string = String(message)
-
-        #expect(string == "a;b;c")
-    }
-
-    @Test
-    func `Empty input throws error`() {
-        let bytes: [Byte] = []
-
-        #expect(throws: DelimitedMessage.Error.empty) {
-            try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
+            #expect(message.parts == ["foo", "bar", "baz"])
+            #expect(message.delimiter == .ascii.verticalLine)
         }
-    }
 
-    @Test
-    func `Parameterized type requires a delimiter (no unparameterized init)`() {
-        // The parse is parameterized: a delimiter is always required.
-        // The following would not compile — there is no `init(_ String)` and
-        // no unparameterized `init(ascii:)`:
-        //   let message = try DelimitedMessage("a,b,c")  // Error: no delimiter!
+        @Test
+        func `Different delimiters produce different parses`() throws {
+            let bytes: [Byte] = [Byte]("a,b|c".utf8)
 
-        // Instead, you must provide the delimiter:
-        let bytes: [Byte] = [Byte]("a,b,c".utf8)
-        let message = try? DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
+            // Parse with comma delimiter
+            let commaMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
+            #expect(commaMessage.parts == ["a", "b|c"])
 
-        #expect(message != nil)
+            // Parse with pipe delimiter
+            let pipeMessage = try DelimitedMessage(ascii: bytes, delimiter: .ascii.verticalLine)
+            #expect(pipeMessage.parts == ["a,b", "c"])
+        }
+
+        @Test
+        func `Serialize to bytes`() throws {
+            let message = DelimitedMessage(
+                __unchecked: (),
+                parts: ["hello", "world"],
+                delimiter: .ascii.hyphen
+            )
+
+            // `DelimitedMessage.serialize(_:)` (Binary.Serializable) returns `[Byte]`.
+            let serialized: [Byte] = DelimitedMessage.serialize(message)
+            #expect(serialized == [Byte]("hello-world".utf8))
+        }
+
+        @Test
+        func `Round-trip: bytes → Message → bytes`() throws {
+            let original: [Byte] = [Byte]("one:two:three".utf8)
+
+            let message = try DelimitedMessage(ascii: original, delimiter: .ascii.colon)
+
+            let serialized: [Byte] = message.bytes
+            #expect(serialized == original)
+        }
+
+        @Test
+        func `Convert to String via serialize`() throws {
+            let message = DelimitedMessage(
+                __unchecked: (),
+                parts: ["a", "b", "c"],
+                delimiter: .ascii.semicolon
+            )
+
+            let string = String(message)
+
+            #expect(string == "a;b;c")
+        }
+
+        @Test
+        func `Empty input throws error`() {
+            let bytes: [Byte] = []
+
+            #expect(throws: DelimitedMessage.Error.empty) {
+                try DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
+            }
+        }
+
+        @Test
+        func `Parameterized type requires a delimiter (no unparameterized init)`() {
+            // The parse is parameterized: a delimiter is always required.
+            // The following would not compile — there is no `init(_ String)` and
+            // no unparameterized `init(ascii:)`:
+            //   let message = try DelimitedMessage("a,b,c")  // Error: no delimiter!
+
+            // Instead, you must provide the delimiter:
+            let bytes: [Byte] = [Byte]("a,b,c".utf8)
+            let message = try? DelimitedMessage(ascii: bytes, delimiter: .ascii.comma)
+
+            #expect(message != nil)
+        }
     }
 }
 
@@ -681,93 +685,95 @@ extension CorrectEmailAddress: CustomStringConvertible {
     var description: String { String(self) }
 }
 
-@Suite("Serializable - Infinite Recursion Prevention")
-struct InfiniteRecursionPreventionTests {
+extension CorrectEmailAddress {
+    @Suite("Serializable - Infinite Recursion Prevention")
+    struct Test {
 
-    // MARK: - Documentation of the Problem
+        // MARK: - Documentation of the Problem
 
-    /// Documents the infinite-recursion hazard for a `Binary.Serializable` type
-    /// that also conforms to `Swift.RawRepresentable` (`RawValue: StringProtocol`)
-    /// with a `rawValue` derived from serialization, WITHOUT an explicit
-    /// `serialize(_:into:)`.
-    ///
-    /// ## Why It Crashes
-    ///
-    /// 1. `rawValue` (derived) evaluates `String(self)`, which serializes.
-    /// 2. The `RawRepresentable`-defaulted `serialize(_:into:)` reads `rawValue.utf8`.
-    /// 3. That reads `rawValue` again → INFINITE RECURSION → stack overflow.
-    ///
-    /// ## The Solution
-    ///
-    /// Provide an explicit `serialize(_:into:)` that serializes from stored
-    /// properties, NOT from `rawValue`.
-    @Test
-    func `Correct pattern avoids infinite recursion`() throws {
-        let email = try CorrectEmailAddress("user@example.com")
+        /// Documents the infinite-recursion hazard for a `Binary.Serializable` type
+        /// that also conforms to `Swift.RawRepresentable` (`RawValue: StringProtocol`)
+        /// with a `rawValue` derived from serialization, WITHOUT an explicit
+        /// `serialize(_:into:)`.
+        ///
+        /// ## Why It Crashes
+        ///
+        /// 1. `rawValue` (derived) evaluates `String(self)`, which serializes.
+        /// 2. The `RawRepresentable`-defaulted `serialize(_:into:)` reads `rawValue.utf8`.
+        /// 3. That reads `rawValue` again → INFINITE RECURSION → stack overflow.
+        ///
+        /// ## The Solution
+        ///
+        /// Provide an explicit `serialize(_:into:)` that serializes from stored
+        /// properties, NOT from `rawValue`.
+        @Test
+        func `Correct pattern avoids infinite recursion`() throws {
+            let email = try CorrectEmailAddress("user@example.com")
 
-        // These should all work without infinite recursion:
-        let rawValue = email.rawValue
-        let description = email.description
-        let bytes: [Byte] = email.bytes
+            // These should all work without infinite recursion:
+            let rawValue = email.rawValue
+            let description = email.description
+            let bytes: [Byte] = email.bytes
 
-        #expect(rawValue == "user@example.com")
-        #expect(description == "user@example.com")
-        #expect(bytes == [Byte]("user@example.com".utf8))
-    }
+            #expect(rawValue == "user@example.com")
+            #expect(description == "user@example.com")
+            #expect(bytes == [Byte]("user@example.com".utf8))
+        }
 
-    @Test
-    func `RawValue is derived from serialization`() throws {
-        let email = try CorrectEmailAddress("test@domain.org")
+        @Test
+        func `RawValue is derived from serialization`() throws {
+            let email = try CorrectEmailAddress("test@domain.org")
 
-        // rawValue should be derived from serialize(_:into:)
-        #expect(email.rawValue == "test@domain.org")
-    }
+            // rawValue should be derived from serialize(_:into:)
+            #expect(email.rawValue == "test@domain.org")
+        }
 
-    @Test
-    func `Round-trip through rawValue`() throws {
-        let original = try CorrectEmailAddress("hello@world.net")
+        @Test
+        func `Round-trip through rawValue`() throws {
+            let original = try CorrectEmailAddress("hello@world.net")
 
-        // rawValue → String → bytes → parse → compare
-        let rawValue = original.rawValue
-        let restored = try CorrectEmailAddress(rawValue)
+            // rawValue → String → bytes → parse → compare
+            let rawValue = original.rawValue
+            let restored = try CorrectEmailAddress(rawValue)
 
-        #expect(original == restored)
-    }
+            #expect(original == restored)
+        }
 
-    @Test
-    func `Serialization does not access rawValue`() throws {
-        let email = try CorrectEmailAddress("direct@serialize.test")
+        @Test
+        func `Serialization does not access rawValue`() throws {
+            let email = try CorrectEmailAddress("direct@serialize.test")
 
-        // serialize(_:into:) should work without ever touching rawValue ([Byte])
-        var buffer: [Byte] = []
-        CorrectEmailAddress.serialize(email, into: &buffer)
+            // serialize(_:into:) should work without ever touching rawValue ([Byte])
+            var buffer: [Byte] = []
+            CorrectEmailAddress.serialize(email, into: &buffer)
 
-        #expect(buffer == [Byte]("direct@serialize.test".utf8))
-    }
+            #expect(buffer == [Byte]("direct@serialize.test".utf8))
+        }
 
-    // MARK: - API Design Guidance
+        // MARK: - API Design Guidance
 
-    @Test
-    func `Checklist for Binary.Serializable + RawRepresentable conformance`() throws {
-        // This test serves as documentation for the required pattern:
-        //
-        // ✅ 1. Implement serialize(_:into:) explicitly
-        // ✅ 2. Do NOT use rawValue in serialize implementation
-        // ✅ 3. Add `Swift.RawRepresentable` with a derived `rawValue`
-        // ✅ 4. Test that rawValue, description, and bytes all work
+        @Test
+        func `Checklist for Binary.Serializable + RawRepresentable conformance`() throws {
+            // This test serves as documentation for the required pattern:
+            //
+            // ✅ 1. Implement serialize(_:into:) explicitly
+            // ✅ 2. Do NOT use rawValue in serialize implementation
+            // ✅ 3. Add `Swift.RawRepresentable` with a derived `rawValue`
+            // ✅ 4. Test that rawValue, description, and bytes all work
 
-        let email = try CorrectEmailAddress("checklist@test.com")
+            let email = try CorrectEmailAddress("checklist@test.com")
 
-        // All of these should work without recursion:
-        #expect(email.rawValue == "checklist@test.com")
-        #expect(email.description == "checklist@test.com")
-        #expect(String(email) == "checklist@test.com")
-        let bytes: [Byte] = email.bytes
-        #expect(bytes == [Byte]("checklist@test.com".utf8))
+            // All of these should work without recursion:
+            #expect(email.rawValue == "checklist@test.com")
+            #expect(email.description == "checklist@test.com")
+            #expect(String(email) == "checklist@test.com")
+            let bytes: [Byte] = email.bytes
+            #expect(bytes == [Byte]("checklist@test.com".utf8))
 
-        // [Byte] buffer
-        var buffer: [Byte] = []
-        email.serialize(into: &buffer)
-        #expect(buffer == [Byte]("checklist@test.com".utf8))
+            // [Byte] buffer
+            var buffer: [Byte] = []
+            email.serialize(into: &buffer)
+            #expect(buffer == [Byte]("checklist@test.com".utf8))
+        }
     }
 }
