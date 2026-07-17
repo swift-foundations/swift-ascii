@@ -28,7 +28,7 @@ private func isAllASCII(_ bytes: [Byte]) -> Bool {
 // MARK: - Bit-Level Boundary Testing
 
 @Suite
-struct Brutal {
+struct `Brutal` {
     @Suite
     struct `Brutal - Every Single Byte Value` {
         @Test(arguments: Array(UInt8(0)...UInt8(255)))

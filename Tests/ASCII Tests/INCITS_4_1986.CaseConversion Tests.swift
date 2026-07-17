@@ -157,7 +157,7 @@ struct `Case Conversion Tests` {
             // a...z / A...Z enumeration.
             #expect(
                 lower - upper == 32,
-                "Offset between '\(Character(UnicodeScalar(lower)))' and '\(Character(UnicodeScalar(upper)))' should be 32"
+
             )
         }
     }

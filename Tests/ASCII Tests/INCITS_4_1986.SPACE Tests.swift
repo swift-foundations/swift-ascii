@@ -16,7 +16,7 @@ import Testing
 @testable import ASCII
 
 @Suite
-struct SPACE {
+struct `SPACE` {
     // MARK: - SPACE Character
 
     @Suite

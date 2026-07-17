@@ -154,7 +154,7 @@ extension DelimitedMessage: CustomStringConvertible {
 // MARK: - Context-Free Parsing Tests
 
 extension Token {
-    @Suite("Serializable - Context-Free Types")
+    @Suite
     struct Test {
         @Test
         func `Parse from bytes using init(ascii:)`() throws {
@@ -235,7 +235,7 @@ extension Token {
 // MARK: - Parameterized Parsing Tests
 
 extension DelimitedMessage {
-    @Suite("Serializable - Parameterized (Delimiter) Types")
+    @Suite
     struct Test {
         @Test
         func `Parse with delimiter using init(ascii:delimiter:)`() throws {
@@ -323,8 +323,8 @@ extension DelimitedMessage {
 
 // MARK: - Serialization Behavior Properties
 
-@Suite("Serializable - Serialization Behavior Properties")
-struct SerializationBehaviorTests {
+@Suite
+struct Test {
     @Test
     func `Serialization is context-free (value is self-describing)`() throws {
         // Even for parameterized-parse types, serialization needs no parameter.
@@ -376,8 +376,8 @@ extension HTMLAnchor {
     }
 }
 
-@Suite("Serializable - Binary.Serializable Conformance")
-struct StreamingConformanceTests {
+@Suite
+struct Test {
 
     // MARK: - Direct Conformance
 
@@ -518,8 +518,8 @@ struct StreamingConformanceTests {
 
 // MARK: - API Pattern Demonstrations
 
-@Suite("Serializable - Streaming API Patterns")
-struct StreamingAPIPatternTests {
+@Suite
+struct Test {
 
     @Test
     func `Pattern: Direct buffer writing for server response`() throws {
@@ -686,7 +686,7 @@ extension CorrectEmailAddress: CustomStringConvertible {
 }
 
 extension CorrectEmailAddress {
-    @Suite("Serializable - Infinite Recursion Prevention")
+    @Suite
     struct Test {
 
         // MARK: - Documentation of the Problem
