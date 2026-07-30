@@ -324,7 +324,7 @@ extension DelimitedMessage {
 // MARK: - Serialization Behavior Properties
 
 @Suite
-struct Test {
+struct SerializationBehaviorTests {
     @Test
     func `Serialization is context-free (value is self-describing)`() throws {
         // Even for parameterized-parse types, serialization needs no parameter.
@@ -377,7 +377,7 @@ extension HTMLAnchor {
 }
 
 @Suite
-struct Test {
+struct DirectConformanceTests {
 
     // MARK: - Direct Conformance
 
@@ -519,7 +519,7 @@ struct Test {
 // MARK: - API Pattern Demonstrations
 
 @Suite
-struct Test {
+struct APIPatternTests {
 
     @Test
     func `Pattern: Direct buffer writing for server response`() throws {
