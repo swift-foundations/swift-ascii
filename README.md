@@ -57,7 +57,10 @@ dependencies: [
 )
 ```
 
-Requires Swift 6.3.1 and macOS 26 / iOS 26 / tvOS 26 / watchOS 26 / visionOS 26.
+Requires Swift 6.3.1. The `ASCII` product supports Windows as a host platform;
+the repository's universal CI includes its required Windows build-and-test leg.
+`Package.swift` declares minimum deployment versions for Apple platforms:
+macOS 26, iOS 26, tvOS 26, watchOS 26, and visionOS 26.
 
 ---
 
