@@ -43,13 +43,19 @@ struct `Graphic Characters` {
         @Test(arguments: Array(zip("ABCDEFGHIJKLMNOPQRSTUVWXYZ", UInt8.ascii.A...UInt8.ascii.Z)))
         func `uppercase letters present`(char: Character, expected: UInt8) {
             let byte = UInt8(ascii: char)!
-            #expect(byte == expected, "Character '\(char)' should have value 0x\(String(expected, radix: 16))")
+            #expect(
+                byte == expected,
+                "Character '\(char)' should have value 0x\(String(expected, radix: 16))"
+            )
         }
 
         @Test(arguments: Array(zip("abcdefghijklmnopqrstuvwxyz", UInt8.ascii.a...UInt8.ascii.z)))
         func `lowercase letters present`(char: Character, expected: UInt8) {
             let byte = UInt8(ascii: char)!
-            #expect(byte == expected, "Character '\(char)' should have value 0x\(String(expected, radix: 16))")
+            #expect(
+                byte == expected,
+                "Character '\(char)' should have value 0x\(String(expected, radix: 16))"
+            )
         }
     }
 

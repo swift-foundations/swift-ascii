@@ -35,18 +35,30 @@ struct `Brutal` {
         func `exhaustive byte classification`(byte: UInt8) {
             // Every byte must be either ASCII or not - no exceptions
             let isASCII = byte <= 0x7F
-            #expect(isAllASCII([Byte(byte)]) == isASCII, "Byte 0x\(String(byte, radix: 16)) classification inconsistent")
+            #expect(
+                isAllASCII([Byte(byte)]) == isASCII,
+                "Byte 0x\(String(byte, radix: 16)) classification inconsistent"
+            )
 
             // Predicates must be consistent for all bytes
             if byte.ascii.isControl {
                 // Control characters are never letters/digits
-                #expect(!byte.ascii.isLetter, "Control byte 0x\(String(byte, radix: 16)) cannot be letter")
-                #expect(!byte.ascii.isDigit, "Control byte 0x\(String(byte, radix: 16)) cannot be digit")
+                #expect(
+                    !byte.ascii.isLetter,
+                    "Control byte 0x\(String(byte, radix: 16)) cannot be letter"
+                )
+                #expect(
+                    !byte.ascii.isDigit,
+                    "Control byte 0x\(String(byte, radix: 16)) cannot be digit"
+                )
             }
 
             // Visible implies printable
             if byte.ascii.isVisible {
-                #expect(byte.ascii.isPrintable, "Visible byte 0x\(String(byte, radix: 16)) must be printable")
+                #expect(
+                    byte.ascii.isPrintable,
+                    "Visible byte 0x\(String(byte, radix: 16)) must be printable"
+                )
             }
         }
 
@@ -54,11 +66,17 @@ struct `Brutal` {
         func `case conversion idempotence for every byte`(byte: UInt8) {
             let upper = byte.ascii(case: .upper)
             let upperAgain = upper.ascii(case: .upper)
-            #expect(upper == upperAgain, "Uppercase idempotence failed for 0x\(String(byte, radix: 16))")
+            #expect(
+                upper == upperAgain,
+                "Uppercase idempotence failed for 0x\(String(byte, radix: 16))"
+            )
 
             let lower = byte.ascii(case: .lower)
             let lowerAgain = lower.ascii(case: .lower)
-            #expect(lower == lowerAgain, "Lowercase idempotence failed for 0x\(String(byte, radix: 16))")
+            #expect(
+                lower == lowerAgain,
+                "Lowercase idempotence failed for 0x\(String(byte, radix: 16))"
+            )
         }
 
         @Test(arguments: Array(UInt8(0)...UInt8(255)))
@@ -88,9 +106,15 @@ struct `Brutal` {
             if byte == UInt8.ascii.sp.underlying {
                 #expect(!isControl && isPrintable)
             } else if byte <= 0x1F || byte == 0x7F {
-                #expect(isControl && !isPrintable, "0x\(String(byte, radix: 16)) should be control, not printable")
+                #expect(
+                    isControl && !isPrintable,
+                    "0x\(String(byte, radix: 16)) should be control, not printable"
+                )
             } else {
-                #expect(!isControl && isPrintable, "0x\(String(byte, radix: 16)) should be printable, not control")
+                #expect(
+                    !isControl && isPrintable,
+                    "0x\(String(byte, radix: 16)) should be printable, not control"
+                )
             }
         }
 
@@ -109,14 +133,20 @@ struct `Brutal` {
         @Test(arguments: Array(UInt8(0)...UInt8(127)))
         func `letter implies alphanumeric`(byte: UInt8) {
             if byte.ascii.isLetter {
-                #expect(byte.ascii.isAlphanumeric, "Letter 0x\(String(byte, radix: 16)) must be alphanumeric")
+                #expect(
+                    byte.ascii.isAlphanumeric,
+                    "Letter 0x\(String(byte, radix: 16)) must be alphanumeric"
+                )
             }
         }
 
         @Test(arguments: Array(UInt8(0)...UInt8(127)))
         func `digit implies alphanumeric`(byte: UInt8) {
             if byte.ascii.isDigit {
-                #expect(byte.ascii.isAlphanumeric, "Digit 0x\(String(byte, radix: 16)) must be alphanumeric")
+                #expect(
+                    byte.ascii.isAlphanumeric,
+                    "Digit 0x\(String(byte, radix: 16)) must be alphanumeric"
+                )
             }
         }
 
@@ -126,13 +156,22 @@ struct `Brutal` {
             let isLower = byte.ascii.isLowercase
 
             // Cannot be both
-            #expect(!(isUpper && isLower), "Byte 0x\(String(byte, radix: 16)) cannot be both upper and lower")
+            #expect(
+                !(isUpper && isLower),
+                "Byte 0x\(String(byte, radix: 16)) cannot be both upper and lower"
+            )
 
             // If letter, must be exactly one
             if byte.ascii.isLetter {
-                #expect(isUpper != isLower, "Letter 0x\(String(byte, radix: 16)) must be exactly one of upper or lower")
+                #expect(
+                    isUpper != isLower,
+                    "Letter 0x\(String(byte, radix: 16)) must be exactly one of upper or lower"
+                )
             } else {
-                #expect(!isUpper && !isLower, "Non-letter 0x\(String(byte, radix: 16)) cannot be upper or lower")
+                #expect(
+                    !isUpper && !isLower,
+                    "Non-letter 0x\(String(byte, radix: 16)) cannot be upper or lower"
+                )
             }
         }
     }
@@ -151,7 +190,10 @@ struct `Brutal` {
             ]
 
             for seq in multiByteSequences {
-                #expect(!isAllASCII(seq), "Multi-byte UTF-8 \(seq.map { String($0.underlying, radix: 16) }) should fail")
+                #expect(
+                    !isAllASCII(seq),
+                    "Multi-byte UTF-8 \(seq.map { String($0.underlying, radix: 16) }) should fail"
+                )
             }
         }
 
@@ -174,7 +216,10 @@ struct `Brutal` {
         func `look-alike characters not confused with ASCII`() {
             // Cyrillic 'а' looks like Latin 'a' but is U+0430 (multi-byte UTF-8)
             let cyrillicA = "а"  // U+0430
-            #expect(UInt8(ascii: Character(cyrillicA)) == nil, "Cyrillic 'а' should not convert to ASCII")
+            #expect(
+                UInt8(ascii: Character(cyrillicA)) == nil,
+                "Cyrillic 'а' should not convert to ASCII"
+            )
 
             // Greek 'Α' looks like Latin 'A' but is U+0391
             let greekA = "Α"  // U+0391
@@ -184,14 +229,20 @@ struct `Brutal` {
         @Test
         func `zero-width characters rejected`() {
             let zeroWidth = "\u{200B}"  // Zero-width space
-            #expect(UInt8(ascii: Character(zeroWidth)) == nil, "Zero-width space should be rejected")
+            #expect(
+                UInt8(ascii: Character(zeroWidth)) == nil,
+                "Zero-width space should be rejected"
+            )
         }
 
         @Test
         func `combining characters rejected`() {
             // Combining diacritical marks
             let combining = "\u{0301}"  // Combining acute accent
-            #expect(UInt8(ascii: Character(combining)) == nil, "Combining character should be rejected")
+            #expect(
+                UInt8(ascii: Character(combining)) == nil,
+                "Combining character should be rejected"
+            )
         }
 
         @Test
@@ -210,7 +261,9 @@ struct `Brutal` {
 
     @Suite
     struct `Brutal - Buffer Boundaries` {
-        @Test(arguments: [0, 1, 2, 3, 4, 7, 8, 15, 16, 31, 32, 63, 64, 127, 128, 255, 256, 511, 512, 1023, 1024])
+        @Test(arguments: [
+            0, 1, 2, 3, 4, 7, 8, 15, 16, 31, 32, 63, 64, 127, 128, 255, 256, 511, 512, 1023, 1024,
+        ])
         func `validation at power-of-2 boundaries`(size: Int) {
             let validASCII: [Byte] = Array(repeating: Byte.ascii.A, count: size)
             #expect(isAllASCII(validASCII), "Valid ASCII array of size \(size) should pass")
@@ -218,7 +271,10 @@ struct `Brutal` {
             var invalidASCII = validASCII
             if size > 0 {
                 invalidASCII[size - 1] = 0x80
-                #expect(!isAllASCII(invalidASCII), "Invalid ASCII array of size \(size) should fail")
+                #expect(
+                    !isAllASCII(invalidASCII),
+                    "Invalid ASCII array of size \(size) should fail"
+                )
             }
         }
 

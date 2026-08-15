@@ -34,7 +34,11 @@ struct `INCITS_4_1986.Classification Tests` {
 
     @Suite
     struct `Control Character Classification` {
-        @Test(arguments: Array(INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us))
+        @Test(
+            arguments: Array(
+                INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us
+            )
+        )
         func `recognizes control characters 0x00-0x1F`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isControl(byte))
         }
@@ -52,7 +56,11 @@ struct `INCITS_4_1986.Classification Tests` {
 
     @Suite
     struct `Digit Classification` {
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.`0`...INCITS_4_1986.Character.Graphic.`9`))
+        @Test(
+            arguments: Array(
+                INCITS_4_1986.Character.Graphic.`0`...INCITS_4_1986.Character.Graphic.`9`
+            )
+        )
         func `recognizes ASCII digits 0-9`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isDigit(byte))
         }
@@ -71,14 +79,18 @@ struct `INCITS_4_1986.Classification Tests` {
 
     @Suite
     struct `Letter Classification` {
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.A...INCITS_4_1986.Character.Graphic.Z))
+        @Test(
+            arguments: Array(INCITS_4_1986.Character.Graphic.A...INCITS_4_1986.Character.Graphic.Z)
+        )
         func `recognizes uppercase letters A-Z`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isLetter(byte))
             #expect(INCITS_4_1986.Classification.isUppercase(byte))
             #expect(!INCITS_4_1986.Classification.isLowercase(byte))
         }
 
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.a...INCITS_4_1986.Character.Graphic.z))
+        @Test(
+            arguments: Array(INCITS_4_1986.Character.Graphic.a...INCITS_4_1986.Character.Graphic.z)
+        )
         func `recognizes lowercase letters a-z`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isLetter(byte))
             #expect(INCITS_4_1986.Classification.isLowercase(byte))
@@ -137,7 +149,9 @@ struct `INCITS_4_1986.Classification Tests` {
         }
 
         @Test(
-            arguments: Array(INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us) + [
+            arguments: Array(
+                INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us
+            ) + [
                 INCITS_4_1986.Character.Control.del
             ]
         )
@@ -159,7 +173,9 @@ struct `INCITS_4_1986.Classification Tests` {
         }
 
         @Test(
-            arguments: Array(INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us) + [
+            arguments: Array(
+                INCITS_4_1986.Character.Control.nul...INCITS_4_1986.Character.Control.us
+            ) + [
                 INCITS_4_1986.Character.Control.del
             ]
         )
@@ -170,17 +186,25 @@ struct `INCITS_4_1986.Classification Tests` {
 
     @Suite
     struct `Hexadecimal Digit Classification` {
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.`0`...INCITS_4_1986.Character.Graphic.`9`))
+        @Test(
+            arguments: Array(
+                INCITS_4_1986.Character.Graphic.`0`...INCITS_4_1986.Character.Graphic.`9`
+            )
+        )
         func `recognizes hex digits 0-9`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isHexDigit(byte))
         }
 
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.A...INCITS_4_1986.Character.Graphic.F))
+        @Test(
+            arguments: Array(INCITS_4_1986.Character.Graphic.A...INCITS_4_1986.Character.Graphic.F)
+        )
         func `recognizes hex digits A-F`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isHexDigit(byte))
         }
 
-        @Test(arguments: Array(INCITS_4_1986.Character.Graphic.a...INCITS_4_1986.Character.Graphic.f))
+        @Test(
+            arguments: Array(INCITS_4_1986.Character.Graphic.a...INCITS_4_1986.Character.Graphic.f)
+        )
         func `recognizes hex digits a-f`(byte: UInt8) {
             #expect(INCITS_4_1986.Classification.isHexDigit(byte))
         }
@@ -204,7 +228,10 @@ struct `INCITS_4_1986.Classification Tests` {
             for byte in UInt8(0)...UInt8(127) {
                 let isControl = INCITS_4_1986.Classification.isControl(byte)
                 let isPrintable = INCITS_4_1986.Classification.isPrintable(byte)
-                #expect(isControl != isPrintable, "Byte \(byte) should be either control or printable, not both")
+                #expect(
+                    isControl != isPrintable,
+                    "Byte \(byte) should be either control or printable, not both"
+                )
             }
         }
 
@@ -213,7 +240,10 @@ struct `INCITS_4_1986.Classification Tests` {
             for byte in UInt8(0)...UInt8(127) {
                 let isControl = INCITS_4_1986.Classification.isControl(byte)
                 let isPrintable = INCITS_4_1986.Classification.isPrintable(byte)
-                #expect(isControl || isPrintable, "Byte \(byte) must be either control or printable")
+                #expect(
+                    isControl || isPrintable,
+                    "Byte \(byte) must be either control or printable"
+                )
             }
         }
 
@@ -222,7 +252,10 @@ struct `INCITS_4_1986.Classification Tests` {
             for byte in UInt8(0)...UInt8(127) {
                 let isUpper = INCITS_4_1986.Classification.isUppercase(byte)
                 let isLower = INCITS_4_1986.Classification.isLowercase(byte)
-                #expect(!(isUpper && isLower), "Byte \(byte) cannot be both uppercase and lowercase")
+                #expect(
+                    !(isUpper && isLower),
+                    "Byte \(byte) cannot be both uppercase and lowercase"
+                )
             }
         }
 

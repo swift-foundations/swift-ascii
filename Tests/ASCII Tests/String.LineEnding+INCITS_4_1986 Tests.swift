@@ -16,7 +16,10 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
         @Test(arguments: [
             (INCITS_4_1986.FormatEffectors.Line.Ending.lf, "LF", [ASCII.Code.lf]),
             (INCITS_4_1986.FormatEffectors.Line.Ending.cr, "CR", [ASCII.Code.cr]),
-            (INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "CRLF", [ASCII.Code.cr, ASCII.Code.lf]),
+            (
+                INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "CRLF",
+                [ASCII.Code.cr, ASCII.Code.lf]
+            ),
         ])
         func `line ending conversions to codes`(
             ending: INCITS_4_1986.FormatEffectors.Line.Ending,
@@ -31,7 +34,10 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
             (INCITS_4_1986.FormatEffectors.Line.Ending.cr, "\r"),
             (INCITS_4_1986.FormatEffectors.Line.Ending.crlf, "\r\n"),
         ])
-        func `line ending conversions to string`(ending: INCITS_4_1986.FormatEffectors.Line.Ending, expected: String) {
+        func `line ending conversions to string`(
+            ending: INCITS_4_1986.FormatEffectors.Line.Ending,
+            expected: String
+        ) {
             #expect(String(ascii: ending) == expected)
         }
 

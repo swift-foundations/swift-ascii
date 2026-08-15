@@ -64,7 +64,9 @@ struct `Character Tests` {
             #expect(char.ascii.isAlphanumeric, "Character '\(char)' should be alphanumeric")
         }
 
-        @Test(arguments: [" ", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "="])
+        @Test(arguments: [
+            " ", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=",
+        ])
         func `special characters are not alphanumeric`(char: Character) {
             #expect(!char.ascii.isAlphanumeric)
         }

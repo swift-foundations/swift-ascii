@@ -228,7 +228,10 @@ struct `Edge Cases Tests` {
         @Test
         func `all extended ASCII bytes invalid`() {
             for value in UInt8(0x80)...UInt8(0xFF) {
-                #expect(!isAllASCII([Byte(value)]), "Byte 0x\(String(value, radix: 16)) should be invalid")
+                #expect(
+                    !isAllASCII([Byte(value)]),
+                    "Byte 0x\(String(value, radix: 16)) should be invalid"
+                )
             }
         }
 
@@ -236,7 +239,9 @@ struct `Edge Cases Tests` {
         func `all standard ASCII bytes valid`() {
             // `Byte` is not Strideable per [API-BYTE-002]; iterate on UInt8
             // and bridge to Byte at the lift site.
-            let allASCII: [Byte] = (UInt8.ascii.nul.underlying...UInt8.ascii.del.underlying).map(Byte.init)
+            let allASCII: [Byte] = (UInt8.ascii.nul.underlying...UInt8.ascii.del.underlying).map(
+                Byte.init
+            )
             #expect(isAllASCII(allASCII))
         }
     }
