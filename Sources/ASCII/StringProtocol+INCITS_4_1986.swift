@@ -57,7 +57,10 @@ extension StringProtocol {
         _ s: S,
         to lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending
     ) -> S {
-        return .init(decoding: INCITS_4_1986.normalized([UInt8](s.utf8), to: lineEnding), as: UTF8.self)
+        return .init(
+            decoding: INCITS_4_1986.normalized([UInt8](s.utf8), to: lineEnding),
+            as: UTF8.self
+        )
     }
     // swiftlint:enable prefer_self_in_static_references
 
@@ -215,7 +218,8 @@ extension StringProtocol {
     /// let s = String(ascii: codes)  // "Hello"
     /// ```
     @inlinable
-    public init<Codes: Sequence>(ascii codes: Codes) where Codes.Element == ASCII_Primitives.ASCII.Code {
+    public init<Codes: Sequence>(ascii codes: Codes)
+    where Codes.Element == ASCII_Primitives.ASCII.Code {
         self.init(decoding: codes.lazy.map(\.underlying), as: UTF8.self)
     }
 

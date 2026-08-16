@@ -137,10 +137,10 @@ struct `Case Conversion Tests` {
     struct `Case Conversion - Mathematical Properties` {
         @Test
         func `conversion offset is exactly 32`() {
-            let a = UInt8(ascii: "a")!
-            let A = UInt8(ascii: "A")!
-            #expect(a - A == 32)
-            #expect(a - A == INCITS_4_1986.Case.Conversion.offset)
+            let lowerA = UInt8(ascii: "a")!
+            let upperA = UInt8(ascii: "A")!
+            #expect(lowerA - upperA == 32)
+            #expect(lowerA - upperA == INCITS_4_1986.Case.Conversion.offset)
         }
 
         @Test(
@@ -155,10 +155,7 @@ struct `Case Conversion Tests` {
             // Range iteration requires Strideable; `ASCII.Code` is not Strideable
             // per [API-BYTE-002], so drop to `.underlying` (UInt8) for the
             // a...z / A...Z enumeration.
-            #expect(
-                lower - upper == 32,
-
-            )
+            #expect(lower - upper == 32)
         }
     }
 }

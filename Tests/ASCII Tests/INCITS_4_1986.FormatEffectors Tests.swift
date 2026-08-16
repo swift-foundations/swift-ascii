@@ -46,7 +46,9 @@ struct `FormatEffectors Tests` {
         }
 
         @Test(arguments: [INCITS_4_1986.FormatEffectors.Line.Ending.lf, .cr, .crlf])
-        func `text without line endings unchanged`(ending: INCITS_4_1986.FormatEffectors.Line.Ending) {
+        func `text without line endings unchanged`(
+            ending: INCITS_4_1986.FormatEffectors.Line.Ending
+        ) {
             let text = "no line endings here"
             #expect(text.normalized(to: ending) == text)
         }

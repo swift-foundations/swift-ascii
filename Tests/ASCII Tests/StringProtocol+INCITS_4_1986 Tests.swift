@@ -43,7 +43,9 @@ struct `StringProtocol+INCITS_4_1986 Tests` {
     struct `Delegation Tests` {
         @Test
         func `String delegates isAllASCII to StringClassification`() {
-            #expect("Hello".ascii.isAllASCII == INCITS_4_1986.Text.Classification.isAllASCII("Hello"))
+            #expect(
+                "Hello".ascii.isAllASCII == INCITS_4_1986.Text.Classification.isAllASCII("Hello")
+            )
             #expect("café".ascii.isAllASCII == INCITS_4_1986.Text.Classification.isAllASCII("café"))
         }
 
@@ -57,14 +59,18 @@ struct `StringProtocol+INCITS_4_1986 Tests` {
         @Test
         func `String delegates detectedLineEnding to LineEndingDetection`() {
             let str = "line1\r\nline2"
-            #expect(str.ascii.detectedLineEnding() == INCITS_4_1986.LineEnding.Detection.detect(str))
+            #expect(
+                str.ascii.detectedLineEnding() == INCITS_4_1986.LineEnding.Detection.detect(str)
+            )
         }
 
         @Test
         func `Substring delegates detectedLineEnding to LineEndingDetection`() {
             let str = "line1\r\nline2"
             let sub = str[...]
-            #expect(sub.ascii.detectedLineEnding() == INCITS_4_1986.LineEnding.Detection.detect(sub))
+            #expect(
+                sub.ascii.detectedLineEnding() == INCITS_4_1986.LineEnding.Detection.detect(sub)
+            )
         }
     }
 

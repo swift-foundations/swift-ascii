@@ -41,7 +41,8 @@ struct `INCITS_4_1986.LineEnding.Detection Tests` {
             ("\r\n", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
             ("test\r\nmore\r\nlines", INCITS_4_1986.FormatEffectors.Line.Ending.crlf),
         ])
-        func `detects CRLF line endings`(input: (String, INCITS_4_1986.FormatEffectors.Line.Ending)) {
+        func `detects CRLF line endings`(input: (String, INCITS_4_1986.FormatEffectors.Line.Ending))
+        {
             let (str, expected) = input
             #expect(INCITS_4_1986.LineEnding.Detection.detect(str) == expected)
         }

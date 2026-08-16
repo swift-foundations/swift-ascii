@@ -183,7 +183,10 @@ struct `Substring Tests` {
         ])
         func `substrings with non-alphanumeric`(str: String) {
             let sub = str[...]
-            #expect(!sub.ascii.isAllAlphanumeric, "Substring '\(sub)' should not be all alphanumeric")
+            #expect(
+                !sub.ascii.isAllAlphanumeric,
+                "Substring '\(sub)' should not be all alphanumeric"
+            )
         }
     }
 
@@ -519,7 +522,10 @@ struct `Substring Tests` {
         ])
         func `substrings with consistent or no line endings`(str: String) {
             let sub = str[...]
-            #expect(!sub.ascii.containsMixedLineEndings, "Substring should not have mixed line endings")
+            #expect(
+                !sub.ascii.containsMixedLineEndings,
+                "Substring should not have mixed line endings"
+            )
         }
     }
 

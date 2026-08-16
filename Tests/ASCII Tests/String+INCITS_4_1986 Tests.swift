@@ -434,7 +434,9 @@ struct `String Tests` {
         func `constants match byte values`() {
             #expect(.ascii.lf == String(decoding: [UInt8.ascii.lf], as: UTF8.self))
             #expect(.ascii.cr == String(decoding: [UInt8.ascii.cr], as: UTF8.self))
-            #expect(.ascii.crlf == String(decoding: INCITS_4_1986.Character.Control.crlf, as: UTF8.self))
+            #expect(
+                .ascii.crlf == String(decoding: INCITS_4_1986.Character.Control.crlf, as: UTF8.self)
+            )
         }
     }
 
@@ -459,7 +461,10 @@ struct `String Tests` {
             "line1\r\nline2\r\nline3",  // Only CRLF
         ])
         func `strings with consistent or no line endings`(str: String) {
-            #expect(!str.ascii.containsMixedLineEndings, "String should not have mixed line endings")
+            #expect(
+                !str.ascii.containsMixedLineEndings,
+                "String should not have mixed line endings"
+            )
         }
     }
 
