@@ -71,8 +71,7 @@ let package = Package(
                     package: "swift-standard-library-extensions"
                 ),
                 .product(name: "String Primitives", package: "swift-string-primitives"),
-                // W3 PRUNE: Swift.Span: Span.`Protocol` conformance for
-                // the byte-span parse calls in the Machine.Access files (Finding 3/8).
+
                 .product(name: "Span Protocol Primitives", package: "swift-span-primitives"),
             ]
         ),

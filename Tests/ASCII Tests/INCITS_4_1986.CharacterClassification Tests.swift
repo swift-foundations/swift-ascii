@@ -1,8 +1,3 @@
-// INCITS_4_1986.Classification Tests.swift
-// swift-incits-4-1986
-//
-// Tests for authoritative character classification predicates
-
 import Testing
 
 @testable import ASCII
@@ -69,8 +64,8 @@ struct `INCITS_4_1986.Classification Tests` {
             INCITS_4_1986.Character.Graphic.A,
             INCITS_4_1986.Character.Graphic.a,
             INCITS_4_1986.SPACE.sp,
-            UInt8(0x2F),  // Before '0'
-            UInt8(0x3A),  // After '9'
+            UInt8(0x2F),
+            UInt8(0x3A),
         ])
         func `rejects non-digit characters`(byte: UInt8) {
             #expect(!INCITS_4_1986.Classification.isDigit(byte))
@@ -101,10 +96,10 @@ struct `INCITS_4_1986.Classification Tests` {
             INCITS_4_1986.Character.Graphic.`0`,
             INCITS_4_1986.SPACE.sp,
             INCITS_4_1986.Character.Graphic.exclamationPoint,
-            UInt8(0x40),  // Before 'A'
-            UInt8(0x5B),  // After 'Z'
-            UInt8(0x60),  // Before 'a'
-            UInt8(0x7B),  // After 'z'
+            UInt8(0x40),
+            UInt8(0x5B),
+            UInt8(0x60),
+            UInt8(0x7B),
         ])
         func `rejects non-letter characters`(byte: UInt8) {
             #expect(!INCITS_4_1986.Classification.isLetter(byte))
@@ -127,9 +122,9 @@ struct `INCITS_4_1986.Classification Tests` {
             INCITS_4_1986.SPACE.sp,
             INCITS_4_1986.Character.Graphic.exclamationPoint,
             INCITS_4_1986.Character.Control.lf,
-            UInt8(0x40),  // @
-            UInt8(0x5B),  // [
-            UInt8(0x60),  // `
+            UInt8(0x40),
+            UInt8(0x5B),
+            UInt8(0x60),
         ])
         func `rejects non-alphanumeric characters`(byte: UInt8) {
             #expect(!INCITS_4_1986.Classification.isAlphanumeric(byte))
@@ -282,38 +277,38 @@ struct `INCITS_4_1986.Classification Tests` {
     struct `Boundary Conditions` {
         @Test
         func `digit boundaries are precise`() {
-            #expect(!INCITS_4_1986.Classification.isDigit(UInt8(0x2F)))  // Before '0'
-            #expect(INCITS_4_1986.Classification.isDigit(UInt8(0x30)))  // '0'
-            #expect(INCITS_4_1986.Classification.isDigit(UInt8(0x39)))  // '9'
-            #expect(!INCITS_4_1986.Classification.isDigit(UInt8(0x3A)))  // After '9'
+            #expect(!INCITS_4_1986.Classification.isDigit(UInt8(0x2F)))
+            #expect(INCITS_4_1986.Classification.isDigit(UInt8(0x30)))
+            #expect(INCITS_4_1986.Classification.isDigit(UInt8(0x39)))
+            #expect(!INCITS_4_1986.Classification.isDigit(UInt8(0x3A)))
         }
 
         @Test
         func `letter boundaries are precise`() {
-            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x40)))  // Before 'A'
-            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x41)))  // 'A'
-            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x5A)))  // 'Z'
-            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x5B)))  // After 'Z'
-            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x60)))  // Before 'a'
-            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x61)))  // 'a'
-            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x7A)))  // 'z'
-            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x7B)))  // After 'z'
+            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x40)))
+            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x41)))
+            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x5A)))
+            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x5B)))
+            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x60)))
+            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x61)))
+            #expect(INCITS_4_1986.Classification.isLetter(UInt8(0x7A)))
+            #expect(!INCITS_4_1986.Classification.isLetter(UInt8(0x7B)))
         }
 
         @Test
         func `visible boundaries are precise`() {
-            #expect(!INCITS_4_1986.Classification.isVisible(UInt8(0x20)))  // SPACE
-            #expect(INCITS_4_1986.Classification.isVisible(UInt8(0x21)))  // !
-            #expect(INCITS_4_1986.Classification.isVisible(UInt8(0x7E)))  // ~
-            #expect(!INCITS_4_1986.Classification.isVisible(UInt8(0x7F)))  // DEL
+            #expect(!INCITS_4_1986.Classification.isVisible(UInt8(0x20)))
+            #expect(INCITS_4_1986.Classification.isVisible(UInt8(0x21)))
+            #expect(INCITS_4_1986.Classification.isVisible(UInt8(0x7E)))
+            #expect(!INCITS_4_1986.Classification.isVisible(UInt8(0x7F)))
         }
 
         @Test
         func `printable boundaries are precise`() {
-            #expect(!INCITS_4_1986.Classification.isPrintable(UInt8(0x1F)))  // Before SPACE
-            #expect(INCITS_4_1986.Classification.isPrintable(UInt8(0x20)))  // SPACE
-            #expect(INCITS_4_1986.Classification.isPrintable(UInt8(0x7E)))  // ~
-            #expect(!INCITS_4_1986.Classification.isPrintable(UInt8(0x7F)))  // DEL
+            #expect(!INCITS_4_1986.Classification.isPrintable(UInt8(0x1F)))
+            #expect(INCITS_4_1986.Classification.isPrintable(UInt8(0x20)))
+            #expect(INCITS_4_1986.Classification.isPrintable(UInt8(0x7E)))
+            #expect(!INCITS_4_1986.Classification.isPrintable(UInt8(0x7F)))
         }
     }
 }

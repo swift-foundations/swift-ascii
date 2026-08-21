@@ -1,28 +1,10 @@
-// EdgeCases Tests.swift
-// swift-incits-4-1986
-//
-// Edge case tests that catch issues other ASCII libraries miss.
-//
-// Substrate per the ASCII-domain retyping arc (2026-05-19):
-// - `[ASCII.Code]` for code-domain fixtures; `[Byte]` for byte-domain
-//   sequences that may include non-ASCII (the validation surface).
-// - Predicates on `byte: UInt8` go through `byte.ascii.isLetter` etc.
-//   (`byte.ascii` returns `ASCII.Code`; predicates live directly on
-//   `ASCII.Code`).
-// - Boundary arithmetic (`UInt8.ascii.A - 1`) drops to `.underlying`
-//   because `ASCII.Code` has no arithmetic by design per [API-BYTE-002].
-
 import Testing
 
 @testable import ASCII
 
-// File-private helper bridging "is [Byte] all ASCII?" to the
-// constructor-lift form. Successful `[ASCII.Code]` lift IS validation.
 private func isAllASCII(_ bytes: [Byte]) -> Bool {
     (try? [ASCII.Code](bytes)) != nil
 }
-
-// MARK: - Boundary Value Edge Cases
 
 @Suite
 struct `Edge Cases Tests` {
@@ -40,14 +22,14 @@ struct `Edge Cases Tests` {
 
         @Test
         func `off-by-one below ASCII range`() {
-            // 0x00 is valid (NUL), but verify it's not treated as empty/invalid
+
             #expect(isAllASCII([Byte.ascii.nul]))
             #expect(UInt8.ascii.nul.isControl)
         }
 
         @Test
         func `off-by-one above ASCII range`() {
-            // 0x80 is first non-ASCII byte (extended ASCII)
+
             let extendedASCII: UInt8 = 0x80
             #expect(!isAllASCII([Byte(extendedASCII)]))
             #expect(!extendedASCII.ascii.isControl)
@@ -56,49 +38,45 @@ struct `Edge Cases Tests` {
 
         @Test
         func `letter boundaries are precise`() {
-            // A-Z: 0x41-0x5A, a-z: 0x61-0x7A.
-            // Boundary arithmetic drops to `.underlying` because
-            // `ASCII.Code` has no arithmetic per [API-BYTE-002].
-            #expect((UInt8.ascii.A.underlying - 1).ascii.isLetter == false)  // 0x40 '@'
-            #expect(UInt8.ascii.A.isLetter == true)  // 0x41 'A'
-            #expect(UInt8.ascii.Z.isLetter == true)  // 0x5A 'Z'
-            #expect((UInt8.ascii.Z.underlying + 1).ascii.isLetter == false)  // 0x5B '['
 
-            #expect((UInt8.ascii.a.underlying - 1).ascii.isLetter == false)  // 0x60 '`'
-            #expect(UInt8.ascii.a.isLetter == true)  // 0x61 'a'
-            #expect(UInt8.ascii.z.isLetter == true)  // 0x7A 'z'
-            #expect((UInt8.ascii.z.underlying + 1).ascii.isLetter == false)  // 0x7B '{'
+            #expect((UInt8.ascii.A.underlying - 1).ascii.isLetter == false)
+            #expect(UInt8.ascii.A.isLetter == true)
+            #expect(UInt8.ascii.Z.isLetter == true)
+            #expect((UInt8.ascii.Z.underlying + 1).ascii.isLetter == false)
+
+            #expect((UInt8.ascii.a.underlying - 1).ascii.isLetter == false)
+            #expect(UInt8.ascii.a.isLetter == true)
+            #expect(UInt8.ascii.z.isLetter == true)
+            #expect((UInt8.ascii.z.underlying + 1).ascii.isLetter == false)
         }
 
         @Test
         func `digit boundaries are precise`() {
-            // 0-9: 0x30-0x39
-            #expect((UInt8.ascii.`0`.underlying - 1).ascii.isDigit == false)  // 0x2F '/'
-            #expect(UInt8.ascii.`0`.isDigit == true)  // 0x30 '0'
-            #expect(UInt8.ascii.`9`.isDigit == true)  // 0x39 '9'
-            #expect((UInt8.ascii.`9`.underlying + 1).ascii.isDigit == false)  // 0x3A ':'
+
+            #expect((UInt8.ascii.`0`.underlying - 1).ascii.isDigit == false)
+            #expect(UInt8.ascii.`0`.isDigit == true)
+            #expect(UInt8.ascii.`9`.isDigit == true)
+            #expect((UInt8.ascii.`9`.underlying + 1).ascii.isDigit == false)
         }
 
         @Test
         func `printable boundaries are precise`() {
-            // Printable: 0x20-0x7E (space through tilde)
-            #expect((UInt8.ascii.sp.underlying - 1).ascii.isPrintable == false)  // 0x1F (US)
-            #expect(UInt8.ascii.sp.isPrintable == true)  // 0x20 (space)
-            #expect(UInt8.ascii.tilde.isPrintable == true)  // 0x7E (~)
-            #expect((UInt8.ascii.tilde.underlying + 1).ascii.isPrintable == false)  // 0x7F (DEL)
+
+            #expect((UInt8.ascii.sp.underlying - 1).ascii.isPrintable == false)
+            #expect(UInt8.ascii.sp.isPrintable == true)
+            #expect(UInt8.ascii.tilde.isPrintable == true)
+            #expect((UInt8.ascii.tilde.underlying + 1).ascii.isPrintable == false)
         }
 
         @Test
         func `visible boundaries are precise`() {
-            // Visible: 0x21-0x7E (exclamation through tilde, excludes space)
-            #expect(UInt8.ascii.sp.isVisible == false)  // 0x20 (space)
-            #expect(UInt8.ascii.exclamationPoint.isVisible == true)  // 0x21 (!)
-            #expect(UInt8.ascii.tilde.isVisible == true)  // 0x7E (~)
-            #expect((UInt8.ascii.tilde.underlying + 1).ascii.isVisible == false)  // 0x7F (DEL)
+
+            #expect(UInt8.ascii.sp.isVisible == false)
+            #expect(UInt8.ascii.exclamationPoint.isVisible == true)
+            #expect(UInt8.ascii.tilde.isVisible == true)
+            #expect((UInt8.ascii.tilde.underlying + 1).ascii.isVisible == false)
         }
     }
-
-    // MARK: - Case Conversion Edge Cases
 
     @Suite
     struct `Edge Cases - Case Conversion` {
@@ -154,14 +132,12 @@ struct `Edge Cases Tests` {
 
         @Test
         func `case conversion at letter boundaries`() {
-            // Test characters just outside letter ranges remain unchanged.
-            // Use integer literals for the boundary codes (0x40, 0x5B, 0x60, 0x7B)
-            // since `ASCII.Code` has no arithmetic per [API-BYTE-002].
+
             let nonLetters: [ASCII.Code] = [
-                0x40,  // '@' — UInt8.ascii.A - 1
-                0x5B,  // '[' — UInt8.ascii.Z + 1
-                0x60,  // '`' — UInt8.ascii.a - 1
-                0x7B,  // '{' — UInt8.ascii.z + 1
+                0x40,
+                0x5B,
+                0x60,
+                0x7B,
             ]
             #expect(nonLetters.ascii(case: .upper) == nonLetters)
             #expect(nonLetters.ascii(case: .lower) == nonLetters)
@@ -174,8 +150,6 @@ struct `Edge Cases Tests` {
             #expect(str.ascii(case: .lower) == "hello123!")
         }
     }
-
-    // MARK: - Validation Edge Cases
 
     @Suite
     struct `Edge Cases - Validation` {
@@ -237,16 +211,13 @@ struct `Edge Cases Tests` {
 
         @Test
         func `all standard ASCII bytes valid`() {
-            // `Byte` is not Strideable per [API-BYTE-002]; iterate on UInt8
-            // and bridge to Byte at the lift site.
+
             let allASCII: [Byte] = (UInt8.ascii.nul.underlying...UInt8.ascii.del.underlying).map(
                 Byte.init
             )
             #expect(isAllASCII(allASCII))
         }
     }
-
-    // MARK: - Character Conversion Edge Cases
 
     @Suite
     struct `Edge Cases - Character Conversion` {
@@ -281,9 +252,7 @@ struct `Edge Cases Tests` {
 
         @Test
         func `all ASCII characters roundtrip`() {
-            // Every ASCII byte should convert to a character and back.
-            // Range iteration on `.underlying` (UInt8); `ASCII.Code` is not
-            // Strideable per [API-BYTE-002].
+
             for byte in UInt8.ascii.nul.underlying...UInt8.ascii.del.underlying {
                 let scalar = UnicodeScalar(byte)
                 let char = Character(scalar)
@@ -301,8 +270,6 @@ struct `Edge Cases Tests` {
             #expect(nonASCII.ascii.isWhitespace == false)
         }
     }
-
-    // MARK: - Line Ending Edge Cases
 
     @Suite
     struct `Edge Cases - Line Endings` {
@@ -370,7 +337,7 @@ struct `Edge Cases Tests` {
 
         @Test
         func `CR followed by non-LF character`() {
-            // Standalone CR should be normalized
+
             let text = "line1\rX"
             #expect(text.normalized(to: .lf) == "line1\nX")
             #expect(text.normalized(to: .crlf) == "line1\r\nX")
@@ -388,8 +355,6 @@ struct `Edge Cases Tests` {
             #expect(text.normalized(to: .lf) == text)
         }
     }
-
-    // MARK: - Trimming Edge Cases
 
     @Suite
     struct `Edge Cases - String Trimming` {
@@ -472,8 +437,6 @@ struct `Edge Cases Tests` {
         }
     }
 
-    // MARK: - Whitespace Set Edge Cases
-
     @Suite
     struct `Edge Cases - Whitespace Set` {
         @Test
@@ -488,8 +451,7 @@ struct `Edge Cases Tests` {
 
         @Test
         func `whitespace set contains only ASCII whitespace`() {
-            // `INCITS_4_1986.whitespaces` is `Set<ASCII.Code>` post-cascade;
-            // bridge to `[Byte]` at the `String(ascii:)` boundary.
+
             let ws = INCITS_4_1986.whitespaces.compactMap { String(ascii: [$0.byte]) }
             #expect(ws.contains(" "))
             #expect(ws.contains("\t"))
@@ -500,36 +462,34 @@ struct `Edge Cases Tests` {
 
         @Test
         func `whitespace set does not contain vertical tab`() {
-            // VTAB (0x0B) is a control character but NOT in ASCII whitespace set
+
             let vtab = Character(UnicodeScalar(0x0B))
             #expect(!Set<Character>.ascii.whitespaces.contains(vtab))
         }
 
         @Test
         func `whitespace set does not contain form feed`() {
-            // FF (0x0C) is a control character but NOT in ASCII whitespace set
+
             let ff = Character(UnicodeScalar(0x0C))
             #expect(!Set<Character>.ascii.whitespaces.contains(ff))
         }
 
         @Test
         func `whitespace set does not contain non-breaking space`() {
-            // U+00A0 is Unicode whitespace but NOT ASCII
+
             let nbsp = Character("\u{00A0}")
             #expect(!Set<Character>.ascii.whitespaces.contains(nbsp))
         }
 
         @Test
         func `whitespace bytes are control characters`() {
-            // All ASCII whitespace bytes are also control characters except space
+
             #expect(UInt8.ascii.htab.isControl)
             #expect(UInt8.ascii.lf.isControl)
             #expect(UInt8.ascii.cr.isControl)
             #expect(!UInt8.ascii.sp.isControl)
         }
     }
-
-    // MARK: - Constants Edge Cases
 
     @Suite
     struct `Edge Cases - Constants` {
@@ -555,65 +515,3 @@ struct `Edge Cases Tests` {
         }
     }
 }
-
-// MARK: - Performance Edge Cases
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Edge Cases - Performance` {
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `validate worst case - non-ASCII at end of 1M bytes`() {
-//            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-//            bytes[999_999] = 0x80
-//            _ = bytes.ascii.isAllASCII
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `validate best case - non-ASCII at start of 1M bytes`() {
-//            var bytes = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-//            bytes[0] = 0x80
-//            _ = bytes.ascii.isAllASCII
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `case conversion of already uppercase 100K bytes`() {
-//            let bytes = Array(repeating: UInt8.ascii.A, count: 100_000)
-//            for _ in 0..<10 {
-//                _ = bytes.ascii(case: .upper)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `case conversion of already lowercase 100K bytes`() {
-//            let bytes = Array(repeating: UInt8.ascii.a, count: 100_000)
-//            for _ in 0..<10 {
-//                _ = bytes.ascii(case: .lower)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `trim all-whitespace string 10K times`() {
-//            let allWhitespace = "                    "  // 20 spaces
-//            for _ in 0..<10000 {
-//                _ = allWhitespace.trimming(.ascii.whitespaces)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `normalize already-normalized text 10K times`() {
-//            let text = "line1\nline2\nline3\nline4\n"
-//            for _ in 0..<10000 {
-//                _ = text.normalized(to: .lf)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(300)))
-//        func `boundary checks 1M times`() {
-//            for _ in 0..<1_000_000 {
-//                _ = UInt8.ascii.del.ascii.isControl  // Upper boundary
-//                _ = (UInt8.ascii.A - 1).ascii.isLetter  // Letter lower boundary
-//                _ = (UInt8.ascii.z + 1).ascii.isLetter  // Letter upper boundary
-//            }
-//        }
-//    }
-// }

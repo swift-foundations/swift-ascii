@@ -1,31 +1,10 @@
-// BrutalEdgeCases Tests.swift
-// swift-incits-4-1986
-//
-// Absolutely brutal edge case tests designed to break most ASCII libraries.
-//
-// Substrate per the ASCII-domain retyping arc (2026-05-19):
-// - `[ASCII.Code]` for code-domain fixtures; `[Byte]` for byte-domain
-//   sequences that may include non-ASCII (the W4 validation surface).
-// - `byte.ascii.X` on `byte: UInt8` returns `ASCII.Code` and its predicates
-//   are accessed directly (`.isWhitespace`, `.isControl`, …) per
-//   `swift-ascii-primitives/ASCII.Code+Classification.swift`.
-// - Collection-level "is all ASCII?" predicate is no longer surfaced on
-//   `[UInt8]`/`[Byte]`; the typed-throws constructor IS the predicate
-//   (`try [ASCII.Code].init(bytes)`). The file-private `isAllASCII`
-//   helper preserves the predicate spelling at the call sites where the
-//   test logic reads more naturally as a predicate.
-
 import Testing
 
 @testable import ASCII
 
-// File-private helper bridging "is [Byte] all ASCII?" to the
-// constructor-lift form. Successful `[ASCII.Code]` lift IS validation.
 private func isAllASCII(_ bytes: [Byte]) -> Bool {
     (try? [ASCII.Code](bytes)) != nil
 }
-
-// MARK: - Bit-Level Boundary Testing
 
 @Suite
 struct `Brutal` {
@@ -33,16 +12,15 @@ struct `Brutal` {
     struct `Brutal - Every Single Byte Value` {
         @Test(arguments: Array(UInt8(0)...UInt8(255)))
         func `exhaustive byte classification`(byte: UInt8) {
-            // Every byte must be either ASCII or not - no exceptions
+
             let isASCII = byte <= 0x7F
             #expect(
                 isAllASCII([Byte(byte)]) == isASCII,
                 "Byte 0x\(String(byte, radix: 16)) classification inconsistent"
             )
 
-            // Predicates must be consistent for all bytes
             if byte.ascii.isControl {
-                // Control characters are never letters/digits
+
                 #expect(
                     !byte.ascii.isLetter,
                     "Control byte 0x\(String(byte, radix: 16)) cannot be letter"
@@ -53,7 +31,6 @@ struct `Brutal` {
                 )
             }
 
-            // Visible implies printable
             if byte.ascii.isVisible {
                 #expect(
                     byte.ascii.isPrintable,
@@ -81,7 +58,7 @@ struct `Brutal` {
 
         @Test(arguments: Array(UInt8(0)...UInt8(255)))
         func `case conversion involution for every byte`(byte: UInt8) {
-            // For letters: upper->lower->upper should return to original
+
             if byte.ascii.isLetter {
                 let cycle = byte.ascii(case: .upper).ascii(case: .lower).ascii(case: .upper)
                 #expect(
@@ -92,8 +69,6 @@ struct `Brutal` {
         }
     }
 
-    // MARK: - Predicate Mutual Exclusion and Coverage
-
     @Suite
     struct `Brutal - Predicate Consistency` {
         @Test(arguments: Array(UInt8(0)...UInt8(127)))
@@ -101,8 +76,6 @@ struct `Brutal` {
             let isControl = byte.ascii.isControl
             let isPrintable = byte.ascii.isPrintable
 
-            // SPACE (0x20) is the only exception: printable but not control
-            // Control range is 0x00-0x1F and 0x7F (DEL)
             if byte == UInt8.ascii.sp.underlying {
                 #expect(!isControl && isPrintable)
             } else if byte <= 0x1F || byte == 0x7F {
@@ -123,7 +96,6 @@ struct `Brutal` {
             let isControl = byte.ascii.isControl
             let isPrintable = byte.ascii.isPrintable
 
-            // Every ASCII byte must be exactly one (XOR)
             #expect(
                 isControl != isPrintable,
                 "Byte 0x\(String(byte, radix: 16)) must be exactly one of control or printable"
@@ -155,13 +127,11 @@ struct `Brutal` {
             let isUpper = byte.ascii.isUppercase
             let isLower = byte.ascii.isLowercase
 
-            // Cannot be both
             #expect(
                 !(isUpper && isLower),
                 "Byte 0x\(String(byte, radix: 16)) cannot be both upper and lower"
             )
 
-            // If letter, must be exactly one
             if byte.ascii.isLetter {
                 #expect(
                     isUpper != isLower,
@@ -176,17 +146,15 @@ struct `Brutal` {
         }
     }
 
-    // MARK: - Unicode Confusion Attacks
-
     @Suite
     struct `Brutal - Unicode Confusion` {
         @Test
         func `UTF-8 multi-byte sequences rejected`() {
-            // These are valid UTF-8 but NOT ASCII
+
             let multiByteSequences: [[Byte]] = [
-                [0xC3, 0xA9],  // é (2-byte)
-                [0xE2, 0x82, 0xAC],  // € (3-byte)
-                [0xF0, 0x9F, 0x98, 0x80],  // 😀 (4-byte)
+                [0xC3, 0xA9],
+                [0xE2, 0x82, 0xAC],
+                [0xF0, 0x9F, 0x98, 0x80],
             ]
 
             for seq in multiByteSequences {
@@ -199,9 +167,7 @@ struct `Brutal` {
 
         @Test
         func `UTF-16 surrogate range bytes rejected`() {
-            // UTF-16 surrogate range is 0xD800-0xDFFF
-            // In UTF-8, bytes starting with 0xED followed by 0xA0-0xBF are surrogates
-            // But as individual bytes, any byte >= 0x80 is invalid ASCII
+
             let surrogateRangeBytes: [Byte] = [0xD8, 0xDC, 0xDF, 0xED]
 
             for byte in surrogateRangeBytes {
@@ -214,21 +180,20 @@ struct `Brutal` {
 
         @Test
         func `look-alike characters not confused with ASCII`() {
-            // Cyrillic 'а' looks like Latin 'a' but is U+0430 (multi-byte UTF-8)
-            let cyrillicA = "а"  // U+0430
+
+            let cyrillicA = "а"
             #expect(
                 UInt8(ascii: Character(cyrillicA)) == nil,
                 "Cyrillic 'а' should not convert to ASCII"
             )
 
-            // Greek 'Α' looks like Latin 'A' but is U+0391
-            let greekA = "Α"  // U+0391
+            let greekA = "Α"
             #expect(UInt8(ascii: Character(greekA)) == nil, "Greek 'Α' should not convert to ASCII")
         }
 
         @Test
         func `zero-width characters rejected`() {
-            let zeroWidth = "\u{200B}"  // Zero-width space
+            let zeroWidth = "\u{200B}"
             #expect(
                 UInt8(ascii: Character(zeroWidth)) == nil,
                 "Zero-width space should be rejected"
@@ -237,8 +202,8 @@ struct `Brutal` {
 
         @Test
         func `combining characters rejected`() {
-            // Combining diacritical marks
-            let combining = "\u{0301}"  // Combining acute accent
+
+            let combining = "\u{0301}"
             #expect(
                 UInt8(ascii: Character(combining)) == nil,
                 "Combining character should be rejected"
@@ -247,17 +212,14 @@ struct `Brutal` {
 
         @Test
         func `unicode whitespace not confused with ASCII whitespace`() {
-            // U+00A0 is non-breaking space (not ASCII whitespace)
+
             let nbsp = "\u{00A0}"
             #expect(UInt8(ascii: Character(nbsp)) == nil, "Non-breaking space should be rejected")
 
-            // U+2003 is em space (not ASCII)
             let emSpace = "\u{2003}"
             #expect(UInt8(ascii: Character(emSpace)) == nil, "Em space should be rejected")
         }
     }
-
-    // MARK: - Buffer Boundary Torture
 
     @Suite
     struct `Brutal - Buffer Boundaries` {
@@ -299,20 +261,17 @@ struct `Brutal` {
         }
     }
 
-    // MARK: - Line Ending Hell
-
     @Suite
     struct `Brutal - Line Ending Pathological Cases` {
         @Test
         func `every possible line ending combination`() {
             let pathological = "\r\n\r\r\n\n\r\n\n\n\r\r\r\n\r\n"
 
-            // Should normalize all to target
             let asLF = pathological.normalized(to: .lf)
             #expect(!asLF.contains("\r"), "All CR should be converted")
 
             let asCRLF = pathological.normalized(to: .crlf)
-            // After normalization, should have consistent line endings
+
             #expect(asCRLF.contains("\r\n"), "Should contain CRLF")
         }
 
@@ -359,15 +318,13 @@ struct `Brutal` {
         @Test
         func `normalize already normalized text - idempotence stress test`() {
             var text = "line1\nline2\nline3"
-            // Apply 100 times - should remain stable
+
             for _ in 0..<100 {
                 text = text.normalized(to: .lf)
             }
             #expect(text == "line1\nline2\nline3", "Repeated normalization should be stable")
         }
     }
-
-    // MARK: - Trimming Torture
 
     @Suite
     struct `Brutal - Trimming Pathological Cases` {
@@ -422,13 +379,11 @@ struct `Brutal` {
         }
     }
 
-    // MARK: - Case Conversion Edge Cases
-
     @Suite
     struct `Brutal - Case Conversion Torture` {
         @Test
         func `case conversion with every non-letter byte`() {
-            // All non-letters should remain unchanged
+
             let nonLetters = Array(UInt8(0)...UInt8(127)).filter { !$0.ascii.isLetter }
             for byte in nonLetters {
                 #expect(
@@ -444,9 +399,7 @@ struct `Brutal` {
 
         @Test
         func `case conversion round-trip for all letters`() {
-            // Range iteration requires Strideable; `ASCII.Code` is not
-            // Strideable per [API-BYTE-002], so drop to `.underlying` (UInt8)
-            // for the A...Z / a...z enumeration.
+
             for byte in UInt8.ascii.A.underlying...UInt8.ascii.Z.underlying {
                 let lower = byte.ascii(case: .lower)
                 let backToUpper = lower.ascii(case: .upper)
@@ -469,9 +422,7 @@ struct `Brutal` {
 
         @Test
         func `array case conversion preserves length`() {
-            // `[UInt8.ascii.H, ...]` is `[ASCII.Code]` (post-cascade) — the
-            // letter constants resolve to `ASCII.Code` and the array literal
-            // takes that as the element type.
+
             let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
             #expect(codes.ascii(case: .upper).count == codes.count)
             #expect(codes.ascii(case: .lower).count == codes.count)
@@ -481,21 +432,17 @@ struct `Brutal` {
         func `case conversion applied 1000 times - stability test`() {
             var codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
 
-            // Apply uppercase 1000 times
             for _ in 0..<1000 {
                 codes = codes.ascii(case: .upper)
             }
             #expect(codes == [.H, .E, .L, .L, .O])
 
-            // Now lowercase 1000 times
             for _ in 0..<1000 {
                 codes = codes.ascii(case: .lower)
             }
             #expect(codes == [.h, .e, .l, .l, .o])
         }
     }
-
-    // MARK: - Validation Exhaustive Testing
 
     @Suite
     struct `Brutal - Validation Exhaustive` {
@@ -548,15 +495,11 @@ struct `Brutal` {
         }
     }
 
-    // MARK: - String Conversion Torture
-
     @Suite
     struct `Brutal - String Conversion Edge Cases` {
         @Test
         func `round-trip every ASCII character`() {
-            // String(ascii:) takes [Byte]; `[ASCII.Code](ascii: String)?`
-            // is the typed reverse direction. Bridge to/from Byte at the
-            // call sites that need it.
+
             for value in UInt8(0)...UInt8(127) {
                 let byte = Byte(value)
                 if let str = String(ascii: [byte]) {
@@ -597,16 +540,14 @@ struct `Brutal` {
         func `NUL bytes in middle of string`() {
             let codes: [ASCII.Code] = [.A, .nul, .B]
             if let str = String(ascii: [Byte](codes)) {
-                // Should preserve NUL
+
                 #expect(str.count == 3, "NUL should be preserved in string")
             }
         }
 
         @Test
         func `all control characters convert and round-trip`() {
-            // Control characters: 0x00 (nul) ... 0x1F (us), plus 0x7F (del).
-            // `ASCII.Code` is not Strideable per [API-BYTE-002]; iterate
-            // on UInt8 with per-iteration Byte bridge.
+
             let nulUInt = UInt8.ascii.nul.underlying
             let usUInt = UInt8.ascii.us.underlying
             let controls: [Byte] = (nulUInt...usUInt).map(Byte.init) + [Byte.ascii.del]
@@ -626,76 +567,3 @@ struct `Brutal` {
         }
     }
 }
-
-// MARK: - Performance Torture Tests
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Brutal - Performance Torture` {
-//        @Test(.timed(threshold: .milliseconds(300)))
-//        func `validate 1M bytes - all valid`() {
-//            let massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-//            _ = massive.ascii.isAllASCII
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `validate 1M bytes - fail at position 0`() {
-//            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-//            massive[0] = 0x80
-//            _ = massive.ascii.isAllASCII
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(300)))
-//        func `validate 1M bytes - fail at position 999999`() {
-//            var massive = Array(repeating: UInt8.ascii.A, count: 1_000_000)
-//            massive[999_999] = 0x80
-//            _ = massive.ascii.isAllASCII
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(100)))
-//        func `case convert 100K byte string - all lowercase`() {
-//            let str = String(repeating: "abcdefghijklmnopqrstuvwxyz", count: 4000)
-//            _ = str.ascii(case: .upper)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(100)))
-//        func `case convert 100K byte string - all uppercase`() {
-//            let str = String(repeating: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", count: 4000)
-//            _ = str.ascii(case: .lower)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(100)))
-//        func `normalize 100K byte string with 10K line endings`() {
-//            let line = "xxxxxxxxxx\n"  // 11 bytes
-//            let text = String(repeating: line, count: 10000)  // ~110KB
-//            _ = text.normalized(to: .crlf)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `trim string with 10K leading and trailing spaces`() {
-//            let spaces = String(repeating: " ", count: 10000)
-//            let text = spaces + "content" + spaces
-//            _ = text.trimming(.ascii.whitespaces)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(500)))
-//        func `character to byte conversion - 100K ASCII characters`() {
-//            for _ in 0..<100_000 {
-//                _ = UInt8(ascii: "A" as Character)
-//                _ = UInt8(ascii: "z" as Character)
-//                _ = UInt8(ascii: "0" as Character)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(3000)))
-//        func `predicate checks on every ASCII byte - 1.28M checks`() {
-//            // 10K iterations × 128 bytes = 1.28M operations
-//            // Expected ~270ms based on 4.7M ops/sec
-//            for _ in 0..<10000 {
-//                for byte in UInt8(0)...UInt8(127) {
-//                    _ = byte.ascii.isLetter
-//                }
-//            }
-//        }
-//    }
-// }

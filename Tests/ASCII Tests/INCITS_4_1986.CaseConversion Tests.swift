@@ -1,19 +1,6 @@
-// INCITS_4_1986.Case.Conversion Tests.swift
-// swift-incits-4-1986
-//
-// Tests for INCITS_4_1986 case conversion operations.
-//
-// Substrate per the ASCII-domain retyping arc (2026-05-19):
-// collection-level case conversion (`bytes.ascii(case: ...)`) is rooted
-// at `Collection where Element == ASCII.Code` per the L3 cascade —
-// fixtures use `[ASCII.Code]` and bridge via `[UInt8]`-mapping where
-// the receiving API (`String.ascii.unchecked`) takes stdlib bytes.
-
 import Testing
 
 @testable import ASCII
-
-// MARK: - String Case Conversion
 
 @Suite
 struct `Case Conversion Tests` {
@@ -41,9 +28,7 @@ struct `Case Conversion Tests` {
         func `Array case conversion matches String case conversion`() {
             let str = "Hello World"
             let strUpper = str.ascii(case: .upper)
-            // [ASCII.Code] is the canonical substrate for the byte-level
-            // case conversion. Bridge to [UInt8] at the
-            // `String.ascii.unchecked` boundary (it takes stdlib bytes).
+
             let codes: [ASCII.Code] = [ASCII.Code].ascii.unchecked(str)
             let bytesUpper = String.ascii.unchecked(
                 codes.ascii(case: .upper).map(\.underlying)
@@ -59,8 +44,6 @@ struct `Case Conversion Tests` {
             #expect(lower == "hello world")
         }
     }
-
-    // MARK: - Byte-Level Case Conversion
 
     @Suite
     struct `UInt8 Case Conversion - Correctness` {
@@ -92,8 +75,6 @@ struct `Case Conversion Tests` {
         }
     }
 
-    // MARK: - Idempotence
-
     @Suite
     struct `Case Conversion - Idempotence` {
         @Test
@@ -114,8 +95,7 @@ struct `Case Conversion Tests` {
 
         @Test
         func `uppercase is idempotent on bytes`() {
-            // [ASCII.Code] substrate per L3 cascade — `[T](ascii: String)?`
-            // is the typed init on [ASCII.Code], not [UInt8].
+
             let codes = [ASCII.Code](ascii: "Hello World 123!")!
             let upper1 = codes.ascii(case: .upper)
             let upper2 = upper1.ascii(case: .upper)
@@ -130,8 +110,6 @@ struct `Case Conversion Tests` {
             #expect(lower1 == lower2, "Applying lowercase twice should be idempotent")
         }
     }
-
-    // MARK: - Mathematical Properties
 
     @Suite
     struct `Case Conversion - Mathematical Properties` {
@@ -152,43 +130,8 @@ struct `Case Conversion Tests` {
             )
         )
         func `all letter pairs have correct offset`(lower: UInt8, upper: UInt8) {
-            // Range iteration requires Strideable; `ASCII.Code` is not Strideable
-            // per [API-BYTE-002], so drop to `.underlying` (UInt8) for the
-            // a...z / A...Z enumeration.
+
             #expect(lower - upper == 32)
         }
     }
 }
-
-// MARK: - Performance
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Case Conversion - Performance` {
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `uppercase conversion 100K character string`() {
-//            let str = String(repeating: "Hello World! ", count: 10000)
-//            _ = str.ascii(case: .upper)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `lowercase conversion 100K character string`() {
-//            let str = String(repeating: "Hello World! ", count: 10000)
-//            _ = str.ascii(case: .lower)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `byte array case conversion 1M bytes`() {
-//            let bytes = Array(repeating: UInt8.ascii.a, count: 1_000_000)
-//            _ = bytes.ascii(case: .upper)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `single byte case conversion 1M times`() {
-//            let byte = UInt8.ascii.a
-//            for _ in 0..<1_000_000 {
-//                _ = byte.ascii(case: .upper)
-//            }
-//        }
-//    }
-// }

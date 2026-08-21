@@ -1,38 +1,13 @@
-//
-//  StringProtocol+INCITS_4_1986.swift
-//  swift-incits-4-1986
-//
-//  Created by Coen ten Thije Boonkkamp on 22/11/2025.
-//
-
 public import ASCII_Primitives
 public import Binary_Primitives
 
 extension StringProtocol {
     public typealias ASCII = INCITS_4_1986.ASCII<Self>
 
-    /// Access to ASCII type-level constants and methods
     public static var ascii: ASCII.Type {
         ASCII.self
     }
 
-    /// Access to ASCII instance methods for this string
-    ///
-    /// Provides instance-level access to ASCII validation and transformation methods.
-    /// Returns a generic `INCITS_4_1986.ASCII` wrapper that works directly with the
-    /// string without copying.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// "hello".ascii.isAllASCII     // true
-    /// "hello".ascii.uppercased()   // "HELLO"
-    /// "HELLO🌍".ascii.lowercased() // "hello🌍"
-    /// ```
-    ///
-    /// ## See Also
-    ///
-    /// - ``INCITS_4_1986/ASCII``
     @inlinable
     public var ascii: ASCII {
         INCITS_4_1986.ASCII(self)
@@ -40,19 +15,7 @@ extension StringProtocol {
 }
 
 extension StringProtocol {
-    // False-positive position: `<S: StringProtocol>` is a generic-parameter
-    // constraint — `Self` here would demand identity, not conformance
-    // (P1a sequence/comparison precedent).
-    // swiftlint:disable prefer_self_in_static_references
-    /// Normalizes ASCII line endings in string to the specified style
-    ///
-    /// Convenience method that delegates to byte-level `normalized(_:to:)`.
-    ///
-    /// Example:
-    /// ```swift
-    /// INCITS_4_1986.normalized("line1\nline2\r\nline3", to: .crlf)
-    /// // "line1\r\nline2\r\nline3"
-    /// ```
+
     public static func normalized<S: StringProtocol>(
         _ s: S,
         to lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending
@@ -62,31 +25,7 @@ extension StringProtocol {
             as: UTF8.self
         )
     }
-    // swiftlint:enable prefer_self_in_static_references
 
-    /// Normalizes ASCII line endings to the specified style
-    ///
-    /// Converts all line endings to a consistent format. Recognizes and normalizes
-    /// all common ASCII line ending styles: LF (`\n`), CR (`\r`), and CRLF (`\r\n`).
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Works with String
-    /// "line1\nline2\r\n".normalized(to: .crlf)
-    ///
-    /// // Works with Substring
-    /// "Hello\r\nWorld"[...].normalized(to: .lf)
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - lineEnding: Target line ending style (`.lf`, `.cr`, or `.crlf`)
-    ///   - encoding: Unicode encoding to use (defaults to UTF-8)
-    /// - Returns: New string with all line endings normalized to the specified style
-    ///
-    /// ## See Also
-    ///
-    /// - ``INCITS_4_1986/normalized(_:to:as:)``
     public func normalized(
         to lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending
     ) -> Self {
@@ -95,181 +34,40 @@ extension StringProtocol {
 }
 
 extension StringProtocol {
-    /// Creates some StringProtocol from a line ending constant
-    ///
-    /// Transforms a line ending enumeration value into its corresponding
-    /// string representation. This is useful when you need the actual line ending characters
-    /// as a string rather than as byte arrays.
-    ///
-    /// ## Line Ending Values
-    ///
-    /// - **`.lf`**: Returns `"\n"` (Line Feed, 0x0A)
-    /// - **`.cr`**: Returns `"\r"` (Carriage Return, 0x0D)
-    /// - **`.crlf`**: Returns `"\r\n"` (Carriage Return + Line Feed, 0x0D 0x0A)
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Get line ending strings
-    /// let unix = String(ascii: .lf)      // "\n"
-    /// let mac = String(ascii: .cr)       // "\r"
-    /// let windows = String(ascii: .crlf) // "\r\n"
-    ///
-    /// // Use in string concatenation
-    /// let line1 = "First line"
-    /// let line2 = "Second line"
-    /// let text = line1 + String(ascii: .crlf) + line2
-    /// // "First line\r\nSecond line"
-    ///
-    /// // Build multi-line text with consistent endings
-    /// let lines = ["Header", "Content", "Footer"]
-    /// let document = lines.joined(separator: String(ascii: .crlf))
-    /// ```
-    ///
-    /// - Parameter ascii: The line ending style to convert to some StringProtocol
-    /// - Returns: String containing the line ending character(s)
-    ///
-    /// ## See Also
-    ///
-    /// - ``LineEnding``
-    /// - ``INCITS_4_1986/crlf``
-    /// - ``normalized(to:as:)``
+
     public init(ascii lineEnding: INCITS_4_1986.FormatEffectors.Line.Ending) {
-        // Use `[ASCII.Code](ascii: lineEnding)` (the typed init defined in
-        // swift-incits-4-1986). Bridge ASCII.Code → UInt8 via per-element
-        // `.underlying` lazy map so we call stdlib's
-        // `String.init(decoding: Sequence<UInt8>, as: UTF8.self)` directly
-        // without needing the BSLI byte-domain decoding overload.
-        // Fully-qualified `ASCII_Primitives.ASCII.Code` because `Self.ASCII`
-        // (`INCITS_4_1986.ASCII<Self>`) shadows the unqualified `ASCII`
-        // namespace in a `StringProtocol` extension.
+
         let codes = [ASCII_Primitives.ASCII.Code](ascii: lineEnding)
         self.init(decoding: codes.lazy.map(\.underlying), as: UTF8.self)
     }
 }
 
 extension StringProtocol {
-    /// Creates a string from ASCII bytes with validation
-    ///
-    /// Constructs a String from a byte array, returning `nil` if any byte is outside the valid
-    /// US-ASCII range (0x00-0x7F). This method ensures that only valid 7-bit ASCII data is
-    /// converted to a string.
-    ///
-    /// ## Validation
-    ///
-    /// The method validates that all bytes fall within the ASCII range before decoding.
-    /// Any byte with the high bit set (>= 0x80) will cause validation to fail and return `nil`.
-    ///
-    /// ## Performance
-    ///
-    /// This method performs O(n) validation before string construction. For known-valid ASCII data,
-    /// use ``String/ascii/unchecked(_:)`` to skip validation and improve performance.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// // Valid ASCII bytes
-    /// let hello = String(ascii: [104, 101, 108, 108, 111])  // "hello"
-    ///
-    /// // Using INCITS constants
-    /// let bytes: [UInt8] = [
-    ///     INCITS_4_1986.Character.Graphic.H,
-    ///     INCITS_4_1986.Character.Graphic.i
-    /// ]
-    /// let text = String(ascii: bytes)  // "Hi"
-    ///
-    /// // Invalid ASCII bytes
-    /// String(ascii: [255])  // nil (0xFF is not valid 7-bit ASCII)
-    /// String(ascii: [0x80]) // nil (high bit set)
-    /// ```
-    ///
-    /// - Parameter ascii: Array of bytes to validate and decode as ASCII
-    /// - Returns: String if all bytes are valid ASCII (0x00-0x7F), `nil` otherwise
-    ///
-    /// ## See Also
-    ///
-    /// - ``String/ascii/unchecked(_:)``
-    /// - ``INCITS_4_1986``
+
     public init?(ascii bytes: [Byte]) {
-        // Validate each byte is in the 7-bit ASCII range (0x00–0x7F).
-        // [Byte] is the byte-domain substrate; bytes may be non-ASCII,
-        // so this validation is the load-bearing fallibility. Callers
-        // with [ASCII.Code] (whose type-level invariant already
-        // guarantees 0x00–0x7F) should reach for the non-failable
-        // ``init(ascii:)-[ASCII.Code]`` overload below.
+
         guard bytes.allSatisfy({ $0.underlying < 0x80 }) else { return nil }
         self.init(decoding: bytes.lazy.map(\.underlying), as: UTF8.self)
     }
 
-    /// Creates a string from a sequence of `ASCII.Code` values.
-    ///
-    /// Non-failable — `ASCII.Code` carries its 7-bit ASCII range as a
-    /// type-system invariant, so no per-element validation is needed.
-    /// Sibling of the fallible ``init(ascii:)-[Byte]`` overload; consumers
-    /// holding `[ASCII.Code]` (e.g., from a successful `try [ASCII.Code](bytes)`
-    /// lift or from named-constant literals like `[.H, .e, .l, .l, .o]`)
-    /// should reach for this overload directly without the explicit
-    /// `[Byte](codes)` bridge.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let codes: [ASCII.Code] = [.H, .e, .l, .l, .o]
-    /// let s = String(ascii: codes)  // "Hello"
-    /// ```
     @inlinable
     public init<Codes: Sequence>(ascii codes: Codes)
     where Codes.Element == ASCII_Primitives.ASCII.Code {
         self.init(decoding: codes.lazy.map(\.underlying), as: UTF8.self)
     }
 
-    /// Creates a single-character string from an ASCII byte with validation
-    ///
-    /// Returns `nil` if the byte is outside the valid ASCII range (0x00-0x7F).
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// String(ascii: 0x41)  // "A"
-    /// String(ascii: 0x20)  // " "
-    /// String(ascii: 0xFF)  // nil (not ASCII)
-    /// ```
-    ///
-    /// - Parameter byte: The byte to validate and decode as ASCII
-    /// - Returns: Single-character string if byte is valid ASCII, `nil` otherwise
     public init?(ascii byte: Byte) {
-        // Sibling of the `[Byte]` overload above; mirror its `< 0x80` ASCII
-        // guard (rather than the throwing `ASCII.Code(_: Byte)` init) and
-        // bridge to the stdlib UTF-8 decoder via `.underlying`.
+
         guard byte.underlying < 0x80 else { return nil }
         self.init(decoding: CollectionOfOne(byte.underlying), as: UTF8.self)
     }
 }
 
 extension StringProtocol {
-    /// String representation of an ASCII-serializable value
-    ///
-    /// Composes through canonical byte representation for academic correctness.
-    ///
-    /// ## Category Theory
-    ///
-    /// String display composes as:
-    /// ```
-    /// Serializable → [UInt8] (ASCII) → String (UTF-8 interpretation)
-    /// ```
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let value: RFC_5322.EmailAddress = ...
-    /// let string = String(value)  // Uses this initializer
-    /// ```
-    ///
-    /// - Parameter value: Any type conforming to Binary.ASCII.Serializable
+
     @_transparent
     public init<T: Binary.Serializable>(_ value: T) {
-        // String(decoding:as:) stays UInt8 (stdlib idiom); cross the byte-domain
-        // boundary via the BSLI Sequence.underlying: [UInt8] accessor.
+
         let typed: [Byte] = value.bytes
         self = Self(decoding: typed.underlying, as: UTF8.self)
     }

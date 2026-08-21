@@ -1,8 +1,3 @@
-// INCITS_4_1986.Numeric.Parsing Tests.swift
-// swift-incits-4-1986
-//
-// Tests for authoritative numeric parsing operations
-
 import Testing
 
 @testable import ASCII
@@ -50,8 +45,8 @@ struct `INCITS_4_1986.Numeric.Parsing Tests` {
             INCITS_4_1986.Character.Graphic.A,
             INCITS_4_1986.Character.Graphic.a,
             INCITS_4_1986.SPACE.sp,
-            UInt8(0x2F),  // Before '0'
-            UInt8(0x3A),  // After '9'
+            UInt8(0x2F),
+            UInt8(0x3A),
         ])
         func `returns nil for non-digit bytes`(byte: UInt8) {
             #expect(ASCII.Code(byte).digitValue == nil)

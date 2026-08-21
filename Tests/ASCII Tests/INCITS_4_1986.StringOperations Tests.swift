@@ -1,8 +1,3 @@
-// INCITS_4_1986.StringOperations Tests.swift
-// swift-incits-4-1986
-//
-// Tests for INCITS_4_1986 string trimming operations
-
 import Testing
 
 @testable import ASCII
@@ -26,7 +21,7 @@ struct `StringOperator Tests` {
         @Test
         func `trim both ends`() {
             #expect("  hello  ".trimming(.ascii.whitespaces) == "hello")
-            // CRLF is a single grapheme in Swift - use predicate for grapheme-aware trimming
+
             #expect("\t\nhello\r\n".trimming(where: Set<Character>.ascii.isWhitespace) == "hello")
         }
 
@@ -62,22 +57,3 @@ struct `StringOperator Tests` {
         }
     }
 }
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `String Trimming - Performance` {
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `trim 10K strings with ASCII whitespace`() {
-//            for _ in 0..<10000 {
-//                _ = "  hello world  ".trimming(Set<Character>.ascii.whitespaces)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `trim large string with many leading spaces`() {
-//            let spaces = String(repeating: " ", count: 10000)
-//            let text = spaces + "content" + spaces
-//            _ = text.trimming(Set<Character>.ascii.whitespaces)
-//        }
-//    }
-// }

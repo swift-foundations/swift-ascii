@@ -1,13 +1,6 @@
-// INCITS_4_1986 Tests.swift
-// swift-incits-4-1986
-//
-// Tests for module-level INCITS_4_1986 namespace
-
 import Testing
 
 @testable import ASCII
-
-// MARK: - Module Constants
 
 @Suite
 struct `INCITS_4_1986 - Constants Tests` {
@@ -18,10 +11,10 @@ struct `INCITS_4_1986 - Constants Tests` {
 
     @Test
     func `whitespaces contains SPACE, TAB, LF, CR`() {
-        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.sp))  // SPACE
-        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.htab))  // HT
-        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.lf))  // LF
-        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.cr))  // CR
+        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.sp))
+        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.htab))
+        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.lf))
+        #expect(INCITS_4_1986.whitespaces.contains(UInt8.ascii.cr))
     }
 
     @Test
@@ -37,29 +30,10 @@ struct `INCITS_4_1986 - Constants Tests` {
 
     @Test
     func `case conversion offset matches letter distance`() {
-        // Arithmetic-domain bridge: `ASCII.Code` has no arithmetic by
-        // design ([API-BYTE-002]); drop to `.underlying` for the
-        // 'a' - 'A' = 0x20 distance check.
+
         #expect(
             ASCII.Code.a.underlying &- ASCII.Code.A.underlying
                 == INCITS_4_1986.Case.Conversion.offset
         )
     }
 }
-
-// MARK: - Performance
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `INCITS_4_1986 - Performance` {
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `whitespaces set lookup 1M times`() {
-//            let testBytes: [UInt8] = [UInt8.ascii.sp, UInt8.ascii.A, UInt8.ascii.htab, UInt8.ascii.a]
-//            for _ in 0..<250_000 {
-//                for byte in testBytes {
-//                    _ = INCITS_4_1986.whitespaces.contains(byte)
-//                }
-//            }
-//        }
-//    }
-// }

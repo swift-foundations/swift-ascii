@@ -1,8 +1,3 @@
-// INCITS_4_1986.FormatEffectors.Line.Ending Tests.swift
-// swift-incits-4-1986
-//
-// Tests for INCITS_4_1986 line ending normalization
-
 import Testing
 
 @testable import ASCII
@@ -54,21 +49,3 @@ struct `FormatEffectors Tests` {
         }
     }
 }
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Line Ending Normalization - Performance` {
-//        @Test(.timed(threshold: .milliseconds(50)))
-//        func `normalize 100K character file with 1K line endings`() {
-//            let line = String(repeating: "x", count: 100)
-//            let text = (0..<1000).map { _ in line }.joined(separator: "\n")
-//            _ = text.normalized(to: .crlf)
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `normalize file with no line endings - fast path`() {
-//            let text = String(repeating: "x", count: 100_000)
-//            _ = text.normalized(to: .lf)
-//        }
-//    }
-// }

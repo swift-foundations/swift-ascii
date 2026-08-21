@@ -1,13 +1,6 @@
-// INCITS_4_1986.FormatEffectors.Line.Ending+INCITS_4_1986 Tests.swift
-// swift-incits-4-1986
-//
-// Tests for INCITS_4_1986.FormatEffectors.Line.Ending support
-
 import Testing
 
 @testable import ASCII
-
-// MARK: - Line Ending Constants
 
 @Suite
 struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
@@ -52,19 +45,3 @@ struct `INCITS_4_1986.FormatEffectors.Line.Ending` {
         }
     }
 }
-
-// MARK: - Performance
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `INCITS_4_1986.FormatEffectors.Line.Ending - Performance` {
-//        @Test(.timed(threshold: .milliseconds(200)))
-//        func `line ending to bytes conversion 10K times`() {
-//            for _ in 0..<10000 {
-//                _ = [UInt8](ascii: .lf)
-//                _ = [UInt8](ascii: .cr)
-//                _ = [UInt8](ascii: .crlf)
-//            }
-//        }
-//    }
-// }

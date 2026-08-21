@@ -1,15 +1,9 @@
-// INCITS_4_1986.Text.Classification Tests.swift
-// swift-incits-4-1986
-//
-// Tests for authoritative string classification operations
-
 import Testing
 
 @testable import ASCII
 
 @Suite
 struct `INCITS_4_1986.Text.Classification Tests` {
-    // MARK: - ASCII Validation Tests
 
     @Suite
     struct `isAllASCII Tests` {
@@ -20,8 +14,8 @@ struct `INCITS_4_1986.Text.Classification Tests` {
             "abcdefghijklmnopqrstuvwxyz",
             "0123456789",
             "!@#$%^&*()",
-            "",  // Empty string
-            " \t\n\r",  // Whitespace
+            "",
+            " \t\n\r",
         ])
         func `returns true for ASCII-only strings`(str: String) {
             #expect(INCITS_4_1986.Text.Classification.isAllASCII(str))
@@ -32,8 +26,8 @@ struct `INCITS_4_1986.Text.Classification Tests` {
             "café",
             "日本語",
             "Ñoño",
-            "test\u{80}",  // First non-ASCII byte
-            "test\u{FF}",  // High byte
+            "test\u{80}",
+            "test\u{FF}",
         ])
         func `returns false for strings with non-ASCII`(str: String) {
             #expect(!INCITS_4_1986.Text.Classification.isAllASCII(str))
@@ -65,8 +59,6 @@ struct `INCITS_4_1986.Text.Classification Tests` {
             #expect(!INCITS_4_1986.Text.Classification.containsNonASCII(str))
         }
     }
-
-    // MARK: - Character Class Tests
 
     @Suite
     struct `isAllWhitespace Tests` {
@@ -134,7 +126,7 @@ struct `INCITS_4_1986.Text.Classification Tests` {
             "hello123",
             "test ",
             "Hello-World",
-            "café",  // Non-ASCII
+            "café",
         ])
         func `returns false for non-letter strings`(str: String) {
             #expect(!INCITS_4_1986.Text.Classification.isAllLetters(str))
@@ -182,7 +174,7 @@ struct `INCITS_4_1986.Text.Classification Tests` {
 
         @Test(arguments: [
             "a",
-            " ",  // SPACE is not control
+            " ",
             "\tA",
             "test\n",
         ])
@@ -205,7 +197,7 @@ struct `INCITS_4_1986.Text.Classification Tests` {
         }
 
         @Test(arguments: [
-            " ",  // SPACE is not visible
+            " ",
             "hello ",
             " world",
             "test\n",
@@ -265,17 +257,15 @@ struct `INCITS_4_1986.Text.Classification Tests` {
         }
     }
 
-    // MARK: - Case Tests
-
     @Suite
     struct `isAllLowercase Tests` {
         @Test(arguments: [
             "hello",
             "world",
             "abcdefghijklmnopqrstuvwxyz",
-            "hello123",  // Digits ignored
-            "test-case",  // Non-letters ignored
-            "123",  // No letters, so all letters are lowercase
+            "hello123",
+            "test-case",
+            "123",
         ])
         func `returns true when all letters are lowercase`(str: String) {
             #expect(INCITS_4_1986.Text.Classification.isAllLowercase(str))
@@ -298,9 +288,9 @@ struct `INCITS_4_1986.Text.Classification Tests` {
             "HELLO",
             "WORLD",
             "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "HELLO123",  // Digits ignored
-            "TEST-CASE",  // Non-letters ignored
-            "123",  // No letters, so all letters are uppercase
+            "HELLO123",
+            "TEST-CASE",
+            "123",
         ])
         func `returns true when all letters are uppercase`(str: String) {
             #expect(INCITS_4_1986.Text.Classification.isAllUppercase(str))
@@ -317,8 +307,6 @@ struct `INCITS_4_1986.Text.Classification Tests` {
         }
     }
 
-    // MARK: - Edge Cases
-
     @Suite
     struct `Empty String Behavior` {
         @Test
@@ -328,43 +316,43 @@ struct `INCITS_4_1986.Text.Classification Tests` {
 
         @Test
         func `empty string is all whitespace`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllWhitespace(""))
         }
 
         @Test
         func `empty string is all digits`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllDigits(""))
         }
 
         @Test
         func `empty string is all letters`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllLetters(""))
         }
 
         @Test
         func `empty string is all alphanumeric`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllAlphanumeric(""))
         }
 
         @Test
         func `empty string is all control`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllControl(""))
         }
 
         @Test
         func `empty string is all visible`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllVisible(""))
         }
 
         @Test
         func `empty string is all printable`() {
-            // Vacuous truth: all (zero) characters satisfy the predicate
+
             #expect(INCITS_4_1986.Text.Classification.isAllPrintable(""))
         }
 
@@ -375,18 +363,16 @@ struct `INCITS_4_1986.Text.Classification Tests` {
 
         @Test
         func `empty string is all lowercase`() {
-            // No letters, so trivially all letters are lowercase
+
             #expect(INCITS_4_1986.Text.Classification.isAllLowercase(""))
         }
 
         @Test
         func `empty string is all uppercase`() {
-            // No letters, so trivially all letters are uppercase
+
             #expect(INCITS_4_1986.Text.Classification.isAllUppercase(""))
         }
     }
-
-    // MARK: - Non-ASCII Behavior
 
     @Suite
     struct `Non-ASCII Character Handling` {
@@ -402,7 +388,7 @@ struct `INCITS_4_1986.Text.Classification Tests` {
 
         @Test
         func `non-ASCII characters fail whitespace test`() {
-            // Non-breaking space U+00A0
+
             #expect(!INCITS_4_1986.Text.Classification.isAllWhitespace("\u{00A0}"))
         }
     }

@@ -1,8 +1,3 @@
-// Substring+INCITS_4_1986 Tests.swift
-// swift-incits-4-1986
-//
-// Tests for Substring extension methods
-
 import Testing
 
 @testable import ASCII
@@ -49,8 +44,6 @@ struct `Substring Tests` {
         }
     }
 
-    // MARK: - Character Classification Tests
-
     @Suite
     struct `Substring.ASCII - isAllASCII` {
         @Test(arguments: [
@@ -60,8 +53,8 @@ struct `Substring Tests` {
             "abcdefghijklmnopqrstuvwxyz",
             "0123456789",
             "!@#$%^&*()",
-            "",  // Empty substring
-            " \t\n\r",  // Whitespace
+            "",
+            " \t\n\r",
         ])
         func `valid ASCII substrings`(str: String) {
             let sub = str[...]
@@ -323,8 +316,6 @@ struct `Substring Tests` {
         }
     }
 
-    // MARK: - Case Validation Tests
-
     @Suite
     struct `Substring.ASCII - isAllLowercase` {
         @Test(arguments: [
@@ -397,8 +388,6 @@ struct `Substring Tests` {
         }
     }
 
-    // MARK: - Case Conversion Tests
-
     @Suite
     struct `Substring - ASCII Case Conversion` {
         @Test(arguments: [
@@ -432,8 +421,6 @@ struct `Substring Tests` {
             #expect(sub.ascii(case: .lower) == "hello🌍")
         }
     }
-
-    // MARK: - Case Convenience Method Tests
 
     @Suite
     struct `Substring.ASCII - uppercased and lowercased` {
@@ -476,8 +463,6 @@ struct `Substring Tests` {
         }
     }
 
-    // MARK: - Line Ending Constants Tests
-
     @Suite
     struct `Substring.ASCII - Line Ending Constants` {
         @Test
@@ -498,8 +483,6 @@ struct `Substring Tests` {
             #expect(Substring.ascii.crlf.utf8.count == 2)
         }
     }
-
-    // MARK: - Line Ending Detection Tests
 
     @Suite
     struct `Substring.ASCII - containsMixedLineEndings` {
@@ -574,17 +557,3 @@ struct `Substring Tests` {
         }
     }
 }
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Substring - Performance` {
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `substring trimming 10K times`() {
-//            let str = "  hello world  "
-//            let sub = str[...]
-//            for _ in 0..<10000 {
-//                _ = sub.trimming(.ascii.whitespaces)
-//            }
-//        }
-//    }
-// }

@@ -1,13 +1,6 @@
-// INCITS_4_1986.Character.Control Tests.swift
-// swift-incits-4-1986
-//
-// Tests for INCITS_4_1986.Character.Control (33 characters: 0x00-0x1F, 0x7F)
-
 import Testing
 
 @testable import ASCII
-
-// MARK: - Control Characters - Constants
 
 @Suite
 struct `Control Characters` {
@@ -39,8 +32,6 @@ struct `Control Characters` {
         }
     }
 
-    // MARK: - Control Characters - Coverage
-
     @Suite
     struct `Coverage Tests` {
         @Test(arguments: [
@@ -60,7 +51,7 @@ struct `Control Characters` {
 
         @Test
         func `all 33 control characters present`() {
-            // C0 controls (0x00-0x1F)
+
             #expect(UInt8.ascii.nul == 0x00)
             #expect(UInt8.ascii.soh == 0x01)
             #expect(UInt8.ascii.stx == 0x02)
@@ -93,7 +84,7 @@ struct `Control Characters` {
             #expect(UInt8.ascii.gs == 0x1D)
             #expect(UInt8.ascii.rs == 0x1E)
             #expect(UInt8.ascii.us == 0x1F)
-            // DELETE
+
             #expect(UInt8.ascii.del == 0x7F)
         }
 
@@ -110,7 +101,7 @@ struct `Control Characters` {
 
         @Test
         func `control characters accessible directly`() {
-            // Verify direct access without ControlCharacters namespace
+
             #expect(UInt8.ascii.nul == INCITS_4_1986.Character.Control.nul)
             #expect(UInt8.ascii.lf == INCITS_4_1986.Character.Control.lf)
             #expect(UInt8.ascii.cr == INCITS_4_1986.Character.Control.cr)
@@ -118,31 +109,3 @@ struct `Control Characters` {
         }
     }
 }
-
-// MARK: - Performance
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `Control Characters - Performance` {
-//        @Test(.timed(threshold: .milliseconds(200)))
-//        func `control character access 100K times`() {
-//            for _ in 0..<100_000 {
-//                _ = UInt8.ascii.lf
-//                _ = UInt8.ascii.cr
-//                _ = UInt8.ascii.htab
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(2000)))
-//        func `control character classification 1M times`() {
-//            let testBytes: [UInt8] = [
-//                UInt8.ascii.nul, UInt8.ascii.htab, UInt8.ascii.lf, UInt8.ascii.cr, UInt8.ascii.us, UInt8.ascii.del,
-//            ]
-//            for _ in 0..<166_667 {
-//                for byte in testBytes {
-//                    _ = byte.ascii.isControl
-//                }
-//            }
-//        }
-//    }
-// }

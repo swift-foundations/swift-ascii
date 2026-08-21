@@ -1,16 +1,6 @@
-// String+INCITS_4_1986 Tests.swift
-// swift-incits-4-1986
-//
-// Tests for String extension methods
-
 import Testing
 
 @testable import ASCII
-
-// Note: String conversion tests are in INCITS_4_1986 Tests.swift
-// Note: String case conversion tests are in INCITS_4_1986.CaseConversion Tests.swift
-// Note: String trimming tests are in INCITS_4_1986.StringOperations Tests.swift
-// Note: String normalization tests are in INCITS_4_1986.FormatEffectors.Line.Ending Tests.swift
 
 @Suite
 struct `String Tests` {
@@ -43,8 +33,6 @@ struct `String Tests` {
         }
     }
 
-    // MARK: - Character Classification Tests
-
     @Suite
     struct `INCITS_4_1986.ASCII - isAllASCII` {
         @Test(arguments: [
@@ -54,8 +42,8 @@ struct `String Tests` {
             "abcdefghijklmnopqrstuvwxyz",
             "0123456789",
             "!@#$%^&*()",
-            "",  // Empty string is all ASCII
-            " \t\n\r",  // Whitespace
+            "",
+            " \t\n\r",
         ])
         func `valid ASCII strings`(str: String) {
             #expect(str.ascii.isAllASCII, "String '\(str)' should be all ASCII")
@@ -66,8 +54,8 @@ struct `String Tests` {
             "café",
             "日本語",
             "Ñoño",
-            "test\u{80}",  // First non-ASCII byte
-            "test\u{FF}",  // High byte
+            "test\u{80}",
+            "test\u{FF}",
         ])
         func `strings with non-ASCII characters`(str: String) {
             #expect(!str.ascii.isAllASCII, "String '\(str)' should contain non-ASCII")
@@ -180,7 +168,7 @@ struct `String Tests` {
             "\n",
             "\r",
             "\t\n\r",
-            "\u{7F}",  // DEL
+            "\u{7F}",
         ])
         func `all control character strings`(str: String) {
             #expect(str.ascii.isAllControl, "String should be all control characters")
@@ -188,7 +176,7 @@ struct `String Tests` {
 
         @Test(arguments: [
             "a",
-            " ",  // SPACE is not control
+            " ",
             "\ta\n",
             "hello",
         ])
@@ -210,7 +198,7 @@ struct `String Tests` {
         }
 
         @Test(arguments: [
-            " ",  // SPACE is not visible
+            " ",
             "hello world",
             "\t",
             "test ",
@@ -275,7 +263,7 @@ struct `String Tests` {
             "F",
             "a",
             "f",
-            "hello",  // contains 'e'
+            "hello",
             "FACE",
             "test0",
         ])
@@ -294,14 +282,12 @@ struct `String Tests` {
         }
     }
 
-    // MARK: - Case Validation Tests
-
     @Suite
     struct `INCITS_4_1986.ASCII - isAllLowercase` {
         @Test(arguments: [
             "abc",
             "hello",
-            "test123",  // Non-letters don't affect the check
+            "test123",
             "hello world",
             "a-b-c",
         ])
@@ -364,8 +350,6 @@ struct `String Tests` {
         }
     }
 
-    // MARK: - Case Convenience Method Tests
-
     @Suite
     struct `INCITS_4_1986.ASCII - uppercased and lowercased` {
         @Test(arguments: [
@@ -405,8 +389,6 @@ struct `String Tests` {
         }
     }
 
-    // MARK: - Line Ending Constants Tests
-
     @Suite
     struct `INCITS_4_1986.ASCII - Line Ending Constants` {
         @Test
@@ -440,14 +422,12 @@ struct `String Tests` {
         }
     }
 
-    // MARK: - Line Ending Detection Tests
-
     @Suite
     struct `INCITS_4_1986.ASCII - containsMixedLineEndings` {
         @Test(arguments: [
-            "line1\nline2\r\nline3",  // LF and CRLF
-            "line1\rline2\nline3",  // CR and LF
-            "line1\nline2\rline3\r\nline4",  // All three
+            "line1\nline2\r\nline3",
+            "line1\rline2\nline3",
+            "line1\nline2\rline3\r\nline4",
         ])
         func `strings with mixed line endings`(str: String) {
             #expect(str.ascii.containsMixedLineEndings, "String should have mixed line endings")
@@ -456,9 +436,9 @@ struct `String Tests` {
         @Test(arguments: [
             "",
             "hello",
-            "line1\nline2\nline3",  // Only LF
-            "line1\rline2\rline3",  // Only CR
-            "line1\r\nline2\r\nline3",  // Only CRLF
+            "line1\nline2\nline3",
+            "line1\rline2\rline3",
+            "line1\r\nline2\r\nline3",
         ])
         func `strings with consistent or no line endings`(str: String) {
             #expect(
@@ -505,30 +485,9 @@ struct `String Tests` {
 
         @Test
         func `prioritizes CRLF over individual CR or LF`() {
-            // When CRLF is present, it should be detected first
+
             let str = "line1\r\nline2\nline3"
             #expect(str.ascii.detectedLineEnding() == .crlf)
         }
     }
 }
-
-// extension `Performance Tests` {
-//    @Suite
-//    struct `String - Performance` {
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `string to bytes conversion 10K times`() {
-//            let str = "Hello World!"
-//            for _ in 0..<10000 {
-//                _ = [UInt8](ascii: str)
-//            }
-//        }
-//
-//        @Test(.timed(threshold: .milliseconds(150)))
-//        func `bytes to string conversion 10K times`() {
-//            let bytes: [UInt8] = [UInt8.ascii.H, .ascii.e, .ascii.l, .ascii.l, .ascii.o]
-//            for _ in 0..<10000 {
-//                _ = String(ascii: bytes)
-//            }
-//        }
-//    }
-// }

@@ -1,15 +1,9 @@
-// INCITS_4_1986.LineEnding.Detection Tests.swift
-// swift-incits-4-1986
-//
-// Tests for authoritative line ending detection operations
-
 import Testing
 
 @testable import ASCII
 
 @Suite
 struct `INCITS_4_1986.LineEnding.Detection Tests` {
-    // MARK: - Line Ending Detection Tests
 
     @Suite
     struct `detect() Method Tests` {
@@ -59,31 +53,29 @@ struct `INCITS_4_1986.LineEnding.Detection Tests` {
 
         @Test
         func `prioritizes CRLF over individual CR or LF`() {
-            // String with CRLF should return .crlf, not .cr or .lf
+
             #expect(INCITS_4_1986.LineEnding.Detection.detect("test\r\nmore") == .crlf)
         }
     }
 
-    // MARK: - Mixed Line Ending Tests
-
     @Suite
     struct `hasMixedLineEndings() Method Tests` {
         @Test(arguments: [
-            "line1\nline2\nline3",  // Consistent LF
-            "line1\rline2\rline3",  // Consistent CR
-            "line1\r\nline2\r\nline3",  // Consistent CRLF
-            "no line endings",  // No line endings
-            "",  // Empty string
+            "line1\nline2\nline3",
+            "line1\rline2\rline3",
+            "line1\r\nline2\r\nline3",
+            "no line endings",
+            "",
         ])
         func `returns false for consistent or no line endings`(str: String) {
             #expect(!INCITS_4_1986.LineEnding.Detection.hasMixedLineEndings(str))
         }
 
         @Test(arguments: [
-            "line1\nline2\r\nline3",  // LF and CRLF
-            "line1\rline2\nline3",  // CR and LF
-            "line1\rline2\r\nline3",  // CR and CRLF
-            "line1\nline2\rline3\r\n",  // All three types
+            "line1\nline2\r\nline3",
+            "line1\rline2\nline3",
+            "line1\rline2\r\nline3",
+            "line1\nline2\rline3\r\n",
         ])
         func `returns true for mixed line endings`(str: String) {
             #expect(INCITS_4_1986.LineEnding.Detection.hasMixedLineEndings(str))
@@ -91,10 +83,9 @@ struct `INCITS_4_1986.LineEnding.Detection Tests` {
 
         @Test
         func `CRLF is distinct from standalone CR and LF`() {
-            // CRLF followed by LF should be mixed
+
             #expect(INCITS_4_1986.LineEnding.Detection.hasMixedLineEndings("line1\r\nline2\nline3"))
 
-            // CRLF followed by CR should be mixed
             #expect(INCITS_4_1986.LineEnding.Detection.hasMixedLineEndings("line1\r\nline2\rline3"))
         }
 
@@ -106,12 +97,10 @@ struct `INCITS_4_1986.LineEnding.Detection Tests` {
 
         @Test
         func `CR not followed by LF is standalone`() {
-            // CR at end of string (not followed by LF) is standalone CR
+
             #expect(!INCITS_4_1986.LineEnding.Detection.hasMixedLineEndings("line1\rline2\r"))
         }
     }
-
-    // MARK: - Edge Cases
 
     @Suite
     struct `Edge Cases` {
@@ -164,33 +153,29 @@ struct `INCITS_4_1986.LineEnding.Detection Tests` {
         }
     }
 
-    // MARK: - Priority Tests
-
     @Suite
     struct `Detection Priority Tests` {
         @Test
         func `CRLF takes precedence in detection`() {
-            // When CRLF is present, it should be detected first
+
             #expect(INCITS_4_1986.LineEnding.Detection.detect("test\r\n") == .crlf)
             #expect(INCITS_4_1986.LineEnding.Detection.detect("a\r\nb") == .crlf)
         }
 
         @Test
         func `standalone CR without LF following`() {
-            // CR not followed by LF should detect as CR
+
             #expect(INCITS_4_1986.LineEnding.Detection.detect("test\rmore") == .cr)
             #expect(INCITS_4_1986.LineEnding.Detection.detect("\r") == .cr)
         }
 
         @Test
         func `standalone LF without CR preceding`() {
-            // LF not preceded by CR should detect as LF
+
             #expect(INCITS_4_1986.LineEnding.Detection.detect("test\nmore") == .lf)
             #expect(INCITS_4_1986.LineEnding.Detection.detect("\n") == .lf)
         }
     }
-
-    // MARK: - Real World Examples
 
     @Suite
     struct `Real World Examples` {
